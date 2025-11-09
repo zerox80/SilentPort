@@ -1,0 +1,28 @@
+# Android/Gradle generated files
+.gradle/
+build/
+app/build/
+
+# IDE specific
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Local configuration
+local.properties
+
+# Log / capture artifacts
+captures/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Kotlin/Java compiled output
+**/build/
+*.class
+
+# Misc
+out/
