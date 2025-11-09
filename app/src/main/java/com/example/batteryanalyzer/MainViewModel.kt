@@ -55,11 +55,21 @@ class MainViewModel(
                 usageRepository.applyEvaluation(evaluation)
 
                 evaluation.appsToNotify.forEach { info ->
-                    NotificationHelper.showPendingDisableNotification(appContext, info.appLabel, info.packageName)
+                    NotificationHelper.showDisableReminderNotification(
+                        context = appContext,
+                        appLabel = info.appLabel,
+                        packageName = info.packageName,
+                        isRecommendation = false
+                    )
                 }
 
-                evaluation.appsToDisable.forEach { info ->
-                    applicationManager.disablePackage(info.packageName)
+                evaluation.appsForDisableRecommendation.forEach { info ->
+                    NotificationHelper.showDisableReminderNotification(
+                        context = appContext,
+                        appLabel = info.appLabel,
+                        packageName = info.packageName,
+                        isRecommendation = true
+                    )
                 }
             }.onFailure { throwable ->
                 Log.e(TAG, "Failed to refresh usage", throwable)

@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit
 
 class UsageAnalyzer(
     private val context: Context,
-    private val trackedAppDao: TrackedAppDao
+    private val trackedAppDao: TrackedAppDao,
+    private val usagePolicy: UsagePolicy
 ) {
 
     private val packageManager: PackageManager = context.packageManager
@@ -34,10 +35,15 @@ class UsageAnalyzer(
         val updates = mutableListOf<TrackedAppEntity>()
         val packagesToRemove = existing.keys.toMutableSet()
         val appsToNotify = mutableListOf<TrackedAppEntity>()
-        val appsToDisable = mutableListOf<TrackedAppEntity>()
+        val appsForDisableRecommendation = mutableListOf<TrackedAppEntity>()
 
         for (appInfo in installedApps) {
             val packageName = appInfo.packageName
+
+            if (usagePolicy.shouldSkip(packageName)) {
+                continue
+            }
+
             packagesToRemove.remove(packageName)
 
             val label = runCatching { packageManager.getApplicationLabel(appInfo).toString() }
@@ -56,25 +62,25 @@ class UsageAnalyzer(
             }
             var notifiedAt = if (isDisabled) null else existingEntity?.notifiedAt
 
-            val shouldDisableNow = !isDisabled && disableAt != null && now >= disableAt
+            val shouldRecommendDisable = !isDisabled && disableAt != null && now >= disableAt && (notifiedAt == null || notifiedAt < disableAt)
             val resolvedStatus = when {
-                isDisabled || shouldDisableNow -> AppUsageStatus.DISABLED
+                isDisabled -> AppUsageStatus.DISABLED
                 lastUsed != null && now - lastUsed <= RECENT_THRESHOLD -> AppUsageStatus.RECENT
                 else -> AppUsageStatus.RARE
             }
 
-            if (shouldDisableNow) {
-                appsToDisable += TrackedAppEntity(
+            if (shouldRecommendDisable) {
+                appsForDisableRecommendation += TrackedAppEntity(
                     packageName = packageName,
                     appLabel = label,
                     lastUsedAt = lastUsed ?: 0L,
-                    status = AppUsageStatus.DISABLED,
-                    isDisabled = true,
-                    scheduledDisableAt = null,
-                    notifiedAt = null
+                    status = AppUsageStatus.RARE,
+                    isDisabled = false,
+                    scheduledDisableAt = disableAt,
+                    notifiedAt = now
                 )
-                scheduledDisableAt = null
-                notifiedAt = null
+                scheduledDisableAt = disableAt
+                notifiedAt = now
             } else if (!isDisabled && notifyAt != null && now >= notifyAt && (notifiedAt == null || notifiedAt < notifyAt) && (disableAt == null || now < disableAt)) {
                 appsToNotify += TrackedAppEntity(
                     packageName = packageName,
@@ -90,7 +96,7 @@ class UsageAnalyzer(
                 notifiedAt = null
             }
 
-            val resolvedIsDisabled = isDisabled || shouldDisableNow
+            val resolvedIsDisabled = isDisabled
             val entity = TrackedAppEntity(
                 packageName = packageName,
                 appLabel = label,
@@ -107,7 +113,7 @@ class UsageAnalyzer(
             updates = updates,
             packagesToRemove = packagesToRemove.toList(),
             appsToNotify = appsToNotify,
-            appsToDisable = appsToDisable
+            appsForDisableRecommendation = appsForDisableRecommendation
         )
     }
 

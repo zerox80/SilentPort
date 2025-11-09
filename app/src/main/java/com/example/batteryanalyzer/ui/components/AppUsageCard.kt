@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -40,6 +41,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 @Composable
 fun AppUsageCard(
     app: AppUsageInfo,
+    onOpenAppInfo: () -> Unit,
     showRestore: Boolean,
     onRestore: () -> Unit
 ) {
@@ -82,12 +84,17 @@ fun AppUsageCard(
                 }
             }
 
-            if (showRestore) {
-                Spacer(modifier = Modifier.height(18.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
+            Spacer(modifier = Modifier.height(18.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                OutlinedButton(onClick = onOpenAppInfo) {
+                    Text(text = stringResource(id = R.string.action_open_app_info))
+                }
+
+                if (showRestore) {
+                    Spacer(modifier = Modifier.size(12.dp))
                     Button(
                         onClick = onRestore,
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)

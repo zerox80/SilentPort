@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.batteryanalyzer.BatteryAnalyzerApp
-import com.example.batteryanalyzer.notifications.NotificationHelper
 import com.example.batteryanalyzer.util.UsagePermissionChecker
 
 class UsageSyncWorker(
@@ -25,14 +24,6 @@ class UsageSyncWorker(
         return runCatching {
             val evaluation = container.usageAnalyzer.evaluateUsage()
             container.usageRepository.applyEvaluation(evaluation)
-
-            evaluation.appsToNotify.forEach { info ->
-                NotificationHelper.showPendingDisableNotification(context, info.appLabel, info.packageName)
-            }
-
-            evaluation.appsToDisable.forEach { info ->
-                container.applicationManager.disablePackage(info.packageName)
-            }
 
             Result.success()
         }.getOrElse { throwable ->

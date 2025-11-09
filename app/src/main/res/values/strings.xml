@@ -8,9 +8,12 @@
     <string name="tab_rare">Selten verwendet</string>
     <string name="tab_disabled">Deaktivierte Apps</string>
     <string name="action_restore_app">App wieder aktivieren</string>
+    <string name="action_open_app_info">App-Info öffnen</string>
     <string name="usage_permission_denied">Berechtigung abgelehnt. Öffnen Sie die Einstellungen, um den Zugriff zu erlauben.</string>
     <string name="notification_disable_title">App wird deaktiviert</string>
-    <string name="notification_disable_text">%1$s wurde seit 4 Tagen nicht verwendet und wird in 24 Stunden deaktiviert.</string>
+    <string name="notification_disable_text">%1$s wurde seit 4 Tagen nicht verwendet. Öffnen Sie die App-Info, um selbst zu deaktivieren oder zu deinstallieren.</string>
+    <string name="notification_disable_recommendation_title">App längere Zeit ungenutzt</string>
+    <string name="notification_disable_recommendation_text">%1$s wurde seit mehreren Tagen nicht genutzt. Prüfen Sie die App-Info, falls Sie Speicher freigeben möchten.</string>
     <string name="notification_channel_name">App-Nutzungsstatus</string>
     <string name="notification_channel_description">Benachrichtigungen zur automatischen Deaktivierung und Wiederherstellung von Apps.</string>
     <string name="settings_usage_access">Nutzungszugriff öffnen</string>

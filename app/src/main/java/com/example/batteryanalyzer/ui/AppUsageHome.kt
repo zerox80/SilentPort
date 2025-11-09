@@ -66,7 +66,8 @@ fun AppUsageHome(
     state: AppHomeState,
     onRequestUsagePermission: () -> Unit,
     onRefresh: () -> Unit,
-    onRestoreApp: (String) -> Unit
+    onRestoreApp: (String) -> Unit,
+    onOpenAppInfo: (String) -> Unit
 ) {
     val tabs = listOf(
         stringResource(id = R.string.tab_recent),
@@ -180,19 +181,22 @@ fun AppUsageHome(
                                     0 -> AppList(
                                         apps = state.recentApps,
                                         emptyText = R.string.empty_state_recent,
-                                        onRestoreApp = onRestoreApp
+                                        onRestoreApp = onRestoreApp,
+                                        onOpenAppInfo = onOpenAppInfo
                                     )
 
                                     1 -> AppList(
                                         apps = state.rareApps,
                                         emptyText = R.string.empty_state_rare,
-                                        onRestoreApp = onRestoreApp
+                                        onRestoreApp = onRestoreApp,
+                                        onOpenAppInfo = onOpenAppInfo
                                     )
 
                                     2 -> AppList(
                                         apps = state.disabledApps,
                                         emptyText = R.string.empty_state_disabled,
                                         onRestoreApp = onRestoreApp,
+                                        onOpenAppInfo = onOpenAppInfo,
                                         showRestore = true
                                     )
                                 }
@@ -363,6 +367,7 @@ private fun AppList(
     apps: List<AppUsageInfo>,
     emptyText: Int,
     onRestoreApp: (String) -> Unit,
+    onOpenAppInfo: (String) -> Unit,
     showRestore: Boolean = false
 ) {
     if (apps.isEmpty()) {
@@ -376,6 +381,7 @@ private fun AppList(
             items(apps) { appInfo ->
                 AppUsageCard(
                     app = appInfo,
+                    onOpenAppInfo = { onOpenAppInfo(appInfo.packageName) },
                     showRestore = showRestore,
                     onRestore = { onRestoreApp(appInfo.packageName) }
                 )

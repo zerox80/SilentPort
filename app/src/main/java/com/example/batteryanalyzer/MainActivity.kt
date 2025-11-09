@@ -1,6 +1,7 @@
 package com.example.batteryanalyzer
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
                         onRefresh = { viewModel.refreshUsage() },
                         onRestoreApp = { packageName ->
                             lifecycleScope.launch { viewModel.restoreApp(packageName) }
-                        }
+                        },
+                        onOpenAppInfo = { packageName -> openAppDetails(packageName) }
                     )
                 }
             }
@@ -48,5 +50,15 @@ class MainActivity : ComponentActivity() {
 
     private fun openUsageAccessSettings() {
         startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+    }
+
+    private fun openAppDetails(packageName: String) {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        ).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 }
