@@ -70,6 +70,9 @@ class MainActivity : ComponentActivity() {
                         },
                         onToggleMetrics = { enabled ->
                             lifecycleScope.launch { viewModel.setMetricsEnabled(enabled) }
+                        },
+                        onManualFirewallUnblockChange = { enabled ->
+                            lifecycleScope.launch { viewModel.setManualFirewallUnblock(enabled) }
                         }
                     )
                 }

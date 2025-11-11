@@ -32,7 +32,8 @@ class SettingsPreferencesDataSource(context: Context) {
         .map { prefs ->
             AppSettingsPreferences(
                 allowDurationMillis = prefs[Keys.ALLOW_DURATION_MILLIS] ?: DEFAULT_ALLOW_DURATION_MILLIS,
-                metricsEnabled = prefs[Keys.METRICS_ENABLED] ?: false
+                metricsEnabled = prefs[Keys.METRICS_ENABLED] ?: false,
+                manualFirewallUnblock = prefs[Keys.MANUAL_FIREWALL_UNBLOCK] ?: false
             )
         }
 
@@ -49,9 +50,16 @@ class SettingsPreferencesDataSource(context: Context) {
         }
     }
 
+    suspend fun setManualFirewallUnblock(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[Keys.MANUAL_FIREWALL_UNBLOCK] = enabled
+        }
+    }
+
     private object Keys {
         val ALLOW_DURATION_MILLIS = longPreferencesKey("allow_duration_millis")
         val METRICS_ENABLED = booleanPreferencesKey("metrics_enabled")
+        val MANUAL_FIREWALL_UNBLOCK = booleanPreferencesKey("manual_firewall_unblock")
     }
 
     companion object {
@@ -61,5 +69,6 @@ class SettingsPreferencesDataSource(context: Context) {
 
 data class AppSettingsPreferences(
     val allowDurationMillis: Long,
-    val metricsEnabled: Boolean
+    val metricsEnabled: Boolean,
+    val manualFirewallUnblock: Boolean
 )

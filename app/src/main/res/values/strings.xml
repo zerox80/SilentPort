@@ -44,6 +44,11 @@
     <string name="firewall_countdown_label">Automatische Blockierung in: %1$s</string>
     <string name="firewall_blocking_now">Selten genutzte Apps sind aktuell ohne Netzwerk</string>
     <string name="firewall_allowing_now">Alle Apps sind vorübergehend freigegeben</string>
+    <string name="firewall_manual_mode_hint">Manuelle Sperrsteuerung aktiv: Apps bleiben blockiert, bis Sie sie in den Einstellungen freigeben.</string>
+    <string name="firewall_manual_section_title">Manuell gesperrte Apps</string>
+    <string name="firewall_manual_section_description">Diese Apps bleiben blockiert, bis Sie sie hier freigeben. Tippen Sie auf &quot;Freigeben&quot;, um den Netzwerkzugang nur für diese App wiederherzustellen.</string>
+    <string name="firewall_manual_section_empty">Aktuell sind keine Apps manuell blockiert.</string>
+    <string name="firewall_manual_unblock_button">Freigeben</string>
     <string name="firewall_vpn_session_name">Battery Analyzer Firewall</string>
     <string name="firewall_notification_channel_name">Firewall-Benachrichtigungen</string>
     <string name="firewall_notification_channel_description">Status der integrierten Firewall und Schnellaktionen.</string>
@@ -67,6 +72,9 @@
     <string name="settings_duration_header">Erlaubnisdauer</string>
     <string name="settings_current_duration">Aktuell: %1$s</string>
     <string name="settings_duration_subtitle">Tippen Sie auf eine Option, um sie zu übernehmen.</string>
+    <string name="settings_manual_firewall_title">Manuelle Sperrsteuerung</string>
+    <string name="settings_manual_firewall_description">Wenn aktiviert, bleiben blockierte Apps gesperrt, bis Sie sie hier manuell freigeben. Das Öffnen einer App hebt die Sperre nicht automatisch auf.</string>
+    <string name="settings_manual_firewall_toggle">Manuelle Freigabe erforderlich</string>
 
     <string name="metrics_title">Netzwerk-Metriken</string>
     <string name="metrics_description">Aktivieren Sie die Metrik-Erfassung, um den tatsächlichen Datenverkehr seltener Apps in den letzten 10 Minuten anzuzeigen. Ideal zum Debuggen von Firewall-Regeln.</string>

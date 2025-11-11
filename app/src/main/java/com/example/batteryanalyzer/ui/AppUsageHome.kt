@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.example.batteryanalyzer.R
+import com.example.batteryanalyzer.data.local.AppUsageStatus
 import com.example.batteryanalyzer.model.AppUsageInfo
 import com.example.batteryanalyzer.ui.components.AppUsageCard
 import com.example.batteryanalyzer.ui.rememberDurationLabel
@@ -85,6 +86,8 @@ fun AppUsageHome(
     onDisableFirewall: () -> Unit,
     onAllowForDuration: () -> Unit,
     onBlockNow: () -> Unit,
+    manualFirewallUnblock: Boolean,
+    onManualUnblock: (String) -> Unit,
     onOpenNavigation: () -> Unit
 ) {
     val tabs = listOf(
@@ -144,6 +147,35 @@ fun AppUsageHome(
 
                 item { Spacer(modifier = Modifier.height(20.dp)) }
 
+                if (manualFirewallUnblock) {
+                    val blockedApps = remember(state.firewallBlockedPackages, state.recentApps, state.rareApps, state.disabledApps) {
+                        val lookup = (state.recentApps + state.rareApps + state.disabledApps)
+                            .associateBy { it.packageName }
+                        state.firewallBlockedPackages.map { pkg ->
+                            lookup[pkg] ?: AppUsageInfo(
+                                packageName = pkg,
+                                appLabel = pkg,
+                                lastUsedAt = null,
+                                status = AppUsageStatus.RARE,
+                                isDisabled = false,
+                                scheduledDisableAt = null,
+                                notifiedAt = null
+                            )
+                        }
+                    }
+                    item {
+                        ManualFirewallSection(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth(),
+                            blockedApps = blockedApps,
+                            onManualUnblock = onManualUnblock
+                        )
+                    }
+
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
+                }
+
                 item {
                     FirewallCard(
                         modifier = Modifier
@@ -154,7 +186,8 @@ fun AppUsageHome(
                         onDisable = onDisableFirewall,
                         onAllowForDuration = onAllowForDuration,
                         onBlockNow = onBlockNow,
-                        allowDurationMillis = state.allowDurationMillis
+                        allowDurationMillis = state.allowDurationMillis,
+                        manualMode = manualFirewallUnblock
                     )
                 }
 
@@ -188,6 +221,86 @@ fun AppUsageHome(
                         onOpenAppInfo = onOpenAppInfo
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ManualFirewallSection(
+    modifier: Modifier = Modifier,
+    blockedApps: List<AppUsageInfo>,
+    onManualUnblock: (String) -> Unit
+) {
+    ElevatedCard(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(id = R.string.firewall_manual_section_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = stringResource(id = R.string.firewall_manual_section_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            if (blockedApps.isEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.firewall_manual_section_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    blockedApps.forEach { app ->
+                        ManualFirewallItem(app = app, onManualUnblock = onManualUnblock)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ManualFirewallItem(app: AppUsageInfo, onManualUnblock: (String) -> Unit) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = app.appLabel,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = app.packageName,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            OutlinedButton(onClick = { onManualUnblock(app.packageName) }) {
+                Text(text = stringResource(id = R.string.firewall_manual_unblock_button))
             }
         }
     }
@@ -294,7 +407,8 @@ private fun FirewallCard(
     onDisable: () -> Unit,
     onAllowForDuration: () -> Unit,
     onBlockNow: () -> Unit,
-    allowDurationMillis: Long
+    allowDurationMillis: Long,
+    manualMode: Boolean
 ) {
     val isEnabled = state.isEnabled
     val isBlocking = state.isBlocking
@@ -384,6 +498,14 @@ private fun FirewallCard(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
+                )
+            }
+
+            if (manualMode) {
+                Text(
+                    text = stringResource(id = R.string.firewall_manual_mode_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

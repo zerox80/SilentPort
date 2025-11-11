@@ -77,7 +77,9 @@ fun BatteryAnalyzerRoot(
     onAllowForDuration: () -> Unit,
     onBlockNow: () -> Unit,
     onUpdateAllowDuration: (Long) -> Unit,
-    onToggleMetrics: (Boolean) -> Unit
+    onToggleMetrics: (Boolean) -> Unit,
+    onManualFirewallUnblockChange: (Boolean) -> Unit,
+    onManualFirewallUnblock: (String) -> Unit
 ) {
     val uiState by uiStateFlow.collectAsState()
     BatteryAnalyzerRoot(
@@ -91,7 +93,9 @@ fun BatteryAnalyzerRoot(
         onAllowForDuration = onAllowForDuration,
         onBlockNow = onBlockNow,
         onUpdateAllowDuration = onUpdateAllowDuration,
-        onToggleMetrics = onToggleMetrics
+        onToggleMetrics = onToggleMetrics,
+        onManualFirewallUnblockChange = onManualFirewallUnblockChange,
+        onManualFirewallUnblock = onManualFirewallUnblock
     )
 }
 
@@ -108,7 +112,9 @@ fun BatteryAnalyzerRoot(
     onAllowForDuration: () -> Unit,
     onBlockNow: () -> Unit,
     onUpdateAllowDuration: (Long) -> Unit,
-    onToggleMetrics: (Boolean) -> Unit
+    onToggleMetrics: (Boolean) -> Unit,
+    onManualFirewallUnblockChange: (Boolean) -> Unit,
+    onManualFirewallUnblock: (String) -> Unit
 ) {
     val navController = rememberNavController()
     val drawerState = androidx.compose.material3.rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
@@ -171,6 +177,8 @@ fun BatteryAnalyzerRoot(
                     onDisableFirewall = onDisableFirewall,
                     onAllowForDuration = onAllowForDuration,
                     onBlockNow = onBlockNow,
+                    manualFirewallUnblock = uiState.manualFirewallUnblock,
+                    onManualUnblock = onManualFirewallUnblock,
                     onOpenNavigation = {
                         scope.launch { drawerState.open() }
                     }
@@ -179,7 +187,9 @@ fun BatteryAnalyzerRoot(
             composable(AppDestination.Settings.route) {
                 SettingsScreen(
                     currentDurationMillis = uiState.allowDurationMillis,
+                    manualFirewallUnblock = uiState.manualFirewallUnblock,
                     onDurationSelected = onUpdateAllowDuration,
+                    onManualFirewallUnblockChange = onManualFirewallUnblockChange,
                     onOpenNavigation = {
                         scope.launch { drawerState.open() }
                     }
@@ -207,7 +217,9 @@ fun BatteryAnalyzerRoot(
 @Composable
 private fun SettingsScreen(
     currentDurationMillis: Long,
+    manualFirewallUnblock: Boolean,
     onDurationSelected: (Long) -> Unit,
+    onManualFirewallUnblockChange: (Boolean) -> Unit,
     onOpenNavigation: () -> Unit
 ) {
     val presetDurations = listOf(
@@ -259,6 +271,33 @@ private fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
                 )
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    ListItem(
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.settings_manual_firewall_title))
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(id = R.string.settings_manual_firewall_description),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = manualFirewallUnblock,
+                                onCheckedChange = onManualFirewallUnblockChange
+                            )
+                        }
+                    )
+                }
             }
 
             items(presetDurations) { duration ->
