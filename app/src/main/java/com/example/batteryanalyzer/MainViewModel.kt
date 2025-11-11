@@ -3,8 +3,8 @@ package com.example.batteryanalyzer
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.TrafficStats
-import android.util.Log
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 import java.util.ArrayDeque
 
 class MainViewModel(
@@ -48,7 +49,7 @@ class MainViewModel(
     private val trafficSnapshots = mutableMapOf<String, Long>()
     private val trafficHistory = mutableMapOf<String, ArrayDeque<Pair<Long, Long>>>()
     private var metricsJob: Job? = null
-    private val trafficWindowMillis = TimeUnit.MINUTES.toMillis(10)
+    private val trafficWindowMillisRef = AtomicLong(TimeUnit.MINUTES.toMillis(10))
     private val trafficSampleIntervalMillis = TimeUnit.SECONDS.toMillis(30)
 
     private var subscriptionsStarted = false
@@ -286,6 +287,7 @@ class MainViewModel(
             .distinctBy { it.packageName }
         val trackedPackages = trackedApps.map { it.packageName }
         val now = System.currentTimeMillis()
+        val windowMillis = trafficWindowMillisRef.get()
 
         if (trackedPackages.isEmpty()) {
             trafficHistory.clear()
@@ -313,7 +315,7 @@ class MainViewModel(
             if (delta > 0) {
                 history.addLast(now to delta)
             }
-            while (history.isNotEmpty() && now - history.first().first > trafficWindowMillis) {
+            while (history.isNotEmpty() && now - history.first().first > windowMillis) {
                 history.removeFirst()
             }
             val sum = history.sumOf { it.second }

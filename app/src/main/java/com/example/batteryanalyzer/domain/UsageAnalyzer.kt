@@ -25,6 +25,10 @@ class UsageAnalyzer(
     private val usageStatsManager: UsageStatsManager = context.getSystemService(UsageStatsManager::class.java)
         ?: throw IllegalStateException("UsageStatsManager not available")
 
+    fun updatePolicyThresholds(allowDurationMillis: Long): Boolean {
+        return usagePolicy.updateThresholds(allowDurationMillis)
+    }
+
     suspend fun evaluateUsage(): UsageEvaluation = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         val existing = trackedAppDao.getAll().associateBy { it.packageName }
@@ -52,8 +56,8 @@ class UsageAnalyzer(
             val lastUsed = resolveLastUsed(packageName, lastUsedMap, existingEntity, appInfo)
             val isDisabled = isPackageDisabled(packageName)
 
-            val disableAt = lastUsed?.let { it + usagePolicy.disableThresholdMillis }
             val notifyAt = lastUsed?.let { it + usagePolicy.warningThresholdMillis }
+            val disableAt = lastUsed?.let { it + usagePolicy.disableThresholdMillis }
 
             var scheduledDisableAt = when {
                 isDisabled -> null
