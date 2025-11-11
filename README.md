@@ -1,5 +1,5 @@
-## Battery Analyzer Firewall
-Battery Analyzer Firewall ist eine Android-App, die ausgehenden Traffic per lokaler VPN-Schnittstelle überwacht und gezielt blockiert. Sie richtet sich an Nutzerinnen und Nutzer, die strom- und datenhungrige Apps temporär oder dauerhaft stummschalten möchten.
+## PrivacyGuard Firewall
+PrivacyGuard Firewall ist eine Android-App, die ausgehenden Traffic per lokaler VPN-Schnittstelle überwacht und gezielt blockiert. Sie richtet sich an Nutzerinnen und Nutzer, die strom- und datenhungrige Apps temporär oder dauerhaft stummschalten möchten.
 
 ### Kernfunktionen
 - Adaptive Blocklisten: Automatische Vorschläge aus Nutzungsprofilen kombiniert mit manuellen Allow- und Blocklists.
@@ -13,4 +13,4 @@ Battery Analyzer Firewall ist eine Android-App, die ausgehenden Traffic per loka
 3. Beim ersten Start VPN-Berechtigung erteilen, Blocklisten konfigurieren und Firewall aktivieren.
 
 ### Support
-Fehler oder Feature-Wünsche bitte als Issue melden. Sicherheitsrelevante Hinweise an security@batteryanalyzer.dev senden.
+Fehler oder Feature-Wünsche bitte als Issue melden. Sicherheitsrelevante Hinweise an security@privacyguard.dev senden.
