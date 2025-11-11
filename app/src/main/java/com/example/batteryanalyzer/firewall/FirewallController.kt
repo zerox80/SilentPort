@@ -78,6 +78,24 @@ class FirewallController(
         startService(isBlocking = true, blockList = packages)
     }
 
+    suspend fun applyManualBlockList(blockPackages: Set<String>) {
+        val current = preferences.preferencesFlow.first()
+        val shouldPersist = !current.isEnabled || current.isBlocking || current.reactivateAt != null || current.blockedPackages != blockPackages
+        if (shouldPersist) {
+            Log.i(TAG, "applyManualBlockList -> ${blockPackages.size} packages (was ${current.blockedPackages.size})")
+            preferences.setState(
+                isEnabled = true,
+                isBlocking = false,
+                reactivateAt = null,
+                blockedPackages = blockPackages
+            )
+        } else {
+            Log.d(TAG, "applyManualBlockList -> no state change required")
+        }
+        cancelAutoBlock()
+        startService(isBlocking = false, blockList = blockPackages, includeBlockListWhenNotBlocking = true)
+    }
+
     suspend fun disableFirewall() {
         Log.i(TAG, "disableFirewall")
         preferences.setState(isEnabled = false, isBlocking = false, reactivateAt = null, blockedPackages = emptySet())
@@ -99,7 +117,8 @@ class FirewallController(
         } else if (reactivateAt != null) {
             scheduleAutoBlock(reactivateAt)
         }
-        startService(isBlocking = blocking, blockList = packages)
+        val includeBlockList = !blocking && reactivateAt == null && packages.isNotEmpty()
+        startService(isBlocking = blocking, blockList = packages, includeBlockListWhenNotBlocking = includeBlockList)
     }
 
     suspend fun updateBlockedPackages(blockPackages: Set<String>) {
@@ -118,16 +137,30 @@ class FirewallController(
         )
 
         if (current.isEnabled) {
-            startService(isBlocking = current.isBlocking, blockList = blockPackages)
+            val includeBlockList = (!current.isBlocking && current.reactivateAt == null && blockPackages.isNotEmpty())
+            startService(
+                isBlocking = current.isBlocking,
+                blockList = blockPackages,
+                includeBlockListWhenNotBlocking = includeBlockList
+            )
         }
     }
 
-    private fun startService(isBlocking: Boolean, blockList: Set<String>) {
+    private fun startService(
+        isBlocking: Boolean,
+        blockList: Set<String>,
+        includeBlockListWhenNotBlocking: Boolean = false
+    ) {
         Log.d(TAG, "startService -> blocking=$isBlocking blockList=${blockList.size}")
         val intent = Intent(appContext, VpnFirewallService::class.java).apply {
             action = VpnFirewallService.ACTION_START_OR_UPDATE
             putExtra(VpnFirewallService.EXTRA_BLOCKING, isBlocking)
-            putStringArrayListExtra(VpnFirewallService.EXTRA_BLOCK_LIST, ArrayList(blockList))
+            val payload = when {
+                isBlocking -> ArrayList(blockList)
+                includeBlockListWhenNotBlocking -> ArrayList(blockList)
+                else -> arrayListOf()
+            }
+            putStringArrayListExtra(VpnFirewallService.EXTRA_BLOCK_LIST, payload)
         }
         ContextCompat.startForegroundService(appContext, intent)
     }

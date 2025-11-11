@@ -31,6 +31,7 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 import java.util.ArrayDeque
+import kotlin.collections.buildList
 
 class MainViewModel(
     private val appContext: Context,
@@ -49,12 +50,16 @@ class MainViewModel(
     private val trafficSnapshots = mutableMapOf<String, Long>()
     private val trafficHistory = mutableMapOf<String, ArrayDeque<Pair<Long, Long>>>()
     private var metricsJob: Job? = null
+    private var manualUnblockSchedulerJob: Job? = null
     private val trafficWindowMillisRef = AtomicLong(TimeUnit.MINUTES.toMillis(10))
     private val trafficSampleIntervalMillis = TimeUnit.SECONDS.toMillis(30)
     private val manualUnblockCooldown = mutableMapOf<String, Long>()
 
     private var subscriptionsStarted = false
     private val blockThresholdMillisRef = AtomicLong(TimeUnit.DAYS.toMillis(4))
+    private val firewallAllowlist = setOf(
+        "com.google.android.youtube"
+    )
 
     init {
         observeSettings()
@@ -81,7 +86,7 @@ class MainViewModel(
             val blockList = computeBlockList(state)
             Log.i(TAG, "enableFirewall requested. manual=${state.manualFirewallUnblock}, blockCount=${blockList.size}")
             if (state.manualFirewallUnblock) {
-                firewallController.blockNow(blockList)
+                firewallController.applyManualBlockList(blockList)
             } else {
                 firewallController.enableFirewall(blockList, state.allowDurationMillis)
             }
@@ -97,9 +102,14 @@ class MainViewModel(
 
     fun blockNow() {
         viewModelScope.launch {
-            val blockList = computeBlockList()
-            Log.i(TAG, "blockNow requested. blockCount=${blockList.size}")
-            firewallController.blockNow(blockList)
+            val state = _uiState.value
+            val blockList = computeBlockList(state)
+            Log.i(TAG, "blockNow requested. manual=${state.manualFirewallUnblock} blockCount=${blockList.size}")
+            if (state.manualFirewallUnblock) {
+                firewallController.applyManualBlockList(blockList)
+            } else {
+                firewallController.blockNow(blockList)
+            }
         }
     }
 
@@ -138,8 +148,14 @@ class MainViewModel(
             if (enabled) {
                 val state = _uiState.value.copy(manualFirewallUnblock = true)
                 val blockList = computeBlockList(state)
-                Log.i(TAG, "Manual mode enabled. Enforcing blockNow with ${blockList.size} packages")
-                firewallController.blockNow(blockList)
+                Log.i(TAG, "Manual mode enabled. Applying manual block list with ${blockList.size} packages")
+                firewallController.applyManualBlockList(blockList)
+                scheduleManualUnblockSync()
+            } else {
+                manualUnblockSchedulerJob?.cancel()
+                manualUnblockSchedulerJob = null
+                manualUnblockCooldown.clear()
+                syncFirewallBlockList()
             }
         }
     }
@@ -149,13 +165,22 @@ class MainViewModel(
             Log.i(TAG, "manualUnblockPackage -> $packageName")
             val now = System.currentTimeMillis()
             val scheduledReblockAt = _uiState.value.firewallState.reactivateAt
-            val cooldownUntil = scheduledReblockAt?.takeIf { it > now } ?: (now + blockThresholdMillisRef.get())
+            val allowDurationMillis = _uiState.value.allowDurationMillis
+            val candidateExpiries = buildList {
+                scheduledReblockAt?.takeIf { it > now }?.let { add(it) }
+                if (allowDurationMillis > 0) {
+                    add(now + allowDurationMillis)
+                }
+            }
+            val cooldownUntil = candidateExpiries.minOrNull() ?: (now + blockThresholdMillisRef.get())
+            Log.d(TAG, "manualUnblockPackage cooldown -> pkg=$packageName until=$cooldownUntil candidates=${candidateExpiries.size}")
             manualUnblockCooldown[packageName] = cooldownUntil
             val current = _uiState.value.firewallBlockedPackages.toMutableSet()
             if (current.remove(packageName)) {
                 Log.d(TAG, "Package removed from manual block set: $packageName")
                 firewallController.updateBlockedPackages(current)
             }
+            scheduleManualUnblockSync()
         }
     }
 
@@ -259,20 +284,46 @@ class MainViewModel(
 
         val result = if (state.manualFirewallUnblock) {
             val manualSet = state.firewallBlockedPackages.toMutableSet()
+
+            disabledPackages.forEach { pkg ->
+                manualUnblockCooldown.remove(pkg)
+            }
+
             val additions = (rarePackages + disabledPackages).filter { pkg ->
                 val cooldownExpiry = manualUnblockCooldown[pkg]
-                (cooldownExpiry == null || cooldownExpiry <= now)
+                cooldownExpiry == null || cooldownExpiry <= now
             }
+
             manualSet += additions
             manualSet.remove(appContext.packageName)
+            manualSet.removeAll(firewallAllowlist)
             manualSet
         } else {
             (rarePackages + disabledPackages).toSet()
                 .filterNot { it == appContext.packageName }
+                .filterNot { it in firewallAllowlist }
                 .toSet()
         }
         Log.d(TAG, "computeBlockList manual=${state.manualFirewallUnblock} -> ${result.size} packages")
         return result
+    }
+
+    private fun scheduleManualUnblockSync() {
+        val nextExpiry = manualUnblockCooldown.values.minOrNull()
+        if (nextExpiry == null) {
+            manualUnblockSchedulerJob?.cancel()
+            manualUnblockSchedulerJob = null
+            return
+        }
+
+        val delayMillis = (nextExpiry - System.currentTimeMillis()).coerceAtLeast(0)
+        manualUnblockSchedulerJob?.cancel()
+        manualUnblockSchedulerJob = viewModelScope.launch {
+            Log.d(TAG, "manualUnblock scheduler waiting ${delayMillis}ms for next expiry")
+            delay(delayMillis)
+            Log.i(TAG, "manualUnblock scheduler expired -> resyncing firewall")
+            syncFirewallBlockList()
+        }
     }
 
     private suspend fun syncFirewallBlockList() {

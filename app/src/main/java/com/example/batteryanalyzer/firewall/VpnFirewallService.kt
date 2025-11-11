@@ -19,6 +19,7 @@ class VpnFirewallService : VpnService() {
     private var drainThread: Thread? = null
     private var inputStream: InputStream? = null
     private var blockedPackages: Set<String> = emptySet()
+    private var isBlockingMode: Boolean = false
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -32,10 +33,16 @@ class VpnFirewallService : VpnService() {
 
         if (action == ACTION_START_OR_UPDATE) {
             val blocking = intent.getBooleanExtra(EXTRA_BLOCKING, false)
-            blockedPackages = intent.getStringArrayListExtra(EXTRA_BLOCK_LIST)?.toSet() ?: emptySet()
+            isBlockingMode = blocking
+            val providedList = intent.getStringArrayListExtra(EXTRA_BLOCK_LIST)
+            blockedPackages = when {
+                blocking -> providedList?.toSet() ?: emptySet()
+                providedList != null -> providedList.toSet()
+                else -> emptySet()
+            }
             Log.i(TAG, "Starting/Updating firewall: blocking=$blocking blocked=${blockedPackages.size}")
             startForeground(NOTIFICATION_ID, buildNotification(blocking))
-            updateVpn(blocking)
+            updateVpn()
             return START_STICKY
         }
 
@@ -98,29 +105,62 @@ class VpnFirewallService : VpnService() {
             .build()
     }
 
-    private fun updateVpn(blocking: Boolean) {
-        Log.d(TAG, "updateVpn blocking=$blocking blockedPackages=${blockedPackages.size}")
-        if (blocking) {
-            if (blockedPackages.isEmpty()) {
-                Log.w(TAG, "Blocking requested but block list empty -> stopping VPN")
-                stopVpn()
-            } else {
-                Log.d(TAG, "Starting VPN for blocked packages")
-                startVpn()
+    private fun updateVpn() {
+        Log.d(TAG, "updateVpn blockingMode=$isBlockingMode blockedPackages=${blockedPackages.size}")
+        when {
+            isBlockingMode -> {
+                Log.d(TAG, "Activating global block mode")
+                startGlobalBlockVpn()
             }
-        } else {
-            Log.d(TAG, "Not blocking -> stopping VPN")
-            stopVpn()
+
+            blockedPackages.isNotEmpty() -> {
+                Log.d(TAG, "Activating selective block mode")
+                startSelectiveBlockVpn()
+            }
+
+            else -> {
+                Log.d(TAG, "No blocking required -> stopping VPN")
+                stopVpn()
+            }
         }
     }
 
-    private fun startVpn() {
-        if (vpnInterface != null) return
+    private fun startGlobalBlockVpn() {
+        stopVpn()
+        val builder = createBaseBuilder()
 
+        runCatching { builder.addDisallowedApplication(packageName) }
+            .onFailure { Log.w(TAG, "Unable to exclude app from VPN", it) }
+
+        establishVpn(builder)
+    }
+
+    private fun startSelectiveBlockVpn() {
+        if (blockedPackages.isEmpty()) {
+            Log.w(TAG, "startSelectiveBlockVpn called with empty list")
+            stopVpn()
+            return
+        }
+
+        stopVpn()
+        val builder = createBaseBuilder()
+
+        blockedPackages.forEach { pkg ->
+            if (pkg != packageName) {
+                runCatching {
+                    builder.addAllowedApplication(pkg)
+                    Log.v(TAG, "Selective block -> app routed through VPN: $pkg")
+                }.onFailure { Log.w(TAG, "Unable to include $pkg in VPN", it) }
+            }
+        }
+
+        establishVpn(builder)
+    }
+
+    private fun createBaseBuilder(): Builder {
         val builder = Builder()
             .setSession(getString(R.string.firewall_vpn_session_name))
 
-        // Assign a virtual local address to the VPN interface.
         builder.addAddress("10.0.0.2", 32)
         builder.addRoute("0.0.0.0", 0)
 
@@ -129,27 +169,16 @@ class VpnFirewallService : VpnService() {
             builder.addRoute("::", 0)
         }
 
-        if (blockedPackages.isEmpty()) {
-            Log.w(TAG, "startVpn called with empty block list")
-            stopVpn()
-            return
-        }
+        return builder
+    }
 
-        blockedPackages.forEach { pkg ->
-            if (pkg != packageName) {
-                runCatching {
-                    builder.addAllowedApplication(pkg)
-                    Log.v(TAG, "Allowed application in firewall VPN: $pkg")
-                }.onFailure { Log.w(TAG, "Unable to include $pkg in VPN", it) }
-            }
-        }
-
+    private fun establishVpn(builder: Builder) {
         vpnInterface = builder.establish()
         vpnInterface?.let { descriptor ->
             Log.i(TAG, "VPN interface established")
             inputStream = ParcelFileDescriptor.AutoCloseInputStream(descriptor)
             drainPackets()
-        }
+        } ?: Log.w(TAG, "Failed to establish VPN interface")
     }
 
     private fun stopVpn() {
