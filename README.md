@@ -13,4 +13,4 @@ PrivacyGuard Firewall ist eine Android-App, die ausgehenden Traffic per lokaler 
 3. Beim ersten Start VPN-Berechtigung erteilen, Blocklisten konfigurieren und Firewall aktivieren.
 
 ### Support
-Fehler oder Feature-Wünsche bitte als Issue melden. Sicherheitsrelevante Hinweise an security@privacyguard.dev senden.
+Fehler oder Feature-Wünsche bitte als Issue melden. Sicherheitsrelevante Hinweise an rujbin@proton.me senden.
