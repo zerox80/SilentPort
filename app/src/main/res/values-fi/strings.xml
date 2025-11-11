@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">Käyttöoikeus vaaditaan</string>
+    <string name="permission_usage_access_message">Sovelluksen käyttötietojen keräämiseksi käyttöoikeus on myönnettävä.</string>
+    <string name="permission_usage_access_action">Myönnä käyttöoikeus</string>
+    <string name="tab_recent">Äskettäin käytetty</string>
+    <string name="tab_rare">Harvoin käytetty</string>
+    <string name="tab_disabled">Poistetut sovellukset</string>
+    <string name="action_restore_app">Palauta sovellus</string>
+    <string name="action_open_app_info">Avaa sovellustiedot</string>
+    <string name="usage_permission_denied">Lupa evätty. Avaa asetukset salliaksesi pääsyn.</string>
+    <string name="notification_disable_title">Sovellus poistetaan käytöstä</string>
+    <string name="notification_disable_text">%1$s ei ole käytetty 4 päivään. Avaa sovellustiedot poistaaksesi käytöstä tai asentaaksesi itse.</string>
+    <string name="notification_disable_recommendation_title">Sovellus käyttämätön pitkään</string>
+    <string name="notification_disable_recommendation_text">%1$s ei ole käytetty useaan päivään. Tarkista sovellustiedot jos haluat vapauttaa tilaa.</string>
+    <string name="notification_channel_name">Sovelluksen käyttötiedot</string>
+    <string name="notification_channel_description">Ilmoitukset automaattisesta käytöstä poistamisesta ja palauttamisesta.</string>
+    <string name="settings_usage_access">Avaa käyttöoikeus</string>
+    <string name="empty_state_recent">Ei äskettäin käytettyjä sovelluksia.</string>
+    <string name="empty_state_rare">Kaikki sovellukset on käytetty äskettäin.</string>
+    <string name="empty_state_disabled">Ei sovelluksia ole poistettu käytöstä.</string>
+    <string name="usage_stats_loading">Ladataan käyttötietoja…</string>
+    <string name="last_used_format">Viimeksi käytetty: %1$s</string>
+    <string name="last_used_never">Ei koskaan avattu</string>
+    <string name="scheduled_disable_format">Ajastettu käytöstä poistaminen: %1$s</string>
+    <string name="permission_usage_access_subtitle">Ilman käyttöoikeutta sovellus ei voi suorittaa analyyseja.</string>
+    <string name="action_refresh">Päivitä</string>
+    <string name="dashboard_title">Käyttöyleiskatsaus</string>
+    <string name="summary_headline">Pidä silmällä sovelluksiasi</string>
+    <string name="summary_subheadline">Automaattiset muistutukset ja käytöstä poistamiset käyttökäyttäytymisen perusteella.</string>
+    <string name="permission_status_granted">Käyttöoikeus aktiivinen</string>
+    <string name="permission_status_missing">Käyttöoikeus vaaditaan</string>
+    <string name="stat_recent">Äskettäinen</string>
+    <string name="stat_rare">Harvinainen</string>
+    <string name="stat_disabled">Poistettu</string>
+    <string name="status_recent">Äskettäin käytetty</string>
+    <string name="status_rare">Harvoin käytetty</string>
+    <string name="status_disabled">Poistettu</string>
+    <string name="firewall_card_title">Verkkovarustus</string>
+    <string name="firewall_card_description">Estää automaattisesti verkkoyhteydet sovelluksista, joita et ole avannut 4 päivään. Voit keskeyttää tai käynnistää varustuksen uudelleen milloin tahansa.</string>
+    <string name="firewall_switch_label">Varustus aktiivinen</string>
+    <string name="firewall_switch_label_disabled">Varustus passiivinen</string>
+    <string name="firewall_countdown_label">Automaattinen esto: %1$s</string>
+    <string name="firewall_blocking_now">Harvoin käytetyt sovellukset ovat offline juuri nyt</string>
+    <string name="firewall_allowing_now">Kaikki sovellukset sallitaan väliaikaisesti</string>
+    <string name="firewall_manual_mode_hint">Manuaalinen estokontrolli aktiivinen: Sovellukset pysyvät estettyinä, kunnes poistat eston asetuksista.</string>
+    <string name="firewall_manual_section_title">Manuaalisesti estetyt sovellukset</string>
+    <string name="firewall_manual_section_description">Nämä sovellukset pysyvät estettyinä, kunnes poistat eston täältä. Napauta "Poista esto" palauttaaksesi verkkopääsyn vain tälle sovellukselle.</string>
+    <string name="firewall_manual_section_empty">Ei sovelluksia ole manuaalisesti estetty juuri nyt.</string>
+    <string name="firewall_manual_unblock_button">Poista esto</string>
+    <string name="firewall_vpn_session_name">PrivacyGuard Varustus</string>
+    <string name="firewall_notification_channel_name">Varustusilmoitukset</string>
+    <string name="firewall_notification_channel_description">Integroitu varustuksen tila ja pikatoiminnot.</string>
+    <string name="firewall_notification_title_blocking">Varustus aktiivinen – harvoin käytetyt sovellukset estetty</string>
+    <string name="firewall_notification_text_blocking">Sovellukset, joita ei ole käytetty vähintään 4 päivään, eivät tällä hetkellä ole verkkoyhteydessä. Avaa sovellus tai keskeytä varustus salliaksesi ne uudelleen.</string>
+    <string name="firewall_notification_action_disable">Poista varustus käytöstä</string>
+    <string name="firewall_notification_title_allowing">Varustus aktiivinen – yhteydet sallittu</string>
+    <string name="firewall_notification_text_allowing">Kaikki sovellukset saavat väliaikaisesti olla online. 4 päivän jälkeen käyttämättömät sovellukset estetään automaattisesti uudelleen.</string>
+    <string name="firewall_allow_button">Salli 4 päivää</string>
+    <string name="firewall_block_now_button">Estä nyt</string>
+    <string name="firewall_allow_button_dynamic">Salli %1$s</string>
+    <string name="firewall_allow_duration_hint">%1$s jälkeen harvoin käytetyt sovellukset estetään automaattisesti.</string>
+
+    <string name="navigation_open">Avaa navigointi</string>
+    <string name="nav_home">Kojelauta</string>
+    <string name="nav_settings">Asetukset</string>
+    <string name="nav_metrics">Verkkomittarit</string>
+
+    <string name="settings_title">Varustusasetukset</string>
+    <string name="settings_description">Aseta, kuinka kauan varustus sallii yhteydet ennen kuin harvoin käytetyt sovellukset estetään uudelleen.</string>
+    <string name="settings_duration_header">Sallimisen kesto</string>
+    <string name="settings_current_duration">Nykyinen: %1$s</string>
+    <string name="settings_duration_subtitle">Napauta vaihtoehtoa käyttääksesi.</string>
+    <string name="settings_manual_firewall_title">Manuaalinen estokontrolli</string>
+    <string name="settings_manual_firewall_description">Kun aktivoitu, estetyt sovellukset pysyvät estetyinä, kunnes poistat eston manuaalisesti täältä. Sovelluksen avaaminen ei poista estoa automaattisesti.</string>
+    <string name="settings_manual_firewall_toggle">Manuaalinen eston poisto vaaditaan</string>
+
+    <string name="metrics_title">Verkkomittarit</string>
+    <string name="metrics_description">Aktivoi mittarien kerääminen näyttääksesi harvinaisten sovellusten todellisen liikenteen viimeisten 10 minuutin aikana. Täydellinen varustussääntöjen virheenkorjaukseen.</string>
+    <string name="metrics_toggle_label">Mittarit aktiiviset</string>
+    <string name="metrics_last_sample">Viimeisin päivitys: %1$s</string>
+    <string name="metrics_no_sample">Mitään näytettä ei ole vielä kerätty.</string>
+    <string name="metrics_disabled_hint">Aktivoi mittarit kerätäksesi liikennekat.</string>
+    <string name="metrics_empty_list">Harvoin käytettyjä sovelluksia ei löytynyt.</string>
+    <string name="metrics_traffic_title">Liikenne (viimeiset 10 minuuttia)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d Päivä</item>
+        <item quantity="other">%d Päivää</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d Tunti</item>
+        <item quantity="other">%d Tuntia</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Minuutti</item>
+        <item quantity="other">%d Minuuttia</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Sekunti</item>
+        <item quantity="other">%d Sekuntia</item>
+    </plurals>
+</resources>
