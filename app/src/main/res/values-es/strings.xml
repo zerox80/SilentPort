@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">Acceso de uso requerido</string>
+    <string name="permission_usage_access_message">Para recopilar estadísticas de uso de aplicaciones, se debe otorgar el acceso de uso.</string>
+    <string name="permission_usage_access_action">Otorgar acceso</string>
+    <string name="tab_recent">Usado recientemente</string>
+    <string name="tab_rare">Usado raramente</string>
+    <string name="tab_disabled">Aplicaciones deshabilitadas</string>
+    <string name="action_restore_app">Reactivar aplicación</string>
+    <string name="action_open_app_info">Abrir información de la aplicación</string>
+    <string name="usage_permission_denied">Permiso denegado. Abre configuración para permitir acceso.</string>
+    <string name="notification_disable_title">La aplicación se está deshabilitando</string>
+    <string name="notification_disable_text">%1$s no se ha usado durante 4 días. Abre la información de la aplicación para deshabilitar o desinstalar tú mismo.</string>
+    <string name="notification_disable_recommendation_title">Aplicación sin usar por mucho tiempo</string>
+    <string name="notification_disable_recommendation_text">%1$s no se ha usado durante varios días. Revisa la información de la aplicación si quieres liberar espacio.</string>
+    <string name="notification_channel_name">Estado de uso de aplicaciones</string>
+    <string name="notification_channel_description">Notificaciones sobre desactivación automática y restauración de aplicaciones.</string>
+    <string name="settings_usage_access">Abrir acceso de uso</string>
+    <string name="empty_state_recent">No hay aplicaciones usadas recientemente.</string>
+    <string name="empty_state_rare">Todas las aplicaciones se han usado recientemente.</string>
+    <string name="empty_state_disabled">No se han deshabilitado aplicaciones.</string>
+    <string name="usage_stats_loading">Cargando datos de uso…</string>
+    <string name="last_used_format">Último uso: %1$s</string>
+    <string name="last_used_never">Nunca abierto</string>
+    <string name="scheduled_disable_format">Desactivación programada: %1$s</string>
+    <string name="permission_usage_access_subtitle">Sin acceso de uso, la aplicación no puede realizar análisis.</string>
+    <string name="action_refresh">Actualizar</string>
+    <string name="dashboard_title">Resumen de uso</string>
+    <string name="summary_headline">Mantén un ojo en tus aplicaciones</string>
+    <string name="summary_subheadline">Recordatorios automáticos y desactivaciones basadas en tu comportamiento de uso.</string>
+    <string name="permission_status_granted">Acceso de uso activo</string>
+    <string name="permission_status_missing">Acceso de uso requerido</string>
+    <string name="stat_recent">Reciente</string>
+    <string name="stat_rare">Raro</string>
+    <string name="stat_disabled">Deshabilitado</string>
+    <string name="status_recent">Usado recientemente</string>
+    <string name="status_rare">Usado raramente</string>
+    <string name="status_disabled">Deshabilitado</string>
+    <string name="firewall_card_title">Firewall de red</string>
+    <string name="firewall_card_description">Bloquea automáticamente las conexiones de red de aplicaciones que no has abierto durante 4 días. Puedes pausar o reiniciar el firewall en cualquier momento.</string>
+    <string name="firewall_switch_label">Firewall activo</string>
+    <string name="firewall_switch_label_disabled">Firewall inactivo</string>
+    <string name="firewall_countdown_label">Bloqueo automático en: %1$s</string>
+    <string name="firewall_blocking_now">Las aplicaciones usadas raramente están actualmente sin conexión</string>
+    <string name="firewall_allowing_now">Todas las aplicaciones están permitidas temporalmente</string>
+    <string name="firewall_manual_mode_hint">Control de bloqueo manual activo: Las aplicaciones permanecen bloqueadas hasta que las desbloquees en configuración.</string>
+    <string name="firewall_manual_section_title">Aplicaciones bloqueadas manualmente</string>
+    <string name="firewall_manual_section_description">Estas aplicaciones permanecen bloqueadas hasta que las desbloquees aquí. Toca "Desbloquear" para restaurar el acceso de red solo para esta aplicación.</string>
+    <string name="firewall_manual_section_empty">Actualmente no hay aplicaciones bloqueadas manualmente.</string>
+    <string name="firewall_manual_unblock_button">Desbloquear</string>
+    <string name="firewall_vpn_session_name">Firewall PrivacyGuard</string>
+    <string name="firewall_notification_channel_name">Notificaciones de firewall</string>
+    <string name="firewall_notification_channel_description">Estado del firewall integrado y acciones rápidas.</string>
+    <string name="firewall_notification_title_blocking">Firewall activo – aplicaciones usadas raramente bloqueadas</string>
+    <string name="firewall_notification_text_blocking">Las aplicaciones que han estado sin usar al menos 4 días actualmente no tienen conexión de red. Abre la aplicación o pausa el firewall para permitirlas de nuevo.</string>
+    <string name="firewall_notification_action_disable">Deshabilitar firewall</string>
+    <string name="firewall_notification_title_allowing">Firewall activo – conexiones permitidas</string>
+    <string name="firewall_notification_text_allowing">Todas las aplicaciones están permitidas para permanecer en línea temporalmente. Después de 4 días, las aplicaciones sin usar se bloquearán automáticamente de nuevo.</string>
+    <string name="firewall_allow_button">Permitir 4 días</string>
+    <string name="firewall_block_now_button">Bloquear ahora</string>
+    <string name="firewall_allow_button_dynamic">Permitir por %1$s</string>
+    <string name="firewall_allow_duration_hint">Después de %1$s, las aplicaciones usadas raramente se bloquearán automáticamente.</string>
+
+    <string name="navigation_open">Abrir navegación</string>
+    <string name="nav_home">Panel</string>
+    <string name="nav_settings">Configuración</string>
+    <string name="nav_metrics">Métricas de red</string>
+
+    <string name="settings_title">Configuración de firewall</string>
+    <string name="settings_description">Establece cuánto tiempo permite el firewall las conexiones antes de bloquear aplicaciones usadas raramente de nuevo.</string>
+    <string name="settings_duration_header">Duración de permiso</string>
+    <string name="settings_current_duration">Actual: %1$s</string>
+    <string name="settings_duration_subtitle">Toca una opción para aplicarla.</string>
+    <string name="settings_manual_firewall_title">Control de bloqueo manual</string>
+    <string name="settings_manual_firewall_description">Cuando está habilitado, las aplicaciones bloqueadas permanecen bloqueadas hasta que las desbloquees manualmente aquí. Abrir una aplicación no levanta el bloqueo automáticamente.</string>
+    <string name="settings_manual_firewall_toggle">Desbloqueo manual requerido</string>
+
+    <string name="metrics_title">Métricas de red</string>
+    <string name="metrics_description">Habilita la recopilación de métricas para mostrar el tráfico real de aplicaciones raras en los últimos 10 minutos. Ideal para depurar reglas de firewall.</string>
+    <string name="metrics_toggle_label">Métricas activas</string>
+    <string name="metrics_last_sample">Última actualización: %1$s</string>
+    <string name="metrics_no_sample">Aún no se ha recopilado muestra.</string>
+    <string name="metrics_disabled_hint">Habilita métricas para recopilar valores de tráfico.</string>
+    <string name="metrics_empty_list">No se encontraron aplicaciones usadas raramente.</string>
+    <string name="metrics_traffic_title">Tráfico (últimos 10 minutos)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d Día</item>
+        <item quantity="other">%d Días</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d Hora</item>
+        <item quantity="other">%d Horas</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Minuto</item>
+        <item quantity="other">%d Minutos</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Segundo</item>
+        <item quantity="other">%d Segundos</item>
+    </plurals>
+</resources>

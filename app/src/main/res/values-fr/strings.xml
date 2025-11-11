@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">Accès utilisation requis</string>
+    <string name="permission_usage_access_message">Pour collecter les statistiques d\'utilisation des applications, l\'accès utilisation doit être accordé.</string>
+    <string name="permission_usage_access_action">Accorder l\'accès</string>
+    <string name="tab_recent">Utilisé récemment</string>
+    <string name="tab_rare">Utilisé rarement</string>
+    <string name="tab_disabled">Applications désactivées</string>
+    <string name="action_restore_app">Réactiver l\'application</string>
+    <string name="action_open_app_info">Ouvrir les infos de l\'application</string>
+    <string name="usage_permission_denied">Permission refusée. Ouvrez les paramètres pour autoriser l\'accès.</string>
+    <string name="notification_disable_title">L\'application est en cours de désactivation</string>
+    <string name="notification_disable_text">%1$s n\'a pas été utilisé pendant 4 jours. Ouvrez les infos de l\'application pour désactiver ou désinstaller vous-même.</string>
+    <string name="notification_disable_recommendation_title">Application inutilisée depuis longtemps</string>
+    <string name="notification_disable_recommendation_text">%1$s n\'a pas été utilisé pendant plusieurs jours. Vérifiez les infos de l\'application si vous souhaitez libérer de l\'espace.</string>
+    <string name="notification_channel_name">État d\'utilisation des applications</string>
+    <string name="notification_channel_description">Notifications sur la désactivation automatique et la restauration des applications.</string>
+    <string name="settings_usage_access">Ouvrir l\'accès utilisation</string>
+    <string name="empty_state_recent">Aucune application utilisée récemment.</string>
+    <string name="empty_state_rare">Toutes les applications ont été utilisées récemment.</string>
+    <string name="empty_state_disabled">Aucune application n\'a été désactivée.</string>
+    <string name="usage_stats_loading">Chargement des données d\'utilisation…</string>
+    <string name="last_used_format">Dernière utilisation: %1$s</string>
+    <string name="last_used_never">Jamais ouvert</string>
+    <string name="scheduled_disable_format">Désactivation programmée: %1$s</string>
+    <string name="permission_usage_access_subtitle">Sans accès utilisation, l\'application ne peut pas effectuer d\'analyses.</string>
+    <string name="action_refresh">Actualiser</string>
+    <string name="dashboard_title">Aperçu d\'utilisation</string>
+    <string name="summary_headline">Gardez un œil sur vos applications</string>
+    <string name="summary_subheadline">Rappels automatiques et désactivations basés sur votre comportement d\'utilisation.</string>
+    <string name="permission_status_granted">Accès utilisation actif</string>
+    <string name="permission_status_missing">Accès utilisation requis</string>
+    <string name="stat_recent">Récent</string>
+    <string name="stat_rare">Rare</string>
+    <string name="stat_disabled">Désactivé</string>
+    <string name="status_recent">Utilisé récemment</string>
+    <string name="status_rare">Utilisé rarement</string>
+    <string name="status_disabled">Désactivé</string>
+    <string name="firewall_card_title">Pare-feu réseau</string>
+    <string name="firewall_card_description">Bloque automatiquement les connexions réseau des applications que vous n\'avez pas ouvertes depuis 4 jours. Vous pouvez mettre en pause ou redémarrer le pare-feu à tout moment.</string>
+    <string name="firewall_switch_label">Pare-feu actif</string>
+    <string name="firewall_switch_label_disabled">Pare-feu inactif</string>
+    <string name="firewall_countdown_label">Blocage automatique dans: %1$s</string>
+    <string name="firewall_blocking_now">Les applications utilisées rarement sont actuellement hors ligne</string>
+    <string name="firewall_allowing_now">Toutes les applications sont autorisées temporairement</string>
+    <string name="firewall_manual_mode_hint">Contrôle de blocage manuel actif: Les applications restent bloquées jusqu\'à ce que vous les débloquiez dans les paramètres.</string>
+    <string name="firewall_manual_section_title">Applications bloquées manuellement</string>
+    <string name="firewall_manual_section_description">Ces applications restent bloquées jusqu\'à ce que vous les débloquiez ici. Appuyez sur "Débloquer" pour restaurer l\'accès réseau seulement pour cette application.</string>
+    <string name="firewall_manual_section_empty">Actuellement aucune application n\'est bloquée manuellement.</string>
+    <string name="firewall_manual_unblock_button">Débloquer</string>
+    <string name="firewall_vpn_session_name">Pare-feu PrivacyGuard</string>
+    <string name="firewall_notification_channel_name">Notifications de pare-feu</string>
+    <string name="firewall_notification_channel_description">État du pare-feu intégré et actions rapides.</string>
+    <string name="firewall_notification_title_blocking">Pare-feu actif – applications utilisées rarement bloquées</string>
+    <string name="firewall_notification_text_blocking">Les applications qui n\'ont pas été utilisées depuis au moins 4 jours n\'ont actuellement pas de connexion réseau. Ouvrez l\'application ou mettez en pause le pare-feu pour les autoriser à nouveau.</string>
+    <string name="firewall_notification_action_disable">Désactiver le pare-feu</string>
+    <string name="firewall_notification_title_allowing">Pare-feu actif – connexions autorisées</string>
+    <string name="firewall_notification_text_allowing">Toutes les applications sont autorisées à rester en ligne temporairement. Après 4 jours, les applications inutilisées seront automatiquement bloquées à nouveau.</string>
+    <string name="firewall_allow_button">Autoriser 4 jours</string>
+    <string name="firewall_block_now_button">Bloquer maintenant</string>
+    <string name="firewall_allow_button_dynamic">Autoriser pour %1$s</string>
+    <string name="firewall_allow_duration_hint">Après %1$s, les applications utilisées rarement seront automatiquement bloquées.</string>
+
+    <string name="navigation_open">Ouvrir la navigation</string>
+    <string name="nav_home">Tableau de bord</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="nav_metrics">Métriques réseau</string>
+
+    <string name="settings_title">Paramètres de pare-feu</string>
+    <string name="settings_description">Définissez combien de temps le pare-feu autorise les connexions avant de bloquer à nouveau les applications utilisées rarement.</string>
+    <string name="settings_duration_header">Durée d\'autorisation</string>
+    <string name="settings_current_duration">Actuel: %1$s</string>
+    <string name="settings_duration_subtitle">Appuyez sur une option pour l\'appliquer.</string>
+    <string name="settings_manual_firewall_title">Contrôle de blocage manuel</string>
+    <string name="settings_manual_firewall_description">Lorsqu\'activé, les applications bloquées restent bloquées jusqu\'à ce que vous les débloquiez manuellement ici. Ouvrir une application ne lève pas automatiquement le blocage.</string>
+    <string name="settings_manual_firewall_toggle">Déblocage manuel requis</string>
+
+    <string name="metrics_title">Métriques réseau</string>
+    <string name="metrics_description">Activez la collecte de métriques pour afficher le trafic réel des applications rares au cours des 10 dernières minutes. Idéal pour déboguer les règles de pare-feu.</string>
+    <string name="metrics_toggle_label">Métriques actives</string>
+    <string name="metrics_last_sample">Dernière mise à jour: %1$s</string>
+    <string name="metrics_no_sample">Aucun échantillon collecté encore.</string>
+    <string name="metrics_disabled_hint">Activez les métriques pour collecter les valeurs de trafic.</string>
+    <string name="metrics_empty_list">Aucune application utilisée rarement trouvée.</string>
+    <string name="metrics_traffic_title">Trafic (10 dernières minutes)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d Jour</item>
+        <item quantity="other">%d Jours</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d Heure</item>
+        <item quantity="other">%d Heures</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minutes</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Seconde</item>
+        <item quantity="other">%d Secondes</item>
+    </plurals>
+</resources>

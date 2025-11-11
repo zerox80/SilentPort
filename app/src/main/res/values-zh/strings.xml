@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">需要使用访问权限</string>
+    <string name="permission_usage_access_message">要收集应用使用统计信息，必须授予使用访问权限。</string>
+    <string name="permission_usage_access_action">授予访问权限</string>
+    <string name="tab_recent">最近使用</string>
+    <string name="tab_rare">很少使用</string>
+    <string name="tab_disabled">已禁用的应用</string>
+    <string name="action_restore_app">重新激活应用</string>
+    <string name="action_open_app_info">打开应用信息</string>
+    <string name="usage_permission_denied">权限被拒绝。打开设置以允许访问。</string>
+    <string name="notification_disable_title">应用正在被禁用</string>
+    <string name="notification_disable_text">%1$s 已有 4 天未使用。打开应用信息自行禁用或卸载。</string>
+    <string name="notification_disable_recommendation_title">应用长时间未使用</string>
+    <string name="notification_disable_recommendation_text">%1$s 已有几天未使用。如果您想释放存储空间，请检查应用信息。</string>
+    <string name="notification_channel_name">应用使用状态</string>
+    <string name="notification_channel_description">关于自动禁用和恢复应用的通知。</string>
+    <string name="settings_usage_access">打开使用访问权限</string>
+    <string name="empty_state_recent">没有最近使用的应用。</string>
+    <string name="empty_state_rare">所有应用最近都已使用。</string>
+    <string name="empty_state_disabled">没有应用被禁用。</string>
+    <string name="usage_stats_loading">正在加载使用数据…</string>
+    <string name="last_used_format">最后使用: %1$s</string>
+    <string name="last_used_never">从未打开</string>
+    <string name="scheduled_disable_format">计划禁用: %1$s</string>
+    <string name="permission_usage_access_subtitle">没有使用访问权限，应用无法进行分析。</string>
+    <string name="action_refresh">刷新</string>
+    <string name="dashboard_title">使用概览</string>
+    <string name="summary_headline">关注您的应用</string>
+    <string name="summary_subheadline">基于您的使用行为自动提醒和禁用。</string>
+    <string name="permission_status_granted">使用访问权限激活</string>
+    <string name="permission_status_missing">需要使用访问权限</string>
+    <string name="stat_recent">最近</string>
+    <string name="stat_rare">很少</string>
+    <string name="stat_disabled">已禁用</string>
+    <string name="status_recent">最近使用</string>
+    <string name="status_rare">很少使用</string>
+    <string name="status_disabled">已禁用</string>
+    <string name="firewall_card_title">网络防火墙</string>
+    <string name="firewall_card_description">自动阻止您 4 天未打开的应用的网络连接。您可以随时暂停或重新启动防火墙。</string>
+    <string name="firewall_switch_label">防火墙激活</string>
+    <string name="firewall_switch_label_disabled">防火墙未激活</string>
+    <string name="firewall_countdown_label">自动阻止于: %1$s</string>
+    <string name="firewall_blocking_now">很少使用的应用目前离线</string>
+    <string name="firewall_allowing_now">所有应用暂时允许</string>
+    <string name="firewall_manual_mode_hint">手动阻止控制激活: 应用保持阻止状态，直到您在设置中取消阻止。</string>
+    <string name="firewall_manual_section_title">手动阻止的应用</string>
+    <string name="firewall_manual_section_description">这些应用保持阻止状态，直到您在此取消阻止。点击"取消阻止"仅为此应用恢复网络访问。</string>
+    <string name="firewall_manual_section_empty">目前没有应用被手动阻止。</string>
+    <string name="firewall_manual_unblock_button">取消阻止</string>
+    <string name="firewall_vpn_session_name">PrivacyGuard 防火墙</string>
+    <string name="firewall_notification_channel_name">防火墙通知</string>
+    <string name="firewall_notification_channel_description">集成防火墙状态和快速操作。</string>
+    <string name="firewall_notification_title_blocking">防火墙激活 – 很少使用的应用被阻止</string>
+    <string name="firewall_notification_text_blocking">至少 4 天未使用的应用目前没有网络连接。打开应用或暂停防火墙以再次允许。</string>
+    <string name="firewall_notification_action_disable">禁用防火墙</string>
+    <string name="firewall_notification_title_allowing">防火墙激活 – 连接允许</string>
+    <string name="firewall_notification_text_allowing">所有应用暂时允许保持在线。4 天后，未使用的应用将自动再次被阻止。</string>
+    <string name="firewall_allow_button">允许 4 天</string>
+    <string name="firewall_block_now_button">立即阻止</string>
+    <string name="firewall_allow_button_dynamic">允许 %1$s</string>
+    <string name="firewall_allow_duration_hint">在 %1$s 后，很少使用的应用将自动被阻止。</string>
+
+    <string name="navigation_open">打开导航</string>
+    <string name="nav_home">仪表板</string>
+    <string name="nav_settings">设置</string>
+    <string name="nav_metrics">网络指标</string>
+
+    <string name="settings_title">防火墙设置</string>
+    <string name="settings_description">设置防火墙允许连接多长时间，然后再次阻止很少使用的应用。</string>
+    <string name="settings_duration_header">允许持续时间</string>
+    <string name="settings_current_duration">当前: %1$s</string>
+    <string name="settings_duration_subtitle">点击选项应用。</string>
+    <string name="settings_manual_firewall_title">手动阻止控制</string>
+    <string name="settings_manual_firewall_description">启用时，被阻止的应用保持阻止状态，直到您在此手动取消阻止。打开应用不会自动解除阻止。</string>
+    <string name="settings_manual_firewall_toggle">需要手动取消阻止</string>
+
+    <string name="metrics_title">网络指标</string>
+    <string name="metrics_description">启用指标收集以显示过去 10 分钟内罕见应用的实际流量。理想用于调试防火墙规则。</string>
+    <string name="metrics_toggle_label">指标激活</string>
+    <string name="metrics_last_sample">最后更新: %1$s</string>
+    <string name="metrics_no_sample">尚未收集样本。</string>
+    <string name="metrics_disabled_hint">启用指标以收集流量值。</string>
+    <string name="metrics_empty_list">未找到很少使用的应用。</string>
+    <string name="metrics_traffic_title">流量 (过去 10 分钟)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d 天</item>
+        <item quantity="other">%d 天</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d 小时</item>
+        <item quantity="other">%d 小时</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d 分钟</item>
+        <item quantity="other">%d 分钟</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d 秒</item>
+        <item quantity="other">%d 秒</item>
+    </plurals>
+</resources>

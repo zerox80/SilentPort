@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">دسترسی استفاده مورد نیاز است</string>
+    <string name="permission_usage_access_message">برای جمع‌آوری آمار استفاده از برنامه، باید دسترسی استفاده اعطا شود.</string>
+    <string name="permission_usage_access_action">دسترسی را اعطا کنید</string>
+    <string name="tab_recent">اخیراً استفاده شده</string>
+    <string name="tab_rare">به ندرت استفاده شده</string>
+    <string name="tab_disabled">برنامه‌های غیرفعال شده</string>
+    <string name="action_restore_app">برنامه را دوباره فعال کنید</string>
+    <string name="action_open_app_info">اطلاعات برنامه را باز کنید</string>
+    <string name="usage_permission_denied">مجوز رد شد. تنظیمات را باز کنید تا دسترسی مجاز شود.</string>
+    <string name="notification_disable_title">برنامه در حال غیرفعال شدن است</string>
+    <string name="notification_disable_text">%1$s به مدت 4 روز استفاده نشده است. اطلاعات برنامه را باز کنید تا خودتان غیرفعال یا حذف نصب کنید.</string>
+    <string name="notification_disable_recommendation_title">برنامه مدت طولانی استفاده نشده</string>
+    <string name="notification_disable_recommendation_text">%1$s به مدت چند روز استفاده نشده است. اگر می‌خواهید فضای ذخیره‌سازی را آزاد کنید، اطلاعات برنامه را بررسی کنید.</string>
+    <string name="notification_channel_name">وضعیت استفاده از برنامه</string>
+    <string name="notification_channel_description">اعلان‌ها درباره غیرفعال‌سازی خودکار و بازیابی برنامه‌ها.</string>
+    <string name="settings_usage_access">دسترسی استفاده را باز کنید</string>
+    <string name="empty_state_recent">هیچ برنامه‌ای اخیراً استفاده نشده است.</string>
+    <string name="empty_state_rare">تمام برنامه‌ها اخیراً استفاده شده‌اند.</string>
+    <string name="empty_state_disabled">هیچ برنامه‌ای غیرفعال نشده است.</string>
+    <string name="usage_stats_loading">در حال بارگذاری داده‌های استفاده…</string>
+    <string name="last_used_format">آخرین استفاده: %1$s</string>
+    <string name="last_used_never">هرگز باز نشده</string>
+    <string name="scheduled_disable_format">غیرفعال‌سازی برنامه‌ریزی شده: %1$s</string>
+    <string name="permission_usage_access_subtitle">بدون دسترسی استفاده، برنامه نمی‌تواند تحلیل انجام دهد.</string>
+    <string name="action_refresh">تازه‌سازی</string>
+    <string name="dashboard_title">نمای کلی استفاده</string>
+    <string name="summary_headline">چشم خود را روی برنامه‌هایتان نگه دارید</string>
+    <string name="summary_subheadline">یادآورهای خودکار و غیرفعال‌سازی‌ها بر اساس رفتار استفاده شما.</string>
+    <string name="permission_status_granted">دسترسی استفاده فعال</string>
+    <string name="permission_status_missing">دسترسی استفاده مورد نیاز</string>
+    <string name="stat_recent">اخیر</string>
+    <string name="stat_rare">نادر</string>
+    <string name="stat_disabled">غیرفعال</string>
+    <string name="status_recent">اخیراً استفاده شده</string>
+    <string name="status_rare">به ندرت استفاده شده</string>
+    <string name="status_disabled">غیرفعال</string>
+    <string name="firewall_card_title">فایروال شبکه</string>
+    <string name="firewall_card_description">اتصالات شبکه برنامه‌هایی که 4 روز باز نکرده‌اید را به طور خودکار مسدود می‌کند. می‌توانید فایروال را در هر زمان متوقف یا مجدداً راه‌اندازی کنید.</string>
+    <string name="firewall_switch_label">فایروال فعال</string>
+    <string name="firewall_switch_label_disabled">فایروال غیرفعال</string>
+    <string name="firewall_countdown_label">مسدودسازی خودکار در: %1$s</string>
+    <string name="firewall_blocking_now">برنامه‌های به ندرت استفاده شده در حال حاضر آفلاین هستند</string>
+    <string name="firewall_allowing_now">تمام برنامه‌ها موقتاً مجاز هستند</string>
+    <string name="firewall_manual_mode_hint">کنترل مسدودسازی دستی فعال: برنامه‌ها مسدود می‌مانند تا زمانی که آنها را در تنظیمات رفع مسدودسازی کنید.</string>
+    <string name="firewall_manual_section_title">برنامه‌های دستی مسدود شده</string>
+    <string name="firewall_manual_section_description">این برنامه‌ها مسدود می‌مانند تا زمانی که آنها را اینجا رفع مسدودسازی کنید. روی "رفع مسدودسازی" ضربه بزنید تا دسترسی شبکه فقط برای این برنامه بازیابی شود.</string>
+    <string name="firewall_manual_section_empty">در حال حاضر هیچ برنامه‌ای دستی مسدود نشده است.</string>
+    <string name="firewall_manual_unblock_button">رفع مسدودسازی</string>
+    <string name="firewall_vpn_session_name">فایروال PrivacyGuard</string>
+    <string name="firewall_notification_channel_name">اعلان‌های فایروال</string>
+    <string name="firewall_notification_channel_description">وضعیت فایروال یکپارچه و اقدامات سریع.</string>
+    <string name="firewall_notification_title_blocking">فایروال فعال – برنامه‌های به ندرت استفاده شده مسدود شده‌اند</string>
+    <string name="firewall_notification_text_blocking">برنامه‌هایی که حداقل 4 روز استفاده نشده‌اند در حال حاضر اتصال شبکه ندارند. برنامه را باز کنید یا فایروال را متوقف کنید تا دوباره مجاز شوند.</string>
+    <string name="firewall_notification_action_disable">فایروال را غیرفعال کنید</string>
+    <string name="firewall_notification_title_allowing">فایروال فعال – اتصالات مجاز</string>
+    <string name="firewall_notification_text_allowing">تمام برنامه‌ها مجاز به ماندن آنلاین به طور موقت هستند. پس از 4 روز، برنامه‌های استفاده نشده به طور خودکار دوباره مسدود می‌شوند.</string>
+    <string name="firewall_allow_button">4 روز مجاز کنید</string>
+    <string name="firewall_block_now_button">همین حالا مسدود کنید</string>
+    <string name="firewall_allow_button_dynamic">مجاز برای %1$s</string>
+    <string name="firewall_allow_duration_hint">پس از %1$s، برنامه‌های به ندرت استفاده شده به طور خودکار مسدود می‌شوند.</string>
+
+    <string name="navigation_open">ناوبری را باز کنید</string>
+    <string name="nav_home">داشبورد</string>
+    <string name="nav_settings">تنظیمات</string>
+    <string name="nav_metrics">متریک‌های شبکه</string>
+
+    <string name="settings_title">تنظیمات فایروال</string>
+    <string name="settings_description">تنظیم کنید که فایروال چقدر اجازه اتصالات دهد قبل از مسدود کردن دوباره برنامه‌های به ندرت استفاده شده.</string>
+    <string name="settings_duration_header">مدت مجاز</string>
+    <string name="settings_current_duration">فعلی: %1$s</string>
+    <string name="settings_duration_subtitle">روی گزینه‌ای ضربه بزنید تا اعمال شود.</string>
+    <string name="settings_manual_firewall_title">کنترل مسدودسازی دستی</string>
+    <string name="settings_manual_firewall_description">وقتی فعال باشد، برنامه‌های مسدود شده مسدود می‌مانند تا زمانی که آنها را اینجا دستی رفع مسدودسازی کنید. باز کردن برنامه به طور خودکار مسدودسازی را برطرف نمی‌کند.</string>
+    <string name="settings_manual_firewall_toggle">رفع مسدودسازی دستی مورد نیاز</string>
+
+    <string name="metrics_title">متریک‌های شبکه</string>
+    <string name="metrics_description">جمع‌آوری متریک را فعال کنید تا ترافیک واقعی برنامه‌های نادر در 10 دقیقه گذشته نمایش داده شود. ایده‌آل برای اشکال‌زدایی قوانین فایروال.</string>
+    <string name="metrics_toggle_label">متریک‌های فعال</string>
+    <string name="metrics_last_sample">آخرین به‌روزرسانی: %1$s</string>
+    <string name="metrics_no_sample">هنوز نمونه‌ای جمع‌آوری نشده است.</string>
+    <string name="metrics_disabled_hint">متریک‌ها را فعال کنید تا مقادیر ترافیک جمع‌آوری شود.</string>
+    <string name="metrics_empty_list">هیچ برنامه‌ای به ندرت استفاده شده یافت نشد.</string>
+    <string name="metrics_traffic_title">ترافیک (10 دقیقه گذشته)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d روز</item>
+        <item quantity="other">%d روز</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d ساعت</item>
+        <item quantity="other">%d ساعت</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d دقیقه</item>
+        <item quantity="other">%d دقیقه</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d ثانیه</item>
+        <item quantity="other">%d ثانیه</item>
+    </plurals>
+</resources>

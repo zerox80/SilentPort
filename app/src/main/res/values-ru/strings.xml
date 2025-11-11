@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PrivacyGuard</string>
+    <string name="permission_usage_access_title">Требуется доступ к использованию</string>
+    <string name="permission_usage_access_message">Для сбора статистики использования приложений необходимо предоставить доступ к использованию.</string>
+    <string name="permission_usage_access_action">Предоставить доступ</string>
+    <string name="tab_recent">Недавно использованные</string>
+    <string name="tab_rare">Редко используемые</string>
+    <string name="tab_disabled">Отключенные приложения</string>
+    <string name="action_restore_app">Восстановить приложение</string>
+    <string name="action_open_app_info">Открыть информацию о приложении</string>
+    <string name="usage_permission_denied">Разрешение отклонено. Откройте настройки, чтобы разрешить доступ.</string>
+    <string name="notification_disable_title">Приложение отключается</string>
+    <string name="notification_disable_text">%1$s не использовалось 4 дня. Откройте информацию о приложении, чтобы отключить или удалить самостоятельно.</string>
+    <string name="notification_disable_recommendation_title">Приложение не использовалось долгое время</string>
+    <string name="notification_disable_recommendation_text">%1$s не использовалось несколько дней. Проверьте информацию о приложении, если хотите освободить место.</string>
+    <string name="notification_channel_name">Состояние использования приложений</string>
+    <string name="notification_channel_description">Уведомления об автоматическом отключении и восстановлении приложений.</string>
+    <string name="settings_usage_access">Открыть доступ к использованию</string>
+    <string name="empty_state_recent">Нет недавно использованных приложений.</string>
+    <string name="empty_state_rare">Все приложения использовались недавно.</string>
+    <string name="empty_state_disabled">Никакие приложения не были отключены.</string>
+    <string name="usage_stats_loading">Загрузка данных использования…</string>
+    <string name="last_used_format">Последнее использование: %1$s</string>
+    <string name="last_used_never">Никогда не открывалось</string>
+    <string name="scheduled_disable_format">Запланированное отключение: %1$s</string>
+    <string name="permission_usage_access_subtitle">Без доступа к использованию приложение не может выполнять анализ.</string>
+    <string name="action_refresh">Обновить</string>
+    <string name="dashboard_title">Обзор использования</string>
+    <string name="summary_headline">Следите за своими приложениями</string>
+    <string name="summary_subheadline">Автоматические напоминания и отключения на основе вашего поведения использования.</string>
+    <string name="permission_status_granted">Доступ к использованию активен</string>
+    <string name="permission_status_missing">Требуется доступ к использованию</string>
+    <string name="stat_recent">Недавно</string>
+    <string name="stat_rare">Редко</string>
+    <string name="stat_disabled">Отключено</string>
+    <string name="status_recent">Недавно использованные</string>
+    <string name="status_rare">Редко используемые</string>
+    <string name="status_disabled">Отключено</string>
+    <string name="firewall_card_title">Сетевой брандмауэр</string>
+    <string name="firewall_card_description">Автоматически блокирует сетевые подключения приложений, которые вы не открывали 4 дня. Вы можете приостановить или перезапустить брандмауэр в любое время.</string>
+    <string name="firewall_switch_label">Брандмауэр активен</string>
+    <string name="firewall_switch_label_disabled">Брандмауэр неактивен</string>
+    <string name="firewall_countdown_label">Автоматическая блокировка через: %1$s</string>
+    <string name="firewall_blocking_now">Редко используемые приложения в настоящее время оффлайн</string>
+    <string name="firewall_allowing_now">Все приложения временно разрешены</string>
+    <string name="firewall_manual_mode_hint">Ручной контроль блокировки активен: приложения остаются заблокированными, пока вы не разблокируете их в настройках.</string>
+    <string name="firewall_manual_section_title">Вручную заблокированные приложения</string>
+    <string name="firewall_manual_section_description">Эти приложения остаются заблокированными, пока вы не разблокируете их здесь. Нажмите "Разблокировать", чтобы восстановить сетевой доступ только для этого приложения.</string>
+    <string name="firewall_manual_section_empty">В настоящее время никаких приложений не заблокировано вручную.</string>
+    <string name="firewall_manual_unblock_button">Разблокировать</string>
+    <string name="firewall_vpn_session_name">Брандмауэр PrivacyGuard</string>
+    <string name="firewall_notification_channel_name">Уведомления брандмауэра</string>
+    <string name="firewall_notification_channel_description">Состояние встроенного брандмауэра и быстрые действия.</string>
+    <string name="firewall_notification_title_blocking">Брандмауэр активен – редко используемые приложения заблокированы</string>
+    <string name="firewall_notification_text_blocking">Приложения, которые не использовались как минимум 4 дня, в настоящее время не имеют сетевого подключения. Откройте приложение или приостановите брандмауэр, чтобы разрешить их снова.</string>
+    <string name="firewall_notification_action_disable">Отключить брандмауэр</string>
+    <string name="firewall_notification_title_allowing">Брандмауэр активен – подключения разрешены</string>
+    <string name="firewall_notification_text_allowing">Все приложения временно разрешено оставаться онлайн. Через 4 дня неиспользуемые приложения будут автоматически заблокированы снова.</string>
+    <string name="firewall_allow_button">Разрешить 4 дня</string>
+    <string name="firewall_block_now_button">Заблокировать сейчас</string>
+    <string name="firewall_allow_button_dynamic">Разрешить на %1$s</string>
+    <string name="firewall_allow_duration_hint">Через %1$s редко используемые приложения будут автоматически заблокированы.</string>
+
+    <string name="navigation_open">Открыть навигацию</string>
+    <string name="nav_home">Панель управления</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_metrics">Сетевые метрики</string>
+
+    <string name="settings_title">Настройки брандмауэра</string>
+    <string name="settings_description">Установите, как долго брандмауэр разрешает подключения, прежде чем снова блокировать редко используемые приложения.</string>
+    <string name="settings_duration_header">Продолжительность разрешения</string>
+    <string name="settings_current_duration">Текущий: %1$s</string>
+    <string name="settings_duration_subtitle">Нажмите на вариант, чтобы применить.</string>
+    <string name="settings_manual_firewall_title">Ручной контроль блокировки</string>
+    <string name="settings_manual_firewall_description">Когда включено, заблокированные приложения остаются заблокированными, пока вы вручную не разблокируете их здесь. Открытие приложения не снимает блокировку автоматически.</string>
+    <string name="settings_manual_firewall_toggle">Требуется ручная разблокировка</string>
+
+    <string name="metrics_title">Сетевые метрики</string>
+    <string name="metrics_description">Включите сбор метрик, чтобы отображать реальный трафик редких приложений за последние 10 минут. Идеально для отладки правил брандмауэра.</string>
+    <string name="metrics_toggle_label">Метрики активны</string>
+    <string name="metrics_last_sample">Последнее обновление: %1$s</string>
+    <string name="metrics_no_sample">Образец еще не собран.</string>
+    <string name="metrics_disabled_hint">Включите метрики для сбора значений трафика.</string>
+    <string name="metrics_empty_list">Не найдено редко используемых приложений.</string>
+    <string name="metrics_traffic_title">Трафик (последние 10 минут)</string>
+
+    <plurals name="duration_days">
+        <item quantity="one">%d День</item>
+        <item quantity="other">%d Дней</item>
+    </plurals>
+    <plurals name="duration_hours">
+        <item quantity="one">%d Час</item>
+        <item quantity="other">%d Часов</item>
+    </plurals>
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Минута</item>
+        <item quantity="other">%d Минут</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Секунда</item>
+        <item quantity="other">%d Секунд</item>
+    </plurals>
+</resources>
