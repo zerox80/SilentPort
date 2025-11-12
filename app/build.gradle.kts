@@ -1,15 +1,15 @@
-﻿plugins {
+plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
 }
 
 android {
-    namespace = "com.privacyguard.batteryanalyzer"
+    namespace = "com.privacyguard.privacyguard"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.privacyguard.batteryanalyzer"
+        applicationId = "com.privacyguard.privacyguard"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
