@@ -1,7 +1,9 @@
 package com.privacyguard.privacyguard.ui.components
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.util.LruCache
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -138,7 +140,7 @@ private fun AppIcon(context: Context, packageName: String, appLabel: String) {
     val packageManager = context.packageManager
     val drawable by produceState<Drawable?>(initialValue = null, key1 = packageName) {
         value = withContext(Dispatchers.IO) {
-            runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
+            AppIconCache.getOrLoad(context, packageManager, packageName)
         }
     }
     if (drawable != null) {
@@ -200,5 +202,26 @@ private fun StatusChip(status: AppUsageStatus) {
         colors = colors,
         label = { Text(text = stringResource(id = labelRes)) }
     )
+}
+
+private object AppIconCache {
+    private const val CACHE_SIZE = 100
+    private val cache = object : LruCache<String, Drawable>(CACHE_SIZE) {}
+
+    fun getOrLoad(context: Context, packageManager: PackageManager, packageName: String): Drawable? {
+        synchronized(cache) {
+            cache.get(packageName)?.let { return it }
+        }
+
+        val drawable = runCatching { packageManager.getApplicationIcon(packageName).mutate() }.getOrNull()
+
+        if (drawable != null) {
+            synchronized(cache) {
+                cache.put(packageName, drawable)
+            }
+        }
+
+        return drawable
+    }
 }
 
