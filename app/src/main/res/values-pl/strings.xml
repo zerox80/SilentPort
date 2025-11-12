@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Wymagany dostęp do użycia</string>
     <string name="permission_usage_access_message">Aby zbierać statystyki użycia aplikacji, należy przyznać dostęp do użycia.</string>
     <string name="permission_usage_access_action">Przyznaj dostęp</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Te aplikacje pozostają zablokowane, dopóki nie odblokujesz ich tutaj. Dotknij "Odblokuj", aby przywrócić dostęp do sieci tylko dla tej aplikacji.</string>
     <string name="firewall_manual_section_empty">Obecnie żadne aplikacje nie są ręcznie zablokowane.</string>
     <string name="firewall_manual_unblock_button">Odblokuj</string>
-    <string name="firewall_vpn_session_name">Firewall Aegilon</string>
+    <string name="firewall_vpn_session_name">Firewall SilentPort</string>
     <string name="firewall_notification_channel_name">Powiadomienia firewall</string>
     <string name="firewall_notification_channel_description">Status zintegrowanego firewall i szybkie działania.</string>
     <string name="firewall_notification_title_blocking">Firewall aktywny – rzadko używane aplikacje zablokowane</string>

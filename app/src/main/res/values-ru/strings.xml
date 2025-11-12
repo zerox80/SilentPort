@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Требуется доступ к использованию</string>
     <string name="permission_usage_access_message">Для сбора статистики использования приложений необходимо предоставить доступ к использованию.</string>
     <string name="permission_usage_access_action">Предоставить доступ</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Эти приложения остаются заблокированными, пока вы не разблокируете их здесь. Нажмите "Разблокировать", чтобы восстановить сетевой доступ только для этого приложения.</string>
     <string name="firewall_manual_section_empty">В настоящее время никаких приложений не заблокировано вручную.</string>
     <string name="firewall_manual_unblock_button">Разблокировать</string>
-    <string name="firewall_vpn_session_name">Брандмауэр Aegilon</string>
+    <string name="firewall_vpn_session_name">Брандмауэр SilentPort</string>
     <string name="firewall_notification_channel_name">Уведомления брандмауэра</string>
     <string name="firewall_notification_channel_description">Состояние встроенного брандмауэра и быстрые действия.</string>
     <string name="firewall_notification_title_blocking">Брандмауэр активен – редко используемые приложения заблокированы</string>

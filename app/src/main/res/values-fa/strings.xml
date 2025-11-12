@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">دسترسی استفاده مورد نیاز است</string>
     <string name="permission_usage_access_message">برای جمع‌آوری آمار استفاده از برنامه، باید دسترسی استفاده اعطا شود.</string>
     <string name="permission_usage_access_action">دسترسی را اعطا کنید</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">این برنامه‌ها مسدود می‌مانند تا زمانی که آنها را اینجا رفع مسدودسازی کنید. روی "رفع مسدودسازی" ضربه بزنید تا دسترسی شبکه فقط برای این برنامه بازیابی شود.</string>
     <string name="firewall_manual_section_empty">در حال حاضر هیچ برنامه‌ای دستی مسدود نشده است.</string>
     <string name="firewall_manual_unblock_button">رفع مسدودسازی</string>
-    <string name="firewall_vpn_session_name">فایروال Aegilon</string>
+    <string name="firewall_vpn_session_name">فایروال SilentPort</string>
     <string name="firewall_notification_channel_name">اعلان‌های فایروال</string>
     <string name="firewall_notification_channel_description">وضعیت فایروال یکپارچه و اقدامات سریع.</string>
     <string name="firewall_notification_title_blocking">فایروال فعال – برنامه‌های به ندرت استفاده شده مسدود شده‌اند</string>

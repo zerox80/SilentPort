@@ -5,9 +5,9 @@ Example usage (dry-run):
     python rename_project.py \
         --root .. \
         --old-project-name PrivacyGuard \
-        --new-project-name Aegilon \
-        --old-package com.privacyguard.privacyguard \
-        --new-package com.aegilon.aegilon
+        --new-project-name SilentPort \
+        --old-package com.silentport.silentport \
+        --new-package com.silentport.silentport
 
 Add ``--apply`` to actually perform the changes once the dry-run output looks good.
 """
@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import os
 from dataclasses import dataclass
+import re
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
 
@@ -60,6 +61,32 @@ class Summary:
             f"files renamed: {self.files_renamed}, "
             f"dirs renamed: {self.dirs_renamed}"
         )
+
+
+@dataclass
+class Replacement:
+    old: str
+    new: str
+    use_safe_context: bool
+    pattern: re.Pattern[str] | None = None
+
+    @staticmethod
+    def create(old: str, new: str) -> "Replacement":
+        use_safe = bool(old) and bool(re.fullmatch(r"[A-Za-z0-9_]+", old))
+        pattern = None
+        if use_safe:
+            pattern = re.compile(rf"(?<![A-Za-z0-9_]){re.escape(old)}(?![a-z0-9_])")
+        return Replacement(old=old, new=new, use_safe_context=use_safe, pattern=pattern)
+
+    def replace_in_text(self, text: str) -> Tuple[str, int]:
+        if self.use_safe_context and self.pattern is not None:
+            return self.pattern.subn(self.new, text)
+        return text.replace(self.old, self.new), text.count(self.old)
+
+    def replace_in_name(self, name: str) -> Tuple[str, int]:
+        if self.use_safe_context and self.pattern is not None:
+            return self.pattern.subn(self.new, name)
+        return name.replace(self.old, self.new), name.count(self.old)
 
 
 def parse_extra(value: str) -> Tuple[str, str]:
@@ -108,7 +135,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def build_replacements(args: argparse.Namespace) -> Dict[str, str]:
+def build_replacements(args: argparse.Namespace) -> List[Replacement]:
     pairs: List[Tuple[str, str]] = []
 
     def add(old: str, new: str):
@@ -140,7 +167,7 @@ def build_replacements(args: argparse.Namespace) -> Dict[str, str]:
     for old, new in pairs:
         if old not in seen:
             seen[old] = new
-    return seen
+    return [Replacement.create(old, new) for old, new in seen.items()]
 
 
 def collect_paths(root: Path, exclude_dirs: Iterable[str]) -> Tuple[List[Path], List[Path]]:
@@ -158,12 +185,14 @@ def collect_paths(root: Path, exclude_dirs: Iterable[str]) -> Tuple[List[Path], 
     return directories, files
 
 
-def rename_path(entity: Path, replacements: Dict[str, str], dry_run: bool, summary: Summary) -> None:
+def rename_path(entity: Path, replacements: List[Replacement], dry_run: bool, summary: Summary) -> None:
     original_name = entity.name
+    was_dir = entity.is_dir()
     new_name = original_name
-    for old, new in replacements.items():
-        if old in new_name:
-            new_name = new_name.replace(old, new)
+    total_replacements = 0
+    for repl in replacements:
+        new_name, count = repl.replace_in_name(new_name)
+        total_replacements += count
     if new_name == original_name:
         return
 
@@ -185,7 +214,7 @@ def rename_path(entity: Path, replacements: Dict[str, str], dry_run: bool, summa
                 raise FileExistsError(f"Target already exists: {target}")
         else:
             entity.rename(target)
-    if entity.is_dir():
+    if was_dir:
         summary.dirs_renamed += 1
     else:
         summary.files_renamed += 1
@@ -202,7 +231,7 @@ def try_read_text(path: Path) -> Tuple[str | None, str | None]:
 
 def update_file_contents(
     path: Path,
-    replacements: Dict[str, str],
+    replacements: List[Replacement],
     dry_run: bool,
     summary: Summary,
     verbose: bool,
@@ -214,10 +243,14 @@ def update_file_contents(
         return
 
     updated = text
-    for old, new in replacements.items():
-        updated = updated.replace(old, new)
+    changed = False
+    for repl in replacements:
+        updated_candidate, count = repl.replace_in_text(updated)
+        if count:
+            changed = True
+            updated = updated_candidate
 
-    if updated == text:
+    if not changed:
         if verbose:
             print(f"[UNCHANGED] {path}")
         return
@@ -259,6 +292,7 @@ def main() -> None:
         rename_path(file_path, replacements, dry_run, summary)
 
     # Update file contents
+    _, files = collect_paths(root, exclude_dirs)
     text_exts = {ext.lower() for ext in args.text_extensions}
     for file_path in files:
         if file_path.suffix.lower() in text_exts or file_path.suffix == "":

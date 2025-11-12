@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Käyttöoikeus vaaditaan</string>
     <string name="permission_usage_access_message">Sovelluksen käyttötietojen keräämiseksi käyttöoikeus on myönnettävä.</string>
     <string name="permission_usage_access_action">Myönnä käyttöoikeus</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Nämä sovellukset pysyvät estettyinä, kunnes poistat eston täältä. Napauta "Poista esto" palauttaaksesi verkkopääsyn vain tälle sovellukselle.</string>
     <string name="firewall_manual_section_empty">Ei sovelluksia ole manuaalisesti estetty juuri nyt.</string>
     <string name="firewall_manual_unblock_button">Poista esto</string>
-    <string name="firewall_vpn_session_name">Aegilon Varustus</string>
+    <string name="firewall_vpn_session_name">SilentPort Varustus</string>
     <string name="firewall_notification_channel_name">Varustusilmoitukset</string>
     <string name="firewall_notification_channel_description">Integroitu varustuksen tila ja pikatoiminnot.</string>
     <string name="firewall_notification_title_blocking">Varustus aktiivinen – harvoin käytetyt sovellukset estetty</string>

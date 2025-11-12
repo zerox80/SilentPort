@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Accès utilisation requis</string>
     <string name="permission_usage_access_message">Pour collecter les statistiques d\'utilisation des applications, l\'accès utilisation doit être accordé.</string>
     <string name="permission_usage_access_action">Accorder l\'accès</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Ces applications restent bloquées jusqu\'à ce que vous les débloquiez ici. Appuyez sur "Débloquer" pour restaurer l\'accès réseau seulement pour cette application.</string>
     <string name="firewall_manual_section_empty">Actuellement aucune application n\'est bloquée manuellement.</string>
     <string name="firewall_manual_unblock_button">Débloquer</string>
-    <string name="firewall_vpn_session_name">Pare-feu Aegilon</string>
+    <string name="firewall_vpn_session_name">Pare-feu SilentPort</string>
     <string name="firewall_notification_channel_name">Notifications de pare-feu</string>
     <string name="firewall_notification_channel_description">État du pare-feu intégré et actions rapides.</string>
     <string name="firewall_notification_title_blocking">Pare-feu actif – applications utilisées rarement bloquées</string>

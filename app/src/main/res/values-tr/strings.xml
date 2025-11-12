@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Kullanım erişimi gerekli</string>
     <string name="permission_usage_access_message">Uygulama kullanım istatistiklerini toplamak için kullanım erişimine izin verilmesi gerekir.</string>
     <string name="permission_usage_access_action">Erişim ver</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Bu uygulamalar burada engellemeyi kaldırana kadar engelli kalır. Yalnızca bu uygulama için ağ erişimini geri yüklemek için "Engellemeyi kaldır"a dokunun.</string>
     <string name="firewall_manual_section_empty">Şu anda hiçbir uygulama manuel olarak engellenmemiş.</string>
     <string name="firewall_manual_unblock_button">Engellemeyi kaldır</string>
-    <string name="firewall_vpn_session_name">Aegilon Güvenlik Duvarı</string>
+    <string name="firewall_vpn_session_name">SilentPort Güvenlik Duvarı</string>
     <string name="firewall_notification_channel_name">Güvenlik duvarı bildirimleri</string>
     <string name="firewall_notification_channel_description">Entegre güvenlik duvarının durumu ve hızlı işlemler.</string>
     <string name="firewall_notification_title_blocking">Güvenlik duvarı aktif – nadir kullanılan uygulamalar engellendi</string>

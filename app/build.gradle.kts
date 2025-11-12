@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.aegilon.aegilon"
+    namespace = "com.silentport.silentport"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.aegilon.aegilon"
+        applicationId = "com.silentport.silentport"
         minSdk = 28
         targetSdk = 34
         versionCode = 1

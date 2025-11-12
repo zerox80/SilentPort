@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Usage Access Required</string>
     <string name="permission_usage_access_message">To collect app usage statistics, usage access must be granted.</string>
     <string name="permission_usage_access_action">Grant Access</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">These apps remain blocked until you unblock them here. Tap "Unblock" to restore network access only for this app.</string>
     <string name="firewall_manual_section_empty">Currently no apps are manually blocked.</string>
     <string name="firewall_manual_unblock_button">Unblock</string>
-    <string name="firewall_vpn_session_name">Aegilon Firewall</string>
+    <string name="firewall_vpn_session_name">SilentPort Firewall</string>
     <string name="firewall_notification_channel_name">Firewall Notifications</string>
     <string name="firewall_notification_channel_description">Status of the integrated firewall and quick actions.</string>
     <string name="firewall_notification_title_blocking">Firewall active – rarely used apps blocked</string>

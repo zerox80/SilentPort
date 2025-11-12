@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aegilon</string>
+    <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Användningsåtkomst krävs</string>
     <string name="permission_usage_access_message">För att samla in appanvändningsstatistik måste användningsåtkomst ges.</string>
     <string name="permission_usage_access_action">Ge åtkomst</string>
@@ -49,7 +49,7 @@
     <string name="firewall_manual_section_description">Dessa appar förblir blockerade tills du avblockerar dem här. Tryck på "Avblockera" för att återställa nätverksåtkomst endast för denna app.</string>
     <string name="firewall_manual_section_empty">Inga appar är manuellt blockerade just nu.</string>
     <string name="firewall_manual_unblock_button">Avblockera</string>
-    <string name="firewall_vpn_session_name">Aegilon Brandvägg</string>
+    <string name="firewall_vpn_session_name">SilentPort Brandvägg</string>
     <string name="firewall_notification_channel_name">Brandväggsmeddelanden</string>
     <string name="firewall_notification_channel_description">Status för integrerad brandvägg och snabba åtgärder.</string>
     <string name="firewall_notification_title_blocking">Brandvägg aktiv – sällan använda appar blockerade</string>

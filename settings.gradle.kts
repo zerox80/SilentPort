@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Aegilon"
+rootProject.name = "SilentPort"
 include(":app")
