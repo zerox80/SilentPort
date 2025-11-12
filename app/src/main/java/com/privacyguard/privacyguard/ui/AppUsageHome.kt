@@ -662,7 +662,11 @@ private fun AppList(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(apps) { appInfo ->
+            items(
+                items = apps,
+                key = { it.packageName },
+                contentType = { "appUsageCard" }
+            ) { appInfo ->
                 AppUsageCard(
                     app = appInfo,
                     onOpenAppInfo = { onOpenAppInfo(appInfo.packageName) },

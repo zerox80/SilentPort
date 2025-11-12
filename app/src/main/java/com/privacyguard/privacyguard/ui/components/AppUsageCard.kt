@@ -1,6 +1,7 @@
-﻿package com.privacyguard.privacyguard.ui.components
+package com.privacyguard.privacyguard.ui.components
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,8 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +40,8 @@ import com.privacyguard.privacyguard.data.local.AppUsageStatus
 import com.privacyguard.privacyguard.model.AppUsageInfo
 import com.privacyguard.privacyguard.util.UsageTextFormatter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AppUsageCard(
@@ -49,6 +54,12 @@ fun AppUsageCard(
     onManualUnblock: () -> Unit
 ) {
     val context = LocalContext.current
+    val lastUsedText = remember(app.lastUsedAt, context) {
+        UsageTextFormatter.formatLastUsed(context, app.lastUsedAt)
+    }
+    val scheduledDisableText = remember(app.scheduledDisableAt, context) {
+        UsageTextFormatter.formatScheduledDisable(context, app.scheduledDisableAt)
+    }
 
     ElevatedCard(
         modifier = Modifier.fillMaxWidth()
@@ -63,7 +74,7 @@ fun AppUsageCard(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                     )
                     Text(
-                        text = UsageTextFormatter.formatLastUsed(context, app.lastUsedAt),
+                        text = lastUsedText,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -74,7 +85,7 @@ fun AppUsageCard(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatusChip(app.status)
-                UsageTextFormatter.formatScheduledDisable(context, app.scheduledDisableAt)?.let { text ->
+                scheduledDisableText?.let { text ->
                     SuggestionChip(
                         onClick = {},
                         enabled = false,
@@ -125,8 +136,10 @@ fun AppUsageCard(
 @Composable
 private fun AppIcon(context: Context, packageName: String, appLabel: String) {
     val packageManager = context.packageManager
-    val drawable = remember(packageName) {
-        runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
+    val drawable by produceState<Drawable?>(initialValue = null, key1 = packageName) {
+        value = withContext(Dispatchers.IO) {
+            runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
+        }
     }
     if (drawable != null) {
         Surface(
