@@ -19,6 +19,10 @@ class FirewallNotificationReceiver : BroadcastReceiver() {
         } else if (intent.action == ACTION_ALLOW_APP) {
             val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
             if (packageName != null) {
+                // Cancel the notification immediately
+                val notificationManager = context.getSystemService(android.app.NotificationManager::class.java)
+                notificationManager.cancel(packageName.hashCode())
+
                 CoroutineScope(Dispatchers.IO).launch {
                     val settings = com.silentport.silentport.settings.SettingsPreferencesDataSource(context.applicationContext)
                     val duration = settings.preferencesFlow.first().allowDurationMillis
