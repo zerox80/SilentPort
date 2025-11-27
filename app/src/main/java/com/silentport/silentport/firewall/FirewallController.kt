@@ -29,7 +29,8 @@ class FirewallController(
             isEnabled = prefs.isEnabled,
             isBlocking = prefs.isBlocking,
             reactivateAt = prefs.reactivateAt,
-            blockedPackages = prefs.blockedPackages
+            blockedPackages = prefs.blockedPackages,
+            whitelistedPackages = prefs.whitelistedPackages
         )
     }
 
@@ -144,6 +145,10 @@ class FirewallController(
                 includeBlockListWhenNotBlocking = includeBlockList
             )
         }
+    }
+
+    suspend fun updateWhitelistedPackages(whitelistedPackages: Set<String>) {
+        preferences.setWhitelistedPackages(whitelistedPackages)
     }
 
     private fun startService(

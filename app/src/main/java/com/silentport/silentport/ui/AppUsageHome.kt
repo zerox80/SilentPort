@@ -103,10 +103,9 @@ fun AppUsageHome(
 ) {
     val tabs = listOf(
         stringResource(id = R.string.tab_recent),
-        stringResource(id = R.string.tab_rare),
-        stringResource(id = R.string.tab_disabled)
+        stringResource(id = R.string.tab_rare)
     )
-    val tabCounts = listOf(state.recentApps.size, state.rareApps.size, state.disabledApps.size)
+    val tabCounts = listOf(state.recentApps.size, state.rareApps.size)
     val selectedTabIndex = remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -192,8 +191,7 @@ fun AppUsageHome(
                             .padding(horizontal = 16.dp)
                             .fillMaxWidth(),
                         recentCount = state.recentApps.size,
-                        rareCount = state.rareApps.size,
-                        disabledCount = state.disabledApps.size
+                        rareCount = state.rareApps.size
                     )
                 }
 
@@ -304,18 +302,6 @@ private fun AppListContainer(
                             emptyText = R.string.empty_state_rare,
                             onRestoreApp = onRestoreApp,
                             onOpenAppInfo = onOpenAppInfo,
-                            manualFirewallEnabled = manualFirewallEnabled,
-                            blockedPackages = blockedPackages,
-                            onManualUnblock = onManualUnblock
-                        )
-
-                        2 -> AppList(
-                            modifier = listModifier,
-                            apps = state.disabledApps,
-                            emptyText = R.string.empty_state_disabled,
-                            onRestoreApp = onRestoreApp,
-                            onOpenAppInfo = onOpenAppInfo,
-                            showRestore = true,
                             manualFirewallEnabled = manualFirewallEnabled,
                             blockedPackages = blockedPackages,
                             onManualUnblock = onManualUnblock
@@ -572,8 +558,7 @@ private fun PermissionStatusChip(isGranted: Boolean) {
 private fun UsageStatsRow(
     modifier: Modifier = Modifier,
     recentCount: Int,
-    rareCount: Int,
-    disabledCount: Int
+    rareCount: Int
 ) {
     Row(
         modifier = modifier,
@@ -592,13 +577,6 @@ private fun UsageStatsRow(
             icon = Icons.Outlined.HourglassEmpty,
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-        )
-        UsageStatCard(
-            title = stringResource(id = R.string.stat_disabled),
-            value = disabledCount,
-            icon = Icons.Outlined.Block,
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer
         )
     }
 }

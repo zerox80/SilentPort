@@ -34,7 +34,8 @@ class FirewallPreferencesDataSource(context: Context) {
                 isEnabled = preferences[Keys.FIREWALL_ENABLED] ?: false,
                 isBlocking = preferences[Keys.IS_BLOCKING] ?: false,
                 reactivateAt = preferences[Keys.REACTIVATE_AT],
-                blockedPackages = preferences[Keys.BLOCKED_PACKAGES] ?: emptySet()
+                blockedPackages = preferences[Keys.BLOCKED_PACKAGES] ?: emptySet(),
+                whitelistedPackages = preferences[Keys.WHITELISTED_PACKAGES] ?: emptySet()
             )
         }
 
@@ -78,11 +79,22 @@ class FirewallPreferencesDataSource(context: Context) {
         }
     }
 
+    suspend fun setWhitelistedPackages(whitelistedPackages: Set<String>) {
+        dataStore.edit { preferences ->
+            if (whitelistedPackages.isEmpty()) {
+                preferences.remove(Keys.WHITELISTED_PACKAGES)
+            } else {
+                preferences[Keys.WHITELISTED_PACKAGES] = whitelistedPackages
+            }
+        }
+    }
+
     private object Keys {
         val FIREWALL_ENABLED = booleanPreferencesKey("firewall_enabled")
         val IS_BLOCKING = booleanPreferencesKey("firewall_is_blocking")
         val REACTIVATE_AT = longPreferencesKey("firewall_reactivate_at")
         val BLOCKED_PACKAGES = stringSetPreferencesKey("firewall_blocked_packages")
+        val WHITELISTED_PACKAGES = stringSetPreferencesKey("firewall_whitelisted_packages")
     }
 }
 
@@ -90,6 +102,7 @@ data class FirewallPreferences(
     val isEnabled: Boolean,
     val isBlocking: Boolean,
     val reactivateAt: Long?,
-    val blockedPackages: Set<String>
+    val blockedPackages: Set<String>,
+    val whitelistedPackages: Set<String>
 )
 

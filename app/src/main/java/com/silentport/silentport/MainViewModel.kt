@@ -46,7 +46,16 @@ class MainViewModel(
     private val settingsPreferences: SettingsPreferencesDataSource
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AppHomeState())
+    private val firewallAllowlist = setOf(
+        "com.google.android.youtube",
+        // Sparkassen-Apps
+        "com.starfinanz.mobile.android.pushtan",
+        "de.starfinanz.smob.android.sfinanzstatus", // Sparkasse
+        "de.starfinanz.smob.android.sfinanzstatus.tablet",
+        "biz.first_financial.bk01_2fa" // BK Secure
+    )
+
+    private val _uiState = MutableStateFlow(AppHomeState(hardcodedAllowlist = firewallAllowlist))
     val uiState: StateFlow<AppHomeState> = _uiState.asStateFlow()
 
     private val packageManager = appContext.packageManager
@@ -62,14 +71,6 @@ class MainViewModel(
 
     private var subscriptionsStarted = false
     private val blockThresholdMillisRef = AtomicLong(TimeUnit.DAYS.toMillis(4))
-    private val firewallAllowlist = setOf(
-        "com.google.android.youtube",
-        // Sparkassen-Apps
-        "com.starfinanz.mobile.android.pushtan",
-        "de.starfinanz.smob.android.sfinanzstatus", // Sparkasse
-        "de.starfinanz.smob.android.sfinanzstatus.tablet",
-        "biz.first_financial.bk01_2fa" // BK Secure
-    )
 
     init {
         observeSettings()
@@ -83,7 +84,8 @@ class MainViewModel(
             firewallController.state.collect { state ->
                 _uiState.value = _uiState.value.copy(
                     firewallState = state,
-                    firewallBlockedPackages = state.blockedPackages
+                    firewallBlockedPackages = state.blockedPackages,
+                    whitelistedPackages = state.whitelistedPackages
                 )
             }
         }
@@ -252,6 +254,26 @@ class MainViewModel(
         }
     }
 
+    fun addToWhitelist(packageName: String) {
+        viewModelScope.launch {
+            val current = _uiState.value.whitelistedPackages.toMutableSet()
+            if (current.add(packageName)) {
+                firewallController.updateWhitelistedPackages(current)
+                syncFirewallBlockList()
+            }
+        }
+    }
+
+    fun removeFromWhitelist(packageName: String) {
+        viewModelScope.launch {
+            val current = _uiState.value.whitelistedPackages.toMutableSet()
+            if (current.remove(packageName)) {
+                firewallController.updateWhitelistedPackages(current)
+                syncFirewallBlockList()
+            }
+        }
+    }
+
 
 
     private fun subscribeToData() {
@@ -314,11 +336,13 @@ class MainViewModel(
             manualSet += additions
             manualSet.remove(appContext.packageName)
             manualSet.removeAll(firewallAllowlist)
+            manualSet.removeAll(state.whitelistedPackages)
             manualSet
         } else {
             (rarePackages + disabledPackages).toSet()
                 .filterNot { it == appContext.packageName }
                 .filterNot { it in firewallAllowlist }
+                .filterNot { it in state.whitelistedPackages }
                 .toSet()
         }
         Log.d(TAG, "computeBlockList manual=${state.manualFirewallUnblock} -> ${result.size} packages")

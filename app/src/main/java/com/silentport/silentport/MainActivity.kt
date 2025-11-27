@@ -79,6 +79,12 @@ class MainActivity : ComponentActivity() {
                         },
                         onRefreshMetrics = {
                             lifecycleScope.launch { viewModel.refreshMetricsNow() }
+                        },
+                        onAddToWhitelist = { packageName ->
+                            lifecycleScope.launch { viewModel.addToWhitelist(packageName) }
+                        },
+                        onRemoveFromWhitelist = { packageName ->
+                            lifecycleScope.launch { viewModel.removeFromWhitelist(packageName) }
                         }
                     )
                 }

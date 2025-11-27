@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.Menu
@@ -62,7 +63,8 @@ private enum class AppDestination(
 ) {
     Home("home", R.string.nav_home, Icons.Outlined.Home),
     Settings("settings", R.string.nav_settings, Icons.Outlined.Settings),
-    Metrics("metrics", R.string.nav_metrics, Icons.Outlined.Insights)
+    Metrics("metrics", R.string.nav_metrics, Icons.Outlined.Insights),
+    Whitelist("whitelist", R.string.nav_whitelist, Icons.Outlined.Check)
 }
 
 @Composable
@@ -80,7 +82,9 @@ fun SilentPortRoot(
     onToggleMetrics: (Boolean) -> Unit,
     onManualFirewallUnblockChange: (Boolean) -> Unit,
     onManualFirewallUnblock: (String) -> Unit,
-    onRefreshMetrics: () -> Unit
+    onRefreshMetrics: () -> Unit,
+    onAddToWhitelist: (String) -> Unit,
+    onRemoveFromWhitelist: (String) -> Unit
 ) {
     val uiState by uiStateFlow.collectAsState()
     SilentPortRoot(
@@ -97,7 +101,9 @@ fun SilentPortRoot(
         onToggleMetrics = onToggleMetrics,
         onManualFirewallUnblockChange = onManualFirewallUnblockChange,
         onManualFirewallUnblock = onManualFirewallUnblock,
-        onRefreshMetrics = onRefreshMetrics
+        onRefreshMetrics = onRefreshMetrics,
+        onAddToWhitelist = onAddToWhitelist,
+        onRemoveFromWhitelist = onRemoveFromWhitelist
     )
 }
 
@@ -117,7 +123,9 @@ fun SilentPortRoot(
     onToggleMetrics: (Boolean) -> Unit,
     onManualFirewallUnblockChange: (Boolean) -> Unit,
     onManualFirewallUnblock: (String) -> Unit,
-    onRefreshMetrics: () -> Unit
+    onRefreshMetrics: () -> Unit,
+    onAddToWhitelist: (String) -> Unit,
+    onRemoveFromWhitelist: (String) -> Unit
 ) {
     val navController = rememberNavController()
     val drawerState = androidx.compose.material3.rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
@@ -208,6 +216,20 @@ fun SilentPortRoot(
                     lastSampleAt = uiState.metricsLastSampleAt,
                     onToggleMetrics = onToggleMetrics,
                     onRefreshMetrics = onRefreshMetrics,
+                    onOpenNavigation = {
+                        scope.launch { drawerState.open() }
+                    }
+                )
+            }
+            composable(AppDestination.Whitelist.route) {
+                val allApps = (uiState.recentApps + uiState.rareApps + uiState.disabledApps)
+                    .distinctBy { it.packageName }
+                WhitelistScreen(
+                    apps = allApps,
+                    whitelistedPackages = uiState.whitelistedPackages,
+                    hardcodedAllowlist = uiState.hardcodedAllowlist,
+                    onAddToWhitelist = onAddToWhitelist,
+                    onRemoveFromWhitelist = onRemoveFromWhitelist,
                     onOpenNavigation = {
                         scope.launch { drawerState.open() }
                     }
