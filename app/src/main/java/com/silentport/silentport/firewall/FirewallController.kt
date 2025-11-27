@@ -30,7 +30,8 @@ class FirewallController(
             isBlocking = prefs.isBlocking,
             reactivateAt = prefs.reactivateAt,
             blockedPackages = prefs.blockedPackages,
-            whitelistedPackages = prefs.whitelistedPackages
+            whitelistedPackages = prefs.whitelistedPackages,
+            temporaryUnblocks = prefs.temporaryUnblocks
         )
     }
 
@@ -149,6 +150,16 @@ class FirewallController(
 
     suspend fun updateWhitelistedPackages(whitelistedPackages: Set<String>) {
         preferences.setWhitelistedPackages(whitelistedPackages)
+    }
+
+    suspend fun temporarilyUnblock(packageName: String, durationMillis: Long = TimeUnit.MINUTES.toMillis(10)) {
+        Log.i(TAG, "temporarilyUnblock -> $packageName for ${durationMillis}ms")
+        preferences.addTemporaryUnblock(packageName, durationMillis)
+
+        // Update blocked packages immediately by removing this one
+        val current = preferences.preferencesFlow.first()
+        val newBlocked = current.blockedPackages - packageName
+        updateBlockedPackages(newBlocked)
     }
 
     private fun startService(

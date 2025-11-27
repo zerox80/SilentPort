@@ -35,7 +35,8 @@ class FirewallPreferencesDataSource(context: Context) {
                 isBlocking = preferences[Keys.IS_BLOCKING] ?: false,
                 reactivateAt = preferences[Keys.REACTIVATE_AT],
                 blockedPackages = preferences[Keys.BLOCKED_PACKAGES] ?: emptySet(),
-                whitelistedPackages = preferences[Keys.WHITELISTED_PACKAGES] ?: emptySet()
+                whitelistedPackages = preferences[Keys.WHITELISTED_PACKAGES] ?: emptySet(),
+                temporaryUnblocks = preferences[Keys.TEMPORARY_UNBLOCKS] ?: emptySet()
             )
         }
 
@@ -89,12 +90,23 @@ class FirewallPreferencesDataSource(context: Context) {
         }
     }
 
+    suspend fun addTemporaryUnblock(packageName: String, durationMillis: Long) {
+        val expiry = System.currentTimeMillis() + durationMillis
+        dataStore.edit { preferences ->
+            val current = preferences[Keys.TEMPORARY_UNBLOCKS] ?: emptySet()
+            val filtered = current.filterNot { it.startsWith("$packageName:") }.toMutableSet()
+            filtered.add("$packageName:$expiry")
+            preferences[Keys.TEMPORARY_UNBLOCKS] = filtered
+        }
+    }
+
     private object Keys {
         val FIREWALL_ENABLED = booleanPreferencesKey("firewall_enabled")
         val IS_BLOCKING = booleanPreferencesKey("firewall_is_blocking")
         val REACTIVATE_AT = longPreferencesKey("firewall_reactivate_at")
         val BLOCKED_PACKAGES = stringSetPreferencesKey("firewall_blocked_packages")
         val WHITELISTED_PACKAGES = stringSetPreferencesKey("firewall_whitelisted_packages")
+        val TEMPORARY_UNBLOCKS = stringSetPreferencesKey("firewall_temporary_unblocks")
     }
 }
 
@@ -103,6 +115,7 @@ data class FirewallPreferences(
     val isBlocking: Boolean,
     val reactivateAt: Long?,
     val blockedPackages: Set<String>,
-    val whitelistedPackages: Set<String>
+    val whitelistedPackages: Set<String>,
+    val temporaryUnblocks: Set<String> = emptySet()
 )
 

@@ -85,9 +85,36 @@ class MainViewModel(
                 _uiState.value = _uiState.value.copy(
                     firewallState = state,
                     firewallBlockedPackages = state.blockedPackages,
-                    whitelistedPackages = state.whitelistedPackages
+                    whitelistedPackages = state.whitelistedPackages,
+                    firewallTemporaryUnblocks = state.temporaryUnblocks
                 )
+                scheduleTemporaryUnblockSync()
             }
+        }
+    }
+
+    private var temporaryUnblockJob: Job? = null
+
+    private fun scheduleTemporaryUnblockSync() {
+        val now = System.currentTimeMillis()
+        val nextExpiry = _uiState.value.firewallTemporaryUnblocks
+            .mapNotNull { it.split(":").getOrNull(1)?.toLongOrNull() }
+            .filter { it > now }
+            .minOrNull()
+
+        if (nextExpiry == null) {
+            temporaryUnblockJob?.cancel()
+            temporaryUnblockJob = null
+            return
+        }
+
+        val delayMillis = (nextExpiry - now).coerceAtLeast(0)
+        temporaryUnblockJob?.cancel()
+        temporaryUnblockJob = viewModelScope.launch {
+            Log.d(TAG, "Scheduled temporary unblock sync in ${delayMillis}ms")
+            delay(delayMillis)
+            Log.i(TAG, "Temporary unblock expired -> resyncing firewall")
+            syncFirewallBlockList()
         }
     }
 
@@ -219,24 +246,7 @@ class MainViewModel(
 
             result.onSuccess { evaluation ->
                 usageRepository.applyEvaluation(evaluation)
-
-                evaluation.appsToNotify.forEach { info ->
-                    NotificationHelper.showDisableReminderNotification(
-                        context = appContext,
-                        appLabel = info.appLabel,
-                        packageName = info.packageName,
-                        isRecommendation = false
-                    )
-                }
-
-                evaluation.appsForDisableRecommendation.forEach { info ->
-                    NotificationHelper.showDisableReminderNotification(
-                        context = appContext,
-                        appLabel = info.appLabel,
-                        packageName = info.packageName,
-                        isRecommendation = true
-                    )
-                }
+                syncFirewallBlockList()
 
                 syncFirewallBlockList()
             }.onFailure { throwable ->
@@ -337,12 +347,34 @@ class MainViewModel(
             manualSet.remove(appContext.packageName)
             manualSet.removeAll(firewallAllowlist)
             manualSet.removeAll(state.whitelistedPackages)
+            
+            // Remove valid temporary unblocks
+            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
+                val parts = entry.split(":")
+                if (parts.size == 2) {
+                    val pkg = parts[0]
+                    val expiry = parts[1].toLongOrNull() ?: 0L
+                    if (expiry > now) pkg else null
+                } else null
+            }.toSet()
+            manualSet.removeAll(validTemporaryUnblocks)
+            
             manualSet
         } else {
+            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
+                val parts = entry.split(":")
+                if (parts.size == 2) {
+                    val pkg = parts[0]
+                    val expiry = parts[1].toLongOrNull() ?: 0L
+                    if (expiry > now) pkg else null
+                } else null
+            }.toSet()
+
             (rarePackages + disabledPackages).toSet()
                 .filterNot { it == appContext.packageName }
                 .filterNot { it in firewallAllowlist }
                 .filterNot { it in state.whitelistedPackages }
+                .filterNot { it in validTemporaryUnblocks }
                 .toSet()
         }
         Log.d(TAG, "computeBlockList manual=${state.manualFirewallUnblock} -> ${result.size} packages")

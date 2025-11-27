@@ -5,6 +5,7 @@ data class FirewallUiState(
     val isBlocking: Boolean = false,
     val reactivateAt: Long? = null,
     val blockedPackages: Set<String> = emptySet(),
-    val whitelistedPackages: Set<String> = emptySet()
+    val whitelistedPackages: Set<String> = emptySet(),
+    val temporaryUnblocks: Set<String> = emptySet()
 )
 

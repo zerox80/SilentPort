@@ -11,6 +11,7 @@ data class AppHomeState(
     val disabledApps: List<AppUsageInfo> = emptyList(),
     val firewallState: FirewallUiState = FirewallUiState(),
     val firewallBlockedPackages: Set<String> = emptySet(),
+    val firewallTemporaryUnblocks: Set<String> = emptySet(),
     val allowDurationMillis: Long = SettingsPreferencesDataSource.DEFAULT_ALLOW_DURATION_MILLIS,
     val manualFirewallUnblock: Boolean = false,
     val metricsEnabled: Boolean = false,

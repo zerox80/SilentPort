@@ -55,8 +55,13 @@
     <string name="firewall_notification_title_blocking">Firewall aktiv – selten genutzte Apps blockiert</string>
     <string name="firewall_notification_text_blocking">Apps, die seit mindestens %1$s ungenutzt sind, haben gerade keine Netzwerkverbindung. Öffnen Sie die App oder pausieren Sie die Firewall, um sie wieder zuzulassen.</string>
     <string name="firewall_notification_action_disable">Firewall deaktivieren</string>
+    <string name="firewall_notification_persistent_title">SilentPort Firewall</string>
+    <string name="firewall_notification_persistent_text">Firewall ist aktiv</string>
     <string name="firewall_notification_title_allowing">Firewall aktiv – Verbindungen erlaubt</string>
     <string name="firewall_notification_text_allowing">Alle Apps dürfen vorübergehend online bleiben. Nach Ablauf der %1$s werden ungenutzte Apps automatisch wieder gesperrt.</string>
+    <string name="firewall_notification_blocked_title">%1$s ist blockiert</string>
+    <string name="firewall_notification_blocked_text">Diese App wurde wegen Inaktivität blockiert. Tippen Sie auf "Zulassen", um sie vorübergehend freizugeben.</string>
+    <string name="firewall_notification_action_allow">Zulassen</string>
     <string name="firewall_allow_button">4 Tage erlauben</string>
     <string name="firewall_block_now_button">Jetzt blockieren</string>
     <string name="firewall_allow_button_dynamic">Für %1$s erlauben</string>

@@ -1,6 +1,7 @@
 package com.silentport.silentport.firewall
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.VpnService
@@ -57,17 +58,7 @@ class VpnFirewallService : VpnService() {
 
     private fun buildNotification(isBlocking: Boolean): Notification {
         val channelId = FIREWALL_CHANNEL_ID
-        val titleRes = if (isBlocking) {
-            R.string.firewall_notification_title_blocking
-        } else {
-            R.string.firewall_notification_title_allowing
-        }
-        val textRes = if (isBlocking) {
-            R.string.firewall_notification_text_blocking
-        } else {
-            R.string.firewall_notification_text_allowing
-        }
-
+        
         val disableIntent = Intent(this, FirewallNotificationReceiver::class.java).apply {
             action = FirewallNotificationReceiver.ACTION_DISABLE_FIREWALL
         }
@@ -90,9 +81,9 @@ class VpnFirewallService : VpnService() {
 
         return NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_stat_notify)
-            .setContentTitle(getString(titleRes))
-            .setContentText(getString(textRes))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentTitle(getString(R.string.firewall_notification_persistent_title))
+            .setContentText(getString(R.string.firewall_notification_persistent_text))
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentIntent(openPendingIntent)
             .setOngoing(true)
             .addAction(
@@ -205,12 +196,27 @@ class VpnFirewallService : VpnService() {
         drainThread?.interrupt()
         drainThread = Thread {
             val buffer = ByteArray(32767)
+            val monitor = ForegroundAppMonitor(this)
+            var lastNotificationTime = 0L
+            val notificationCooldown = 5000L // 5 seconds
+
             while (!Thread.currentThread().isInterrupted) {
                 try {
                     val read = stream.read(buffer)
                     if (read <= 0) {
                         Log.v(TAG, "Firewall VPN drain thread idle")
                         Thread.sleep(50)
+                    } else {
+                        // Traffic detected from a blocked app
+                        val now = System.currentTimeMillis()
+                        if (now - lastNotificationTime > notificationCooldown) {
+                            val foregroundApp = monitor.getForegroundApp()
+                            if (foregroundApp != null && blockedPackages.contains(foregroundApp)) {
+                                Log.i(TAG, "Blocked app detected in foreground: $foregroundApp")
+                                showBlockedAppNotification(foregroundApp)
+                                lastNotificationTime = now
+                            }
+                        }
                     }
                 } catch (_: IOException) {
                     break
@@ -228,6 +234,44 @@ class VpnFirewallService : VpnService() {
             start()
             Log.d(TAG, "Firewall VPN drain thread started")
         }
+    }
+
+    private fun showBlockedAppNotification(packageName: String) {
+        val pm = packageManager
+        val appName = try {
+            pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString()
+        } catch (e: Exception) {
+            packageName
+        }
+
+        val allowIntent = Intent(this, FirewallNotificationReceiver::class.java).apply {
+            action = FirewallNotificationReceiver.ACTION_ALLOW_APP
+            putExtra(FirewallNotificationReceiver.EXTRA_PACKAGE_NAME, packageName)
+        }
+        val allowPendingIntent = PendingIntent.getBroadcast(
+            this,
+            packageName.hashCode(),
+            allowIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        )
+
+        val notification = NotificationCompat.Builder(this, FIREWALL_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_stat_notify)
+            .setContentTitle(getString(R.string.firewall_notification_blocked_title, appName))
+            .setContentText(getString(R.string.firewall_notification_blocked_text))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .addAction(
+                NotificationCompat.Action(
+                    0,
+                    getString(R.string.firewall_notification_action_allow),
+                    allowPendingIntent
+                )
+            )
+            .build()
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.notify(packageName.hashCode(), notification)
     }
 
     companion object {

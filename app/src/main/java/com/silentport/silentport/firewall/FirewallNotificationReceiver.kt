@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FirewallNotificationReceiver : BroadcastReceiver() {
@@ -15,11 +16,23 @@ class FirewallNotificationReceiver : BroadcastReceiver() {
                 val controller = FirewallControllerProvider.get(context.applicationContext)
                 controller.disableFirewall()
             }
+        } else if (intent.action == ACTION_ALLOW_APP) {
+            val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
+            if (packageName != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val settings = com.silentport.silentport.settings.SettingsPreferencesDataSource(context.applicationContext)
+                    val duration = settings.preferencesFlow.first().allowDurationMillis
+                    val controller = FirewallControllerProvider.get(context.applicationContext)
+                    controller.temporarilyUnblock(packageName, duration)
+                }
+            }
         }
     }
 
     companion object {
         const val ACTION_DISABLE_FIREWALL = "com.silentport.silentport.firewall.DISABLE"
+        const val ACTION_ALLOW_APP = "com.silentport.silentport.firewall.ALLOW_APP"
+        const val EXTRA_PACKAGE_NAME = "extra_package_name"
     }
 }
 
