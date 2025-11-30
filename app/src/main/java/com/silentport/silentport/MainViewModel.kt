@@ -32,6 +32,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.ArrayDeque
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
@@ -68,6 +70,7 @@ class MainViewModel(
     private val trafficWindowMillisRef = AtomicLong(TimeUnit.MINUTES.toMillis(10))
     private val trafficSampleIntervalMillis = TimeUnit.SECONDS.toMillis(30)
     private val manualUnblockCooldown = mutableMapOf<String, Long>()
+    private val trafficMutex = Mutex()
 
     private var subscriptionsStarted = false
     private val blockThresholdMillisRef = AtomicLong(TimeUnit.DAYS.toMillis(4))
@@ -472,7 +475,7 @@ class MainViewModel(
         }
     }
 
-    private fun sampleAppTraffic() {
+    private suspend fun sampleAppTraffic() = trafficMutex.withLock {
         val trackedApps = (_uiState.value.recentApps + _uiState.value.rareApps)
             .distinctBy { it.packageName }
         val trackedPackages = trackedApps.map { it.packageName }
@@ -485,7 +488,7 @@ class MainViewModel(
             _uiState.update { state ->
                 state.copy(appTraffic = emptyMap(), metricsLastSampleAt = now)
             }
-            return
+            return@withLock
         }
 
         val trackedPackageSet = trackedPackages.toSet()
@@ -574,8 +577,16 @@ class MainViewModel(
 
         try {
             for (networkType in networkTypes) {
-                val stats = try {
-                    manager.querySummary(networkType, null, safeStart, end)
+                try {
+                    manager.querySummary(networkType, null, safeStart, end).use { stats ->
+                        while (stats.hasNextBucket()) {
+                            stats.getNextBucket(bucket)
+                            val packageName = uidToPackage[bucket.uid] ?: continue
+                            val bytes = bucket.rxBytes + bucket.txBytes
+                            if (bytes <= 0) continue
+                            totals[packageName] = (totals[packageName] ?: 0L) + bytes
+                        }
+                    }
                 } catch (error: SecurityException) {
                     Log.w(TAG, "Network stats permission missing", error)
                     return null
@@ -584,38 +595,7 @@ class MainViewModel(
                 } catch (error: RuntimeException) {
                     Log.v(TAG, "Skipping network type $networkType", error)
                     null
-                } ?: continue
-
-                val statsClass = stats.javaClass
-                val hasNextBucketMethod = runCatching { statsClass.getMethod("hasNextBucket") }.getOrNull()
-                val getNextBucketMethod = runCatching { statsClass.getMethod("getNextBucket", bucket.javaClass) }.getOrNull()
-                val closeMethod = runCatching { statsClass.getMethod("close") }.getOrNull()
-
-                if (hasNextBucketMethod == null || getNextBucketMethod == null) {
-                    Log.w(TAG, "Network stats iteration unsupported for type $networkType")
-                    runCatching { closeMethod?.invoke(stats) }
-                    continue
                 }
-
-                try {
-                    while ((hasNextBucketMethod.invoke(stats) as? Boolean) == true) {
-                        getNextBucketMethod.invoke(stats, bucket)
-                        val packageName = uidToPackage[bucket.uid] ?: continue
-                        val bytes = bucket.rxBytes + bucket.txBytes
-                        if (bytes <= 0) continue
-                        totals[packageName] = (totals[packageName] ?: 0L) + bytes
-                    }
-                } catch (error: ReflectiveOperationException) {
-                    Log.w(TAG, "Failed to iterate network stats", error)
-                    runCatching { closeMethod?.invoke(stats) }
-                    return null
-                } catch (error: ClassCastException) {
-                    Log.w(TAG, "Unexpected network stats result", error)
-                    runCatching { closeMethod?.invoke(stats) }
-                    return null
-                }
-
-                runCatching { closeMethod?.invoke(stats) }
             }
         } catch (error: SecurityException) {
             Log.w(TAG, "Missing permission for network stats", error)
