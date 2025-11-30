@@ -79,5 +79,5 @@ Since we do not collect data, there is no complex process required to request da
 
 SilentPort is a community-driven project. If you have questions regarding security or the source code, please open an issue in our public repository.
 
-**Maintainer:** [Your Name / Project Name]  
-**Project URL:** [Link to GitHub Repo]
+**Maintainer:** zerox80
+**Project URL:** https://github.com/zerox80/SilentPort  
