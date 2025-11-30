@@ -27,9 +27,12 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -117,7 +120,6 @@ fun AppUsageCard(
                     }
                 }
 
-                }
             }
         }
     }
@@ -179,7 +181,6 @@ private fun AppIcon(context: Context, packageName: String, appLabel: String) {
 private fun StatusChip(status: AppUsageStatus) {
     val labelRes = when (status) {
         AppUsageStatus.RECENT -> R.string.status_recent
-        AppUsageStatus.RARE -> R.string.status_rare
         AppUsageStatus.RARE -> R.string.status_rare
     }
     val colors = when (status) {
