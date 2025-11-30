@@ -50,11 +50,12 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun AppUsageCard(
+    modifier: Modifier = Modifier,
     app: AppUsageInfo,
-    onOpenAppInfo: () -> Unit,
+    onOpenAppInfo: (String) -> Unit,
     manualFirewallEnabled: Boolean,
     isManuallyBlocked: Boolean,
-    onManualUnblock: () -> Unit
+    onManualUnblock: (String) -> Unit
 ) {
     val context = LocalContext.current
     val lastUsedText = remember(app.lastUsedAt, context) {
@@ -65,7 +66,7 @@ fun AppUsageCard(
     }
 
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -106,14 +107,14 @@ fun AppUsageCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton(onClick = onOpenAppInfo) {
+                OutlinedButton(onClick = { onOpenAppInfo(app.packageName) }) {
                     Text(text = stringResource(id = R.string.action_open_app_info))
                 }
 
                 if (manualFirewallEnabled && isManuallyBlocked) {
                     Spacer(modifier = Modifier.size(12.dp))
                     Button(
-                        onClick = onManualUnblock,
+                        onClick = { onManualUnblock(app.packageName) },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
                     ) {
                         Text(text = stringResource(id = R.string.firewall_manual_unblock_button))

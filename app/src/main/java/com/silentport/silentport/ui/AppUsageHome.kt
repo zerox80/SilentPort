@@ -267,16 +267,19 @@ fun AppUsageHome(
                         items = currentApps,
                         key = { it.packageName },
                         contentType = { "appUsageCard" }
+                    items(
+                        items = currentApps,
+                        key = { it.packageName },
+                        contentType = { "appUsageCard" }
                     ) { appInfo ->
-                        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                            AppUsageCard(
-                                app = appInfo,
-                                onOpenAppInfo = { onOpenAppInfo(appInfo.packageName) },
-                                manualFirewallEnabled = manualFirewallUnblock,
-                                isManuallyBlocked = appInfo.packageName in state.firewallBlockedPackages,
-                                onManualUnblock = { onManualUnblock(appInfo.packageName) }
-                            )
-                        }
+                        AppUsageCard(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            app = appInfo,
+                            onOpenAppInfo = onOpenAppInfo,
+                            manualFirewallEnabled = manualFirewallUnblock,
+                            isManuallyBlocked = appInfo.packageName in state.firewallBlockedPackages,
+                            onManualUnblock = onManualUnblock
+                        )
                     }
                 }
             }
