@@ -48,6 +48,10 @@ class UsageAnalyzer(
                 continue
             }
 
+            if (isPackageDisabled(packageName)) {
+                continue
+            }
+
             packagesToRemove.remove(packageName)
 
             val label = runCatching { packageManager.getApplicationLabel(appInfo).toString() }
@@ -68,7 +72,6 @@ class UsageAnalyzer(
 
             val shouldRecommendDisable = !isDisabled && disableAt != null && now >= disableAt && (notifiedAt == null || notifiedAt < disableAt)
             val resolvedStatus = when {
-                isDisabled -> AppUsageStatus.DISABLED
                 lastUsed != null && now - lastUsed <= usagePolicy.recentThresholdMillis -> AppUsageStatus.RECENT
                 else -> AppUsageStatus.RARE
             }

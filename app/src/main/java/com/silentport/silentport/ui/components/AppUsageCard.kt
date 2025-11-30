@@ -182,7 +182,6 @@ private fun StatusChip(status: AppUsageStatus) {
     val labelRes = when (status) {
         AppUsageStatus.RECENT -> R.string.status_recent
         AppUsageStatus.RARE -> R.string.status_rare
-        AppUsageStatus.DISABLED -> R.string.status_disabled
     }
     val colors = when (status) {
         AppUsageStatus.RECENT -> SuggestionChipDefaults.suggestionChipColors(
@@ -192,10 +191,6 @@ private fun StatusChip(status: AppUsageStatus) {
         AppUsageStatus.RARE -> SuggestionChipDefaults.suggestionChipColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             labelColor = MaterialTheme.colorScheme.onTertiaryContainer
-        )
-        AppUsageStatus.DISABLED -> SuggestionChipDefaults.suggestionChipColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            labelColor = MaterialTheme.colorScheme.onErrorContainer
         )
     }
 

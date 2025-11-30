@@ -203,7 +203,7 @@ fun SilentPortRoot(
                 )
             }
             composable(AppDestination.Metrics.route) {
-                val trackedApps = (uiState.recentApps + uiState.rareApps + uiState.disabledApps)
+                val trackedApps = (uiState.recentApps + uiState.rareApps)
                     .distinctBy { it.packageName }
                 MetricsScreen(
                     metricsEnabled = uiState.metricsEnabled,
@@ -218,7 +218,7 @@ fun SilentPortRoot(
                 )
             }
             composable(AppDestination.Whitelist.route) {
-                val allApps = (uiState.recentApps + uiState.rareApps + uiState.disabledApps)
+                val allApps = (uiState.recentApps + uiState.rareApps)
                     .distinctBy { it.packageName }
                 WhitelistScreen(
                     apps = allApps,
