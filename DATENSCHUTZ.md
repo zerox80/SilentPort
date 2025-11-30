@@ -78,5 +78,6 @@ Da wir keine Daten sammeln, müssen wir keine komplexen Prozesse zur Datenlösch
 
 SilentPort ist ein Community-Projekt. Bei Fragen zur Sicherheit oder zum Quellcode können Sie uns über unser öffentliches Repository kontaktieren.
 
-**Verantwortlich:** [Ihr Name / Projektname]  
-**Projekt-URL:** [Link zum GitHub Repo]
+**Verantwortlich:** zerox80
+
+**Projekt-URL:** https://github.com/zerox80/SilentPort
