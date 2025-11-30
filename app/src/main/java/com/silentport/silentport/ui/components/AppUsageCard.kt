@@ -126,11 +126,24 @@ fun AppUsageCard(
 @Composable
 private fun AppIcon(context: Context, packageName: String, appLabel: String) {
     val packageManager = context.packageManager
-    val drawable by produceState<Drawable?>(initialValue = null, key1 = packageName) {
-        value = withContext(Dispatchers.IO) {
-            AppIconCache.getOrLoad(packageManager, packageName)
+    
+    // Optimization: Try to get from cache synchronously first to avoid initial null state
+    // and unnecessary recompositions for cached items.
+    var drawable by remember(packageName) { 
+        mutableStateOf(AppIconCache.getFromCache(packageName)) 
+    }
+
+    LaunchedEffect(packageName) {
+        if (drawable == null) {
+            withContext(Dispatchers.IO) {
+                val loaded = AppIconCache.getOrLoad(packageManager, packageName)
+                withContext(Dispatchers.Main) {
+                    drawable = loaded
+                }
+            }
         }
     }
+
     if (drawable != null) {
         Surface(
             modifier = Modifier
@@ -195,6 +208,12 @@ private fun StatusChip(status: AppUsageStatus) {
 internal object AppIconCache {
     private const val CACHE_SIZE = 150
     private val cache = object : LruCache<String, Drawable>(CACHE_SIZE) {}
+
+    fun getFromCache(packageName: String): Drawable? {
+        synchronized(cache) {
+            return cache.get(packageName)
+        }
+    }
 
     fun getOrLoad(packageManager: PackageManager, packageName: String): Drawable? {
         synchronized(cache) {
