@@ -291,8 +291,8 @@ class MainViewModel(
         launchStatusCollector(AppUsageStatus.RARE) { rare ->
             _uiState.value = _uiState.value.copy(rareApps = rare, isLoading = false)
         }
-        launchStatusCollector(AppUsageStatus.DISABLED) { disabled ->
-            _uiState.value = _uiState.value.copy(disabledApps = disabled, isLoading = false)
+        launchStatusCollector(AppUsageStatus.RARE) { rare ->
+            _uiState.value = _uiState.value.copy(rareApps = rare, isLoading = false)
         }
     }
 
@@ -317,7 +317,7 @@ class MainViewModel(
             }
             .map { it.packageName }
 
-        val disabledPackages = state.disabledApps.map { it.packageName }
+
 
         val iterator = manualUnblockCooldown.entries.iterator()
         while (iterator.hasNext()) {
@@ -329,11 +329,9 @@ class MainViewModel(
         val result = if (state.manualFirewallUnblock) {
             val manualSet = state.firewallBlockedPackages.toMutableSet()
 
-            disabledPackages.forEach { pkg ->
-                manualUnblockCooldown.remove(pkg)
-            }
 
-            val additions = (rarePackages + disabledPackages).filter { pkg ->
+
+            val additions = rarePackages.filter { pkg ->
                 val cooldownExpiry = manualUnblockCooldown[pkg]
                 cooldownExpiry == null || cooldownExpiry <= now
             }
@@ -365,7 +363,7 @@ class MainViewModel(
                 } else null
             }.toSet()
 
-            (rarePackages + disabledPackages).toSet()
+            rarePackages.toSet()
                 .filterNot { it == appContext.packageName }
                 .filterNot { it in firewallAllowlist }
                 .filterNot { it in state.whitelistedPackages }
@@ -475,7 +473,7 @@ class MainViewModel(
     }
 
     private fun sampleAppTraffic() {
-        val trackedApps = (_uiState.value.recentApps + _uiState.value.rareApps + _uiState.value.disabledApps)
+        val trackedApps = (_uiState.value.recentApps + _uiState.value.rareApps)
             .distinctBy { it.packageName }
         val trackedPackages = trackedApps.map { it.packageName }
         val now = System.currentTimeMillis()
