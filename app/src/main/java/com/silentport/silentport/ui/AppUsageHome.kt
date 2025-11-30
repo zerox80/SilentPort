@@ -30,6 +30,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.PrivacyTip
 import android.text.format.DateUtils
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -84,7 +85,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun AppUsageHome(
     state: AppHomeState,
@@ -110,6 +111,20 @@ fun AppUsageHome(
     val scope = rememberCoroutineScope()
     val appListItemIndex = 6
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val context = LocalContext.current
+
+    val currentApps = if (selectedTabIndex.intValue == 0) state.recentApps else state.rareApps
+
+    LaunchedEffect(currentApps) {
+        if (currentApps.isNotEmpty()) {
+            val packageManager = context.packageManager
+            val packageNames = currentApps.take(24).map { it.packageName }
+            withContext(Dispatchers.IO) {
+                AppIconCache.preload(packageManager, packageNames)
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -196,117 +211,80 @@ fun AppUsageHome(
 
                 item { Spacer(modifier = Modifier.height(20.dp)) }
 
-                item {
-                    AppListContainer(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth(),
-                        tabs = tabs,
-                        tabCounts = tabCounts,
-                        state = state,
-                        isLoading = state.isLoading,
-                        selectedTabIndex = selectedTabIndex.intValue,
-                        onTabSelected = { selectedTabIndex.intValue = it },
-                        onOpenAppInfo = onOpenAppInfo,
-                        manualFirewallEnabled = manualFirewallUnblock,
-                        blockedPackages = state.firewallBlockedPackages,
-                        onManualUnblock = onManualUnblock
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AppListContainer(
-    modifier: Modifier = Modifier,
-    tabs: List<String>,
-    tabCounts: List<Int>,
-    state: AppHomeState,
-    isLoading: Boolean,
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit,
-    onOpenAppInfo: (String) -> Unit,
-    manualFirewallEnabled: Boolean,
-    blockedPackages: Set<String>,
-    onManualUnblock: (String) -> Unit
-) {
-    ElevatedCard(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            androidx.compose.material3.TabRow(
-                selectedTabIndex = selectedTabIndex,
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { onTabSelected(index) },
-                        text = {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = title,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = if (selectedTabIndex == index) FontWeight.SemiBold else FontWeight.Normal
-                                )
-                                Text(
-                                    text = tabCounts[index].toString(),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                stickyHeader {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column {
+                            androidx.compose.material3.TabRow(
+                                selectedTabIndex = selectedTabIndex.intValue,
+                                indicator = { tabPositions ->
+                                    TabRowDefaults.SecondaryIndicator(
+                                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.intValue]),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                divider = {}
+                            ) {
+                                tabs.forEachIndexed { index, title ->
+                                    Tab(
+                                        selected = selectedTabIndex.intValue == index,
+                                        onClick = { selectedTabIndex.intValue = index },
+                                        text = {
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(
+                                                    text = title,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    fontWeight = if (selectedTabIndex.intValue == index) FontWeight.SemiBold else FontWeight.Normal
+                                                )
+                                                Text(
+                                                    text = tabCounts[index].toString(),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
                             }
+                            HorizontalDivider()
                         }
-                    )
+                    }
                 }
-            }
 
-            HorizontalDivider()
-
-            val listModifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 200.dp, max = 520.dp)
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                if (isLoading) {
-                    LoadingState(modifier = Modifier.fillMaxWidth())
+                if (state.isLoading) {
+                    item {
+                        LoadingState(modifier = Modifier.fillMaxWidth())
+                    }
+                } else if (currentApps.isEmpty()) {
+                    item {
+                        val emptyText = if (selectedTabIndex.intValue == 0) R.string.empty_state_recent else R.string.empty_state_rare
+                        EmptyState(text = stringResource(id = emptyText))
+                    }
                 } else {
-                    when (selectedTabIndex) {
-                        0 -> AppList(
-                            modifier = listModifier,
-                            apps = state.recentApps,
-                            emptyText = R.string.empty_state_recent,
-                            onOpenAppInfo = onOpenAppInfo,
-                            manualFirewallEnabled = manualFirewallEnabled,
-                            blockedPackages = blockedPackages,
-                            onManualUnblock = onManualUnblock
-                        )
-
-                        1 -> AppList(
-                            modifier = listModifier,
-                            apps = state.rareApps,
-                            emptyText = R.string.empty_state_rare,
-                            onOpenAppInfo = onOpenAppInfo,
-                            manualFirewallEnabled = manualFirewallEnabled,
-                            blockedPackages = blockedPackages,
-                            onManualUnblock = onManualUnblock
-                        )
+                    items(
+                        items = currentApps,
+                        key = { it.packageName },
+                        contentType = { "appUsageCard" }
+                    ) { appInfo ->
+                        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                            AppUsageCard(
+                                app = appInfo,
+                                onOpenAppInfo = { onOpenAppInfo(appInfo.packageName) },
+                                manualFirewallEnabled = manualFirewallUnblock,
+                                isManuallyBlocked = appInfo.packageName in state.firewallBlockedPackages,
+                                onManualUnblock = { onManualUnblock(appInfo.packageName) }
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
 
 @Composable
 private fun FirewallCard(
@@ -614,57 +592,7 @@ private fun RowScope.UsageStatCard(
     }
 }
 
-@Composable
-private fun AppList(
-    modifier: Modifier = Modifier,
-    apps: List<AppUsageInfo>,
-    emptyText: Int,
-    onOpenAppInfo: (String) -> Unit,
-    manualFirewallEnabled: Boolean,
-    blockedPackages: Set<String>,
-    onManualUnblock: (String) -> Unit
-) {
-    val context = LocalContext.current
 
-    LaunchedEffect(apps) {
-        if (apps.isNotEmpty()) {
-            val packageManager = context.packageManager
-            val packageNames = apps.take(24).map { it.packageName }
-            withContext(Dispatchers.IO) {
-                AppIconCache.preload(packageManager, packageNames)
-            }
-        }
-    }
-
-    if (apps.isEmpty()) {
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.Center
-        ) {
-            EmptyState(text = stringResource(id = emptyText))
-        }
-    } else {
-        LazyColumn(
-            modifier = modifier,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(
-                items = apps,
-                key = { it.packageName },
-                contentType = { "appUsageCard" }
-            ) { appInfo ->
-                AppUsageCard(
-                    app = appInfo,
-                    onOpenAppInfo = { onOpenAppInfo(appInfo.packageName) },
-                    manualFirewallEnabled = manualFirewallEnabled,
-                    isManuallyBlocked = appInfo.packageName in blockedPackages,
-                    onManualUnblock = { onManualUnblock(appInfo.packageName) }
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
