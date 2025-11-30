@@ -263,10 +263,7 @@ fun AppUsageHome(
                         EmptyState(text = stringResource(id = emptyText))
                     }
                 } else {
-                    items(
-                        items = currentApps,
-                        key = { it.packageName },
-                        contentType = { "appUsageCard" }
+
                     items(
                         items = currentApps,
                         key = { it.packageName },
