@@ -8,6 +8,7 @@ data class AppHomeState(
     val isLoading: Boolean = true,
     val recentApps: List<AppUsageInfo> = emptyList(),
     val rareApps: List<AppUsageInfo> = emptyList(),
+    val disabledApps: List<AppUsageInfo> = emptyList(),
 
     val firewallState: FirewallUiState = FirewallUiState(),
     val firewallBlockedPackages: Set<String> = emptySet(),

@@ -294,9 +294,10 @@ class MainViewModel(
         launchStatusCollector(AppUsageStatus.RARE) { rare ->
             _uiState.value = _uiState.value.copy(rareApps = rare, isLoading = false)
         }
-        launchStatusCollector(AppUsageStatus.RARE) { rare ->
-            _uiState.value = _uiState.value.copy(rareApps = rare, isLoading = false)
+        launchStatusCollector(AppUsageStatus.DISABLED) { disabled ->
+            _uiState.value = _uiState.value.copy(disabledApps = disabled, isLoading = false)
         }
+
     }
 
     private fun launchStatusCollector(status: AppUsageStatus, onUpdate: (List<com.silentport.silentport.model.AppUsageInfo>) -> Unit) {
