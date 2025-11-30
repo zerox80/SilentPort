@@ -46,25 +46,7 @@ class ApplicationManager(
         }.getOrDefault(false)
     }
 
-    suspend fun restorePackage(packageName: String) = withContext(Dispatchers.IO) {
-        runCatching {
-            packageManager.setApplicationEnabledSetting(
-                packageName,
-                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
-                PackageManager.DONT_KILL_APP
-            )
-            trackedAppDao.updateStatus(
-                packageName = packageName,
-                status = AppUsageStatus.RECENT,
-                disabled = false,
-                scheduledAt = null,
-                notifiedAt = null
-            )
-            true
-        }.onFailure { throwable ->
-            Log.w(TAG, "Failed to restore $packageName", throwable)
-        }.getOrDefault(false)
-    }
+
 
     suspend fun isPackageDisabled(packageName: String): Boolean = withContext(Dispatchers.IO) {
         runCatching {

@@ -257,12 +257,7 @@ class MainViewModel(
         }
     }
 
-    fun restoreApp(packageName: String) {
-        viewModelScope.launch {
-            applicationManager.restorePackage(packageName)
-            refreshUsage()
-        }
-    }
+
 
     fun addToWhitelist(packageName: String) {
         viewModelScope.launch {

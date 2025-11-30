@@ -43,9 +43,7 @@ class MainActivity : ComponentActivity() {
                         uiStateFlow = viewModel.uiState,
                         onRequestUsagePermission = { openUsageAccessSettings() },
                         onRefresh = { viewModel.refreshUsage() },
-                        onRestoreApp = { packageName ->
-                            lifecycleScope.launch { viewModel.restoreApp(packageName) }
-                        },
+
                         onOpenAppInfo = { packageName -> openAppDetails(packageName) },
                         onEnableFirewall = {
                             ensureVpnPermission {

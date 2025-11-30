@@ -49,8 +49,6 @@ import kotlinx.coroutines.withContext
 fun AppUsageCard(
     app: AppUsageInfo,
     onOpenAppInfo: () -> Unit,
-    showRestore: Boolean,
-    onRestore: () -> Unit,
     manualFirewallEnabled: Boolean,
     isManuallyBlocked: Boolean,
     onManualUnblock: () -> Unit
@@ -119,16 +117,6 @@ fun AppUsageCard(
                     }
                 }
 
-                if (showRestore) {
-                    Spacer(modifier = Modifier.size(12.dp))
-                    Button(
-                        onClick = onRestore,
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Restore, contentDescription = null)
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Text(text = stringResource(id = R.string.action_restore_app))
-                    }
                 }
             }
         }
