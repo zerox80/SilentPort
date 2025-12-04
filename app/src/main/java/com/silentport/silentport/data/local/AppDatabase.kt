@@ -31,8 +31,10 @@ abstract class AppDatabase : RoomDatabase() {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "silentport.db"
-            ).fallbackToDestructiveMigration()
-                .build()
+            )
+                    // Bug fix 7: Disable destructive migration to prevent data loss
+                    // .fallbackToDestructiveMigration() 
+                    .build()
         }
     }
 }

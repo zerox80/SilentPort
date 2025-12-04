@@ -237,6 +237,8 @@ class MainViewModel(
     fun refreshUsage() {
         viewModelScope.launch {
             val hasPermission = UsagePermissionChecker.isUsageAccessGranted(appContext)
+            // Bug fix 11: Invalidate UID cache on refresh to handle app updates/reinstalls
+            uidCache.clear()
             _uiState.value = _uiState.value.copy(usagePermissionGranted = hasPermission, isLoading = true)
 
             if (!hasPermission) {
@@ -322,12 +324,6 @@ class MainViewModel(
 
 
 
-        val iterator = manualUnblockCooldown.entries.iterator()
-        while (iterator.hasNext()) {
-            if (iterator.next().value <= now) {
-                iterator.remove()
-            }
-        }
 
         val result = if (state.manualFirewallUnblock) {
             val manualSet = state.firewallBlockedPackages.toMutableSet()
@@ -396,6 +392,15 @@ class MainViewModel(
     }
 
     private suspend fun syncFirewallBlockList() {
+        // Bug fix 12: Cleanup expired cooldowns before computing block list
+        val now = System.currentTimeMillis()
+        val iterator = manualUnblockCooldown.entries.iterator()
+        while (iterator.hasNext()) {
+            if (iterator.next().value <= now) {
+                iterator.remove()
+            }
+        }
+        
         val desired = computeBlockList()
         val current = _uiState.value.firewallBlockedPackages
         if (desired != current) {
@@ -451,8 +456,10 @@ class MainViewModel(
     }
 
     private fun stopMetricsMonitor() {
-        metricsJob?.cancel()
+        // Bug fix 8: Safe cancellation
+        val job = metricsJob
         metricsJob = null
+        job?.cancel()
         // Bug fix: Clear collections safely or just let them be.
         // If we want to clear, we should probably do it under lock or just rely on GC if we were replacing maps.
         // But since they are concurrent maps now, clear() is safe-ish but might race with a running sample.
@@ -562,7 +569,7 @@ class MainViewModel(
             history.removeFirst()
         }
         // Bug fix: Limit history size to prevent memory leaks
-        while (history.size > 100) {
+        while (history.size > MAX_HISTORY_SIZE) {
             history.removeFirst()
         }
         return history.sumOf { it.second }
@@ -611,8 +618,10 @@ class MainViewModel(
                 } catch (error: RemoteException) {
                     Log.w(TAG, "Unable to query network stats", error)
                 } catch (error: RuntimeException) {
-                    Log.v(TAG, "Skipping network type $networkType", error)
-                    null
+                    Log.e(TAG, "Skipping network type $networkType due to error", error)
+                    // Bug fix 20: Don't just return null, try next network type or return partial results if possible.
+                    // But if it's a critical error, we might want to flag it.
+                    // For now, we continue to next network type.
                 }
             }
         } catch (error: SecurityException) {
@@ -628,6 +637,7 @@ class MainViewModel(
 
     companion object {
         private const val TAG = "MainViewModel"
+        private const val MAX_HISTORY_SIZE = 100
 
         fun Factory(container: AppContainer): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {

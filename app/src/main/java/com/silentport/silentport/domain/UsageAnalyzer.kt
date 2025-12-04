@@ -142,8 +142,13 @@ class UsageAnalyzer(
         }
 
         return apps.filter { appInfo: ApplicationInfo ->
-            appInfo.packageName != context.packageName &&
-                (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0
+            if (appInfo.packageName == context.packageName) return@filter false
+            
+            // Bug fix 15: Allow system apps if they are launchable (bloatware)
+            val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            if (!isSystem) return@filter true
+            
+            packageManager.getLaunchIntentForPackage(appInfo.packageName) != null
         }
     }
 
@@ -184,18 +189,8 @@ class UsageAnalyzer(
         val previous = existing?.lastUsedAt?.takeIf { it > 0 }
         if (previous != null) return previous
 
-        return try {
-            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                packageManager.getPackageInfo(packageName, 0)
-            }
-            maxOf(packageInfo.firstInstallTime, packageInfo.lastUpdateTime)
-        } catch (t: Throwable) {
-            Log.w(TAG, "Unable to get fallback timestamp for $packageName", t)
-            null
-        }
+        // Bug fix 14: Return null if never used, instead of install time
+        return null
     }
 
     private fun isPackageDisabled(packageName: String): Boolean {

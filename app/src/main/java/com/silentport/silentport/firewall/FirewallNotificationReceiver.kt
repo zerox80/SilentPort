@@ -3,6 +3,7 @@ package com.silentport.silentport.firewall
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.silentport.silentport.SilentPortApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -30,8 +31,10 @@ class FirewallNotificationReceiver : BroadcastReceiver() {
 
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val settings = com.silentport.silentport.settings.SettingsPreferencesDataSource(context.applicationContext)
-                        val duration = settings.preferencesFlow.first().allowDurationMillis
+                        // Bug fix 13: Use singleton data source from AppContainer
+                        val app = context.applicationContext as SilentPortApp
+                        val prefs = app.container.settingsPreferences
+                        val duration = prefs.preferencesFlow.first().allowDurationMillis
                         val controller = FirewallControllerProvider.get(context.applicationContext)
                         controller.temporarilyUnblock(packageName, duration)
                     } finally {

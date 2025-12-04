@@ -24,18 +24,37 @@ class MainActivity : ComponentActivity() {
         MainViewModel.Factory(app.container)
     }
 
-    private var pendingFirewallAction: (() -> Unit)? = null
+    private enum class PendingAction {
+        ENABLE, ALLOW_DURATION, BLOCK_NOW, NONE
+    }
+
+    private var pendingAction = PendingAction.NONE
 
     private val vpnPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val permissionGranted = result.resultCode == Activity.RESULT_OK || VpnService.prepare(this) == null
         if (permissionGranted) {
-            pendingFirewallAction?.invoke()
+            executePendingAction()
         }
-        pendingFirewallAction = null
+        pendingAction = PendingAction.NONE
+    }
+
+    private fun executePendingAction() {
+        when (pendingAction) {
+            PendingAction.ENABLE -> lifecycleScope.launch { viewModel.enableFirewall() }
+            PendingAction.ALLOW_DURATION -> lifecycleScope.launch { viewModel.allowForConfiguredDuration() }
+            PendingAction.BLOCK_NOW -> lifecycleScope.launch { viewModel.blockNow() }
+            PendingAction.NONE -> {}
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            val actionName = savedInstanceState.getString("pending_action")
+            if (actionName != null) {
+                pendingAction = PendingAction.valueOf(actionName)
+            }
+        }
         setContent {
             SilentPortTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -46,22 +65,16 @@ class MainActivity : ComponentActivity() {
 
                         onOpenAppInfo = { packageName -> openAppDetails(packageName) },
                         onEnableFirewall = {
-                            ensureVpnPermission {
-                                lifecycleScope.launch { viewModel.enableFirewall() }
-                            }
+                            ensureVpnPermission(PendingAction.ENABLE)
                         },
                         onDisableFirewall = {
                             lifecycleScope.launch { viewModel.disableFirewall() }
                         },
                         onAllowForDuration = {
-                            ensureVpnPermission {
-                                lifecycleScope.launch { viewModel.allowForConfiguredDuration() }
-                            }
+                            ensureVpnPermission(PendingAction.ALLOW_DURATION)
                         },
                         onBlockNow = {
-                            ensureVpnPermission {
-                                lifecycleScope.launch { viewModel.blockNow() }
-                            }
+                            ensureVpnPermission(PendingAction.BLOCK_NOW)
                         },
                         onUpdateAllowDuration = { duration ->
                             lifecycleScope.launch { viewModel.updateAllowDuration(duration) }
@@ -109,12 +122,19 @@ class MainActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    private fun ensureVpnPermission(onGranted: () -> Unit) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("pending_action", pendingAction.name)
+    }
+
+    private fun ensureVpnPermission(action: PendingAction) {
         val prepareIntent = VpnService.prepare(this)
         if (prepareIntent == null) {
-            onGranted()
+            pendingAction = action
+            executePendingAction()
+            pendingAction = PendingAction.NONE
         } else {
-            pendingFirewallAction = onGranted
+            pendingAction = action
             vpnPermissionLauncher.launch(prepareIntent)
         }
     }

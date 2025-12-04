@@ -2,8 +2,11 @@ package com.silentport.silentport.ui.components
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.LruCache
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.graphics.drawable.toBitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -155,7 +158,7 @@ private fun AppIcon(context: Context, packageName: String, appLabel: String) {
             color = MaterialTheme.colorScheme.surfaceVariant
         ) {
             androidx.compose.foundation.Image(
-                painter = rememberDrawablePainter(drawable = drawable),
+                bitmap = drawable.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.padding(4.dp)
             )
@@ -205,28 +208,29 @@ private fun StatusChip(status: AppUsageStatus) {
 
 internal object AppIconCache {
     private const val CACHE_SIZE = 150
-    private val cache = object : LruCache<String, Drawable>(CACHE_SIZE) {}
+    private val cache = object : LruCache<String, Bitmap>(CACHE_SIZE) {}
 
-    fun getFromCache(packageName: String): Drawable? {
+    fun getFromCache(packageName: String): Bitmap? {
         synchronized(cache) {
             return cache.get(packageName)
         }
     }
 
-    fun getOrLoad(packageManager: PackageManager, packageName: String): Drawable? {
+    fun getOrLoad(packageManager: PackageManager, packageName: String): Bitmap? {
         synchronized(cache) {
             cache.get(packageName)?.let { return it }
         }
 
-        val drawable = runCatching { packageManager.getApplicationIcon(packageName).mutate() }.getOrNull()
+        val drawable = runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
+        val bitmap = drawable?.toBitmap()
 
-        if (drawable != null) {
+        if (bitmap != null) {
             synchronized(cache) {
-                cache.put(packageName, drawable)
+                cache.put(packageName, bitmap)
             }
         }
 
-        return drawable
+        return bitmap
     }
 
     fun preload(packageManager: PackageManager, packageNames: Collection<String>) {

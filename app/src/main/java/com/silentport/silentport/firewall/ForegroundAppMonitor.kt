@@ -14,8 +14,8 @@ class ForegroundAppMonitor(private val context: Context) {
             return null
         }
         val time = System.currentTimeMillis()
-        // Look back 5 minutes instead of 24 hours. We check frequently so we don't need a long history.
-        val events = usageStatsManager.queryEvents(time - 5 * 60 * 1000, time)
+        // Bug fix 6: Look back 24 hours to ensure we catch the foreground app even if device was idle
+        val events = usageStatsManager.queryEvents(time - 24 * 60 * 60 * 1000, time)
         var lastPackage: String? = null
         var lastTimeStamp = 0L
         val event = UsageEvents.Event()

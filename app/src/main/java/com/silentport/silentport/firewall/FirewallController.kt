@@ -151,18 +151,27 @@ class FirewallController(
         }
         Log.i(TAG, "updateBlockedPackages -> ${blockPackages.size} packages (was ${current.blockedPackages.size})")
 
+        // Bug fix 19: Filter out valid temporary unblocks to prevent race conditions
+        val now = System.currentTimeMillis()
+        val validUnblocks = current.temporaryUnblocks.mapNotNull { 
+            val parts = it.split(":")
+            if (parts.size == 2 && (parts[1].toLongOrNull() ?: 0L) > now) parts[0] else null
+        }.toSet()
+        
+        val filteredPackages = blockPackages - validUnblocks
+
         preferences.setState(
             isEnabled = current.isEnabled,
             isBlocking = current.isBlocking,
             reactivateAt = current.reactivateAt,
-            blockedPackages = blockPackages
+            blockedPackages = filteredPackages
         )
 
         if (current.isEnabled) {
-            val includeBlockList = (!current.isBlocking && current.reactivateAt == null && blockPackages.isNotEmpty())
+            val includeBlockList = (!current.isBlocking && current.reactivateAt == null && filteredPackages.isNotEmpty())
             startService(
                 isBlocking = current.isBlocking,
-                blockList = blockPackages,
+                blockList = filteredPackages,
                 includeBlockListWhenNotBlocking = includeBlockList
             )
         }
@@ -209,8 +218,8 @@ class FirewallController(
             action = VpnFirewallService.ACTION_START_OR_UPDATE
             putExtra(VpnFirewallService.EXTRA_BLOCKING, isBlocking)
             val payload = when {
-                isBlocking -> ArrayList(blockList)
-                includeBlockListWhenNotBlocking -> ArrayList(blockList)
+                isBlocking && blockList.size < 500 -> ArrayList(blockList)
+                includeBlockListWhenNotBlocking && blockList.size < 500 -> ArrayList(blockList)
                 else -> arrayListOf()
             }
             putStringArrayListExtra(VpnFirewallService.EXTRA_BLOCK_LIST, payload)
@@ -230,9 +239,11 @@ class FirewallController(
         val delay = reactivateAt - System.currentTimeMillis()
         Log.d(TAG, "scheduleAutoBlock -> reactivateAt=$reactivateAt delay=$delay")
         if (delay <= 0) {
-            // Bug fix: If reactivateAt is in the past, we should probably not schedule it, or schedule it immediately.
-            // But if it's WAY in the past, it might be stale.
-            // For now, we assume if it's set, it's valid.
+            // Bug fix 16: Check if it's too stale (more than 1 hour ago)
+            if (delay < -TimeUnit.HOURS.toMillis(1)) {
+                Log.w(TAG, "scheduleAutoBlock -> reactivateAt is too stale ($delay ms), ignoring")
+                return
+            }
             Log.w(TAG, "scheduleAutoBlock -> delay <= 0, enqueuing immediate block")
             workManager.enqueueUniqueWork(
                 AUTO_BLOCK_UNIQUE_WORK,

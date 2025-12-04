@@ -37,11 +37,21 @@ class VpnFirewallService : VpnService() {
             val blocking = intent.getBooleanExtra(EXTRA_BLOCKING, false)
             isBlockingMode = blocking
             val providedList = intent.getStringArrayListExtra(EXTRA_BLOCK_LIST)
-            blockedPackages = when {
-                blocking -> providedList?.toSet() ?: emptySet()
-                providedList != null -> providedList.toSet()
-                else -> emptySet()
+            
+            if (blocking && (providedList == null || providedList.isEmpty())) {
+                 // Bug fix 2: If list is missing but blocking is requested, read from prefs
+                 kotlinx.coroutines.runBlocking {
+                     val prefs = FirewallPreferencesDataSource(applicationContext)
+                     blockedPackages = kotlinx.coroutines.flow.first(prefs.preferencesFlow).blockedPackages
+                 }
+            } else {
+                blockedPackages = when {
+                    blocking -> providedList?.toSet() ?: emptySet()
+                    providedList != null -> providedList.toSet()
+                    else -> emptySet()
+                }
             }
+
             Log.i(TAG, "Starting/Updating firewall: blocking=$blocking blocked=${blockedPackages.size}")
             startForeground(NOTIFICATION_ID, buildNotification(blocking))
             updateVpn()
@@ -226,7 +236,7 @@ class VpnFirewallService : VpnService() {
                     val read = stream.read(buffer)
                     if (read <= 0) {
                         Log.v(TAG, "Firewall VPN drain thread idle")
-                        Thread.sleep(50)
+                        Thread.sleep(100)
                     } else {
                         // Traffic detected from a blocked app
                         val now = System.currentTimeMillis()
@@ -261,7 +271,7 @@ class VpnFirewallService : VpnService() {
         val appName = try {
             // Optimization: Could cache this, but for now just running it on a background thread (which this is) is okay.
             // The drain thread is a background thread.
-            pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString()
+            packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, 0)).toString()
         } catch (e: Exception) {
             packageName
         }
@@ -304,6 +314,6 @@ class VpnFirewallService : VpnService() {
         const val FIREWALL_CHANNEL_ID = "firewall_channel"
         private const val NOTIFICATION_ID = 1011
         private const val TAG = "VpnFirewallService"
-        private const val VPN_ADDRESS = "10.0.0.2"
+        private const val VPN_ADDRESS = "10.100.0.2"
     }
 }

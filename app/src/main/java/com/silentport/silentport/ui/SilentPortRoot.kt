@@ -356,7 +356,9 @@ private fun MetricsScreen(
     onRefreshMetrics: () -> Unit,
     onOpenNavigation: () -> Unit
 ) {
-    val sortedApps = apps.sortedByDescending { trafficByPackage[it.packageName] ?: 0L }
+    val sortedApps = androidx.compose.runtime.remember(apps, trafficByPackage) {
+        apps.sortedByDescending { trafficByPackage[it.packageName] ?: 0L }
+    }
     val lastSampleText = lastSampleAt?.let {
         DateUtils.getRelativeTimeSpanString(
             it,
