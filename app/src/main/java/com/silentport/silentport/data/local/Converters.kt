@@ -8,5 +8,11 @@ class Converters {
     fun fromStatus(status: AppUsageStatus): String = status.name
 
     @TypeConverter
-    fun toStatus(value: String): AppUsageStatus = AppUsageStatus.valueOf(value)
+    fun toStatus(value: String): AppUsageStatus {
+        return try {
+            AppUsageStatus.valueOf(value)
+        } catch (e: IllegalArgumentException) {
+            AppUsageStatus.RARE
+        }
+    }
 }

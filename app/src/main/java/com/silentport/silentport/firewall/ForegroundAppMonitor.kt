@@ -10,15 +10,19 @@ class ForegroundAppMonitor(private val context: Context) {
 
     fun getForegroundApp(): String? {
         val time = System.currentTimeMillis()
-        // Look back a bit to catch the event
-        val events = usageStatsManager.queryEvents(time - 5000, time)
+        // Look back 24 hours to ensure we catch the last move to foreground event
+        val events = usageStatsManager.queryEvents(time - 24 * 60 * 60 * 1000, time)
         var lastPackage: String? = null
+        var lastTimeStamp = 0L
         val event = UsageEvents.Event()
         
         while (events.hasNextEvent()) {
             events.getNextEvent(event)
             if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                lastPackage = event.packageName
+                if (event.timeStamp > lastTimeStamp) {
+                    lastPackage = event.packageName
+                    lastTimeStamp = event.timeStamp
+                }
             }
         }
         return lastPackage
