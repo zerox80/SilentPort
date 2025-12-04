@@ -11,10 +11,15 @@ import kotlinx.coroutines.launch
 class FirewallNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        val pendingResult = goAsync()
         if (intent.action == ACTION_DISABLE_FIREWALL) {
             CoroutineScope(Dispatchers.IO).launch {
-                val controller = FirewallControllerProvider.get(context.applicationContext)
-                controller.disableFirewall()
+                try {
+                    val controller = FirewallControllerProvider.get(context.applicationContext)
+                    controller.disableFirewall()
+                } finally {
+                    pendingResult.finish()
+                }
             }
         } else if (intent.action == ACTION_ALLOW_APP) {
             val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
@@ -24,12 +29,20 @@ class FirewallNotificationReceiver : BroadcastReceiver() {
                 notificationManager.cancel(packageName.hashCode())
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val settings = com.silentport.silentport.settings.SettingsPreferencesDataSource(context.applicationContext)
-                    val duration = settings.preferencesFlow.first().allowDurationMillis
-                    val controller = FirewallControllerProvider.get(context.applicationContext)
-                    controller.temporarilyUnblock(packageName, duration)
+                    try {
+                        val settings = com.silentport.silentport.settings.SettingsPreferencesDataSource(context.applicationContext)
+                        val duration = settings.preferencesFlow.first().allowDurationMillis
+                        val controller = FirewallControllerProvider.get(context.applicationContext)
+                        controller.temporarilyUnblock(packageName, duration)
+                    } finally {
+                        pendingResult.finish()
+                    }
                 }
+            } else {
+                pendingResult.finish()
             }
+        } else {
+            pendingResult.finish()
         }
     }
 

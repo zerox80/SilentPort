@@ -18,7 +18,8 @@ class UsageSyncWorker(
         val context = container.appContext
 
         if (!UsagePermissionChecker.isUsageAccessGranted(context)) {
-            return Result.retry()
+            // Bug fix: Do not retry indefinitely if permission is missing. It requires user action.
+            return Result.failure()
         }
 
         return runCatching {

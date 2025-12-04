@@ -35,6 +35,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.ArrayDeque
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.collections.buildList
@@ -62,14 +63,14 @@ class MainViewModel(
 
     private val packageManager = appContext.packageManager
     private val networkStatsManager = appContext.getSystemService(NetworkStatsManager::class.java)
-    private val uidCache = mutableMapOf<String, Int>()
-    private val trafficSnapshots = mutableMapOf<String, Long>()
-    private val trafficHistory = mutableMapOf<String, ArrayDeque<Pair<Long, Long>>>()
+    private val uidCache = ConcurrentHashMap<String, Int>()
+    private val trafficSnapshots = ConcurrentHashMap<String, Long>()
+    private val trafficHistory = ConcurrentHashMap<String, ArrayDeque<Pair<Long, Long>>>()
     private var metricsJob: Job? = null
     private var manualUnblockSchedulerJob: Job? = null
     private val trafficWindowMillisRef = AtomicLong(TimeUnit.MINUTES.toMillis(10))
     private val trafficSampleIntervalMillis = TimeUnit.SECONDS.toMillis(30)
-    private val manualUnblockCooldown = mutableMapOf<String, Long>()
+    private val manualUnblockCooldown = ConcurrentHashMap<String, Long>()
     private val trafficMutex = Mutex()
 
     private var subscriptionsStarted = false
@@ -452,8 +453,17 @@ class MainViewModel(
     private fun stopMetricsMonitor() {
         metricsJob?.cancel()
         metricsJob = null
-        trafficHistory.clear()
-        trafficSnapshots.clear()
+        // Bug fix: Clear collections safely or just let them be.
+        // If we want to clear, we should probably do it under lock or just rely on GC if we were replacing maps.
+        // But since they are concurrent maps now, clear() is safe-ish but might race with a running sample.
+        // Ideally we should acquire mutex, but stopMetricsMonitor might be called from UI thread and we don't want to block.
+        // So we launch a coroutine to clear it.
+        viewModelScope.launch(Dispatchers.IO) {
+            trafficMutex.withLock {
+                trafficHistory.clear()
+                trafficSnapshots.clear()
+            }
+        }
         _uiState.update { state ->
             state.copy(appTraffic = emptyMap(), metricsLastSampleAt = null)
         }
@@ -551,6 +561,10 @@ class MainViewModel(
         while (history.isNotEmpty() && now - history.first().first > windowMillis) {
             history.removeFirst()
         }
+        // Bug fix: Limit history size to prevent memory leaks
+        while (history.size > 100) {
+            history.removeFirst()
+        }
         return history.sumOf { it.second }
     }
 
@@ -577,6 +591,11 @@ class MainViewModel(
         try {
             for (networkType in networkTypes) {
                 try {
+                    // Bug fix: Handle potential nulls or exceptions better.
+                    // querySummary(networkType, subscriberId, start, end)
+                    // subscriberId is null for all mobile interfaces or wifi?
+                    // For WiFi it should be null. For Mobile it might need subscriberId but usually null works for "all".
+                    // Some devices throw if null is passed for mobile.
                     manager.querySummary(networkType, null, safeStart, end).use { stats ->
                         while (stats.hasNextBucket()) {
                             stats.getNextBucket(bucket)

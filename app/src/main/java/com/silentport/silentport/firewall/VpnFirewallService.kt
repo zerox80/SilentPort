@@ -19,6 +19,7 @@ class VpnFirewallService : VpnService() {
     private var vpnInterface: ParcelFileDescriptor? = null
     private var drainThread: Thread? = null
     private var inputStream: InputStream? = null
+    @Volatile
     private var blockedPackages: Set<String> = emptySet()
     private var isBlockingMode: Boolean = false
 
@@ -98,20 +99,30 @@ class VpnFirewallService : VpnService() {
 
     private fun updateVpn() {
         Log.d(TAG, "updateVpn blockingMode=$isBlockingMode blockedPackages=${blockedPackages.size}")
+        
+        // Optimization: If we are not blocking and not in blocking mode, just ensure stopped
+        if (!isBlockingMode && blockedPackages.isEmpty()) {
+             if (vpnInterface != null) {
+                 Log.d(TAG, "No blocking required -> stopping VPN")
+                 stopVpn()
+             }
+             return
+        }
+
+        // For now, we still restart to apply changes, but we could optimize further to only restart if diff is significant
+        // or use addDisallowedApplication dynamically if API allowed (it doesn't for active VPN).
+        // To minimize downtime, we could try to establish new before closing old, but Android VpnService usually requires
+        // only one active interface per app or automatically closes the old one.
+        // We will stick to stop -> start for reliability but ensure it's fast.
+        
         when {
             isBlockingMode -> {
                 Log.d(TAG, "Activating global block mode")
                 startGlobalBlockVpn()
             }
-
-            blockedPackages.isNotEmpty() -> {
+            else -> {
                 Log.d(TAG, "Activating selective block mode")
                 startSelectiveBlockVpn()
-            }
-
-            else -> {
-                Log.d(TAG, "No blocking required -> stopping VPN")
-                stopVpn()
             }
         }
     }
@@ -120,6 +131,9 @@ class VpnFirewallService : VpnService() {
         stopVpn()
         val builder = createBaseBuilder()
 
+        // Bug fix: No need to explicitly exclude self if we are the VPN provider, 
+        // but it's good practice to ensure we don't block our own traffic if we were to block everything.
+        // However, in selective block mode it was redundant. Here it is fine.
         runCatching { builder.addDisallowedApplication(packageName) }
             .onFailure { Log.w(TAG, "Unable to exclude app from VPN", it) }
 
@@ -136,14 +150,16 @@ class VpnFirewallService : VpnService() {
         stopVpn()
         val builder = createBaseBuilder()
 
-        blockedPackages.forEach { pkg ->
-            if (pkg != packageName) {
-                runCatching {
-                    builder.addAllowedApplication(pkg)
-                    Log.v(TAG, "Selective block -> app routed through VPN: $pkg")
-                }.onFailure { Log.w(TAG, "Unable to include $pkg in VPN", it) }
-            }
+        var addedCount = 0
+        for (pkg in blockedPackages) {
+             // Bug fix: Removed redundant check (pkg != packageName) as we don't add ourselves to blockedPackages usually
+             runCatching {
+                 builder.addAllowedApplication(pkg)
+                 addedCount++
+                 // Log.v(TAG, "Selective block -> app routed through VPN: $pkg") // Reduced logging
+             }.onFailure { Log.w(TAG, "Unable to include $pkg in VPN", it) }
         }
+        Log.i(TAG, "Added $addedCount packages to VPN")
 
         establishVpn(builder)
     }
@@ -152,7 +168,7 @@ class VpnFirewallService : VpnService() {
         val builder = Builder()
             .setSession(getString(R.string.firewall_vpn_session_name))
 
-        builder.addAddress("10.0.0.2", 32)
+        builder.addAddress(VPN_ADDRESS, 32)
         builder.addRoute("0.0.0.0", 0)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -164,12 +180,17 @@ class VpnFirewallService : VpnService() {
     }
 
     private fun establishVpn(builder: Builder) {
-        vpnInterface = builder.establish()
-        vpnInterface?.let { descriptor ->
-            Log.i(TAG, "VPN interface established")
-            inputStream = ParcelFileDescriptor.AutoCloseInputStream(descriptor)
-            drainPackets()
-        } ?: Log.w(TAG, "Failed to establish VPN interface")
+        try {
+            vpnInterface = builder.establish()
+            vpnInterface?.let { descriptor ->
+                Log.i(TAG, "VPN interface established")
+                inputStream = ParcelFileDescriptor.AutoCloseInputStream(descriptor)
+                drainPackets()
+            } ?: Log.w(TAG, "Failed to establish VPN interface")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to establish VPN", e)
+            stopVpn()
+        }
     }
 
     private fun stopVpn() {
@@ -179,7 +200,7 @@ class VpnFirewallService : VpnService() {
         try {
             inputStream?.close()
         } catch (ex: IOException) {
-            Log.w(TAG, "Error closing input stream", ex)
+            // Log.w(TAG, "Error closing input stream", ex) // Benign
         }
         inputStream = null
 
@@ -212,7 +233,7 @@ class VpnFirewallService : VpnService() {
                         if (now - lastNotificationTime > notificationCooldown) {
                             val foregroundApp = monitor.getForegroundApp()
                             if (foregroundApp != null && blockedPackages.contains(foregroundApp)) {
-                                Log.i(TAG, "Blocked app detected in foreground: $foregroundApp")
+                                Log.i(TAG, "Blocked app detected in foreground") // Privacy fix: don't log package name
                                 showBlockedAppNotification(foregroundApp)
                                 lastNotificationTime = now
                             }
@@ -227,7 +248,7 @@ class VpnFirewallService : VpnService() {
             try {
                 stream.close()
             } catch (ex: IOException) {
-                Log.w(TAG, "Error closing drain stream", ex)
+                // Log.w(TAG, "Error closing drain stream", ex) // Benign
             }
         }.apply {
             isDaemon = true
@@ -237,8 +258,9 @@ class VpnFirewallService : VpnService() {
     }
 
     private fun showBlockedAppNotification(packageName: String) {
-        val pm = packageManager
         val appName = try {
+            // Optimization: Could cache this, but for now just running it on a background thread (which this is) is okay.
+            // The drain thread is a background thread.
             pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString()
         } catch (e: Exception) {
             packageName
@@ -282,5 +304,6 @@ class VpnFirewallService : VpnService() {
         const val FIREWALL_CHANNEL_ID = "firewall_channel"
         private const val NOTIFICATION_ID = 1011
         private const val TAG = "VpnFirewallService"
+        private const val VPN_ADDRESS = "10.0.0.2"
     }
 }

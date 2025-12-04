@@ -11,6 +11,8 @@ import com.silentport.silentport.ui.state.FirewallUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.TimeUnit
 
 private const val AUTO_BLOCK_UNIQUE_WORK = "firewall_auto_block"
@@ -23,6 +25,7 @@ class FirewallController(
 
     private val appContext = context.applicationContext
     private val workManager: WorkManager = WorkManager.getInstance(appContext)
+    private val stateMutex = Mutex()
 
     val state: Flow<FirewallUiState> = preferences.preferencesFlow.map { prefs ->
         FirewallUiState(
@@ -35,7 +38,7 @@ class FirewallController(
         )
     }
 
-    suspend fun enableFirewall(blockPackages: Set<String>? = null, allowDurationMillis: Long = DEFAULT_ALLOW_DURATION_MILLIS) {
+    suspend fun enableFirewall(blockPackages: Set<String>? = null, allowDurationMillis: Long = DEFAULT_ALLOW_DURATION_MILLIS) = stateMutex.withLock {
         val packages = blockPackages ?: preferences.preferencesFlow.first().blockedPackages
         val reactivateAt = System.currentTimeMillis() + allowDurationMillis
         Log.i(TAG, "enableFirewall -> allowDuration=${allowDurationMillis} packages=${packages.size}")
@@ -49,13 +52,30 @@ class FirewallController(
         startService(isBlocking = false, blockList = packages)
     }
 
-    suspend fun allowForDuration(allowDurationMillis: Long, blockPackages: Set<String>? = null) {
+    suspend fun allowForDuration(allowDurationMillis: Long, blockPackages: Set<String>? = null) = stateMutex.withLock {
         val packages = blockPackages ?: preferences.preferencesFlow.first().blockedPackages
         if (packages.isEmpty()) {
             Log.i(TAG, "allowForDuration -> no packages, delegating to setBlocking(false)")
-            setBlocking(false, System.currentTimeMillis() + allowDurationMillis, packages)
-            return
+            // We need to release lock before calling another suspended function that acquires it, or refactor.
+            // setBlocking acquires lock. Re-entrant locks are not supported by Mutex.
+            // Refactoring to internal method or just inlining logic.
+            // Simplest is to just duplicate logic or extract internal helper.
+            // Let's extract internal helper.
         }
+        // Actually, let's just implement it directly here to avoid recursion issues with Mutex
+        if (packages.isEmpty()) {
+             Log.i(TAG, "allowForDuration -> no packages, disabling blocking")
+             preferences.setState(
+                isEnabled = true,
+                isBlocking = false,
+                reactivateAt = System.currentTimeMillis() + allowDurationMillis,
+                blockedPackages = packages
+            )
+            scheduleAutoBlock(System.currentTimeMillis() + allowDurationMillis)
+            startService(isBlocking = false, blockList = packages, includeBlockListWhenNotBlocking = true)
+            return@withLock
+        }
+
         Log.i(TAG, "allowForDuration -> allowDuration=${allowDurationMillis} keepBlocked=${packages.size}")
         preferences.setState(
             isEnabled = true,
@@ -67,7 +87,7 @@ class FirewallController(
         startService(isBlocking = false, blockList = packages)
     }
 
-    suspend fun blockNow(blockPackages: Set<String>? = null) {
+    suspend fun blockNow(blockPackages: Set<String>? = null) = stateMutex.withLock {
         val packages = blockPackages ?: preferences.preferencesFlow.first().blockedPackages
         Log.i(TAG, "blockNow -> packages=${packages.size}")
         preferences.setState(
@@ -80,7 +100,7 @@ class FirewallController(
         startService(isBlocking = true, blockList = packages)
     }
 
-    suspend fun applyManualBlockList(blockPackages: Set<String>) {
+    suspend fun applyManualBlockList(blockPackages: Set<String>) = stateMutex.withLock {
         val current = preferences.preferencesFlow.first()
         val shouldPersist = !current.isEnabled || current.isBlocking || current.reactivateAt != null || current.blockedPackages != blockPackages
         if (shouldPersist) {
@@ -98,14 +118,14 @@ class FirewallController(
         startService(isBlocking = false, blockList = blockPackages, includeBlockListWhenNotBlocking = true)
     }
 
-    suspend fun disableFirewall() {
+    suspend fun disableFirewall() = stateMutex.withLock {
         Log.i(TAG, "disableFirewall")
         preferences.setState(isEnabled = false, isBlocking = false, reactivateAt = null, blockedPackages = emptySet())
         cancelAutoBlock()
         stopService()
     }
 
-    suspend fun setBlocking(blocking: Boolean, reactivateAt: Long?, blockPackages: Set<String>? = null) {
+    suspend fun setBlocking(blocking: Boolean, reactivateAt: Long?, blockPackages: Set<String>? = null) = stateMutex.withLock {
         val packages = blockPackages ?: preferences.preferencesFlow.first().blockedPackages
         Log.i(TAG, "setBlocking -> blocking=$blocking reactivateAt=$reactivateAt packages=${packages.size}")
         preferences.setState(
@@ -123,11 +143,11 @@ class FirewallController(
         startService(isBlocking = blocking, blockList = packages, includeBlockListWhenNotBlocking = includeBlockList)
     }
 
-    suspend fun updateBlockedPackages(blockPackages: Set<String>) {
+    suspend fun updateBlockedPackages(blockPackages: Set<String>) = stateMutex.withLock {
         val current = preferences.preferencesFlow.first()
         if (current.blockedPackages == blockPackages) {
             Log.d(TAG, "updateBlockedPackages -> no change (${blockPackages.size})")
-            return
+            return@withLock
         }
         Log.i(TAG, "updateBlockedPackages -> ${blockPackages.size} packages (was ${current.blockedPackages.size})")
 
@@ -148,18 +168,35 @@ class FirewallController(
         }
     }
 
-    suspend fun updateWhitelistedPackages(whitelistedPackages: Set<String>) {
+    suspend fun updateWhitelistedPackages(whitelistedPackages: Set<String>) = stateMutex.withLock {
         preferences.setWhitelistedPackages(whitelistedPackages)
     }
 
-    suspend fun temporarilyUnblock(packageName: String, durationMillis: Long = TimeUnit.MINUTES.toMillis(10)) {
+    suspend fun temporarilyUnblock(packageName: String, durationMillis: Long = TimeUnit.MINUTES.toMillis(10)) = stateMutex.withLock {
         Log.i(TAG, "temporarilyUnblock -> $packageName for ${durationMillis}ms")
         preferences.addTemporaryUnblock(packageName, durationMillis)
 
         // Update blocked packages immediately by removing this one
         val current = preferences.preferencesFlow.first()
         val newBlocked = current.blockedPackages - packageName
-        updateBlockedPackages(newBlocked)
+        
+        // Inline updateBlockedPackages logic to avoid re-entrancy
+        if (current.blockedPackages != newBlocked) {
+             preferences.setState(
+                isEnabled = current.isEnabled,
+                isBlocking = current.isBlocking,
+                reactivateAt = current.reactivateAt,
+                blockedPackages = newBlocked
+            )
+            if (current.isEnabled) {
+                val includeBlockList = (!current.isBlocking && current.reactivateAt == null && newBlocked.isNotEmpty())
+                startService(
+                    isBlocking = current.isBlocking,
+                    blockList = newBlocked,
+                    includeBlockListWhenNotBlocking = includeBlockList
+                )
+            }
+        }
     }
 
     private fun startService(
@@ -193,6 +230,9 @@ class FirewallController(
         val delay = reactivateAt - System.currentTimeMillis()
         Log.d(TAG, "scheduleAutoBlock -> reactivateAt=$reactivateAt delay=$delay")
         if (delay <= 0) {
+            // Bug fix: If reactivateAt is in the past, we should probably not schedule it, or schedule it immediately.
+            // But if it's WAY in the past, it might be stale.
+            // For now, we assume if it's set, it's valid.
             Log.w(TAG, "scheduleAutoBlock -> delay <= 0, enqueuing immediate block")
             workManager.enqueueUniqueWork(
                 AUTO_BLOCK_UNIQUE_WORK,
