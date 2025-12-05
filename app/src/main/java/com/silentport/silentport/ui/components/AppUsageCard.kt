@@ -150,7 +150,8 @@ private fun AppIcon(context: Context, packageName: String, appLabel: String) {
         }
     }
 
-    if (drawable != null) {
+    val currentDrawable = drawable
+    if (currentDrawable != null) {
         Surface(
             modifier = Modifier
                 .size(48.dp)
@@ -158,7 +159,7 @@ private fun AppIcon(context: Context, packageName: String, appLabel: String) {
             color = MaterialTheme.colorScheme.surfaceVariant
         ) {
             androidx.compose.foundation.Image(
-                bitmap = drawable.asImageBitmap(),
+                bitmap = currentDrawable.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.padding(4.dp)
             )

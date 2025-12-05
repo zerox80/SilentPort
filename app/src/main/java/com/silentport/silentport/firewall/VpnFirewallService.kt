@@ -13,6 +13,8 @@ import com.silentport.silentport.MainActivity
 import com.silentport.silentport.R
 import java.io.IOException
 import java.io.InputStream
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class VpnFirewallService : VpnService() {
 
@@ -40,9 +42,9 @@ class VpnFirewallService : VpnService() {
             
             if (blocking && (providedList == null || providedList.isEmpty())) {
                  // Bug fix 2: If list is missing but blocking is requested, read from prefs
-                 kotlinx.coroutines.runBlocking {
+                 runBlocking {
                      val prefs = FirewallPreferencesDataSource(applicationContext)
-                     blockedPackages = kotlinx.coroutines.flow.first(prefs.preferencesFlow).blockedPackages
+                     blockedPackages = prefs.preferencesFlow.first().blockedPackages
                  }
             } else {
                 blockedPackages = when {
