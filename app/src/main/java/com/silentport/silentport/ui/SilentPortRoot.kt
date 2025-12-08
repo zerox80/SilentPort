@@ -83,7 +83,11 @@ fun SilentPortRoot(
     onManualFirewallUnblock: (String) -> Unit,
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
-    onRemoveFromWhitelist: (String) -> Unit
+    onManualFirewallUnblock: (String) -> Unit,
+    onRefreshMetrics: () -> Unit,
+    onAddToWhitelist: (String) -> Unit,
+    onRemoveFromWhitelist: (String) -> Unit,
+    onToggleHideSystemApps: (Boolean) -> Unit
 ) {
     val uiState by uiStateFlow.collectAsState()
     SilentPortRoot(
@@ -101,7 +105,11 @@ fun SilentPortRoot(
         onManualFirewallUnblock = onManualFirewallUnblock,
         onRefreshMetrics = onRefreshMetrics,
         onAddToWhitelist = onAddToWhitelist,
-        onRemoveFromWhitelist = onRemoveFromWhitelist
+        onManualFirewallUnblock = onManualFirewallUnblock,
+        onRefreshMetrics = onRefreshMetrics,
+        onAddToWhitelist = onAddToWhitelist,
+        onRemoveFromWhitelist = onRemoveFromWhitelist,
+        onToggleHideSystemApps = onToggleHideSystemApps
     )
 }
 
@@ -122,7 +130,11 @@ fun SilentPortRoot(
     onManualFirewallUnblock: (String) -> Unit,
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
-    onRemoveFromWhitelist: (String) -> Unit
+    onManualFirewallUnblock: (String) -> Unit,
+    onRefreshMetrics: () -> Unit,
+    onAddToWhitelist: (String) -> Unit,
+    onRemoveFromWhitelist: (String) -> Unit,
+    onToggleHideSystemApps: (Boolean) -> Unit
 ) {
     val navController = rememberNavController()
     val drawerState = androidx.compose.material3.rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
@@ -195,8 +207,10 @@ fun SilentPortRoot(
                 SettingsScreen(
                     currentDurationMillis = uiState.allowDurationMillis,
                     manualFirewallUnblock = uiState.manualFirewallUnblock,
+                    hideSystemApps = uiState.hideSystemApps,
                     onDurationSelected = onUpdateAllowDuration,
                     onManualFirewallUnblockChange = onManualFirewallUnblockChange,
+                    onToggleHideSystemApps = onToggleHideSystemApps,
                     onOpenNavigation = {
                         scope.launch { drawerState.open() }
                     }
@@ -240,8 +254,10 @@ fun SilentPortRoot(
 private fun SettingsScreen(
     currentDurationMillis: Long,
     manualFirewallUnblock: Boolean,
+    hideSystemApps: Boolean,
     onDurationSelected: (Long) -> Unit,
     onManualFirewallUnblockChange: (Boolean) -> Unit,
+    onToggleHideSystemApps: (Boolean) -> Unit,
     onOpenNavigation: () -> Unit
 ) {
     val presetDurations = listOf(
@@ -316,6 +332,36 @@ private fun SettingsScreen(
                             Switch(
                                 checked = manualFirewallUnblock,
                                 onCheckedChange = onManualFirewallUnblockChange
+                            )
+                        }
+                    )
+                }
+            }
+
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    ListItem(
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.settings_hide_system_apps_title))
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(id = R.string.settings_hide_system_apps_desc),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = hideSystemApps,
+                                onCheckedChange = onToggleHideSystemApps
                             )
                         }
                     )

@@ -33,7 +33,9 @@ class SettingsPreferencesDataSource(context: Context) {
             AppSettingsPreferences(
                 allowDurationMillis = prefs[Keys.ALLOW_DURATION_MILLIS] ?: DEFAULT_ALLOW_DURATION_MILLIS,
                 metricsEnabled = prefs[Keys.METRICS_ENABLED] ?: false,
-                manualFirewallUnblock = prefs[Keys.MANUAL_FIREWALL_UNBLOCK] ?: false
+                metricsEnabled = prefs[Keys.METRICS_ENABLED] ?: false,
+                manualFirewallUnblock = prefs[Keys.MANUAL_FIREWALL_UNBLOCK] ?: false,
+                hideSystemApps = prefs[Keys.HIDE_SYSTEM_APPS] ?: false
             )
         }
 
@@ -56,10 +58,18 @@ class SettingsPreferencesDataSource(context: Context) {
         }
     }
 
+    suspend fun setHideSystemApps(enabled: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[Keys.HIDE_SYSTEM_APPS] = enabled
+        }
+    }
+
     private object Keys {
         val ALLOW_DURATION_MILLIS = longPreferencesKey("allow_duration_millis")
         val METRICS_ENABLED = booleanPreferencesKey("metrics_enabled")
+        val METRICS_ENABLED = booleanPreferencesKey("metrics_enabled")
         val MANUAL_FIREWALL_UNBLOCK = booleanPreferencesKey("manual_firewall_unblock")
+        val HIDE_SYSTEM_APPS = booleanPreferencesKey("hide_system_apps")
     }
 
     companion object {
@@ -70,6 +80,7 @@ class SettingsPreferencesDataSource(context: Context) {
 data class AppSettingsPreferences(
     val allowDurationMillis: Long,
     val metricsEnabled: Boolean,
-    val manualFirewallUnblock: Boolean
+    val manualFirewallUnblock: Boolean,
+    val hideSystemApps: Boolean
 )
 

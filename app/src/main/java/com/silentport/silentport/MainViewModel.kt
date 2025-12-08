@@ -28,6 +28,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -203,6 +206,12 @@ class MainViewModel(
         }
     }
 
+    fun setHideSystemApps(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsPreferences.setHideSystemApps(enabled)
+        }
+    }
+
     fun refreshMetricsNow() {
         if (!_uiState.value.metricsEnabled) return
         viewModelScope.launch(Dispatchers.IO) {
@@ -291,19 +300,34 @@ class MainViewModel(
         if (subscriptionsStarted) return
         subscriptionsStarted = true
 
-        launchStatusCollector(AppUsageStatus.RECENT) { recent ->
-            _uiState.value = _uiState.value.copy(recentApps = recent, isLoading = false)
-        }
-        launchStatusCollector(AppUsageStatus.RARE) { rare ->
-            _uiState.value = _uiState.value.copy(rareApps = rare, isLoading = false)
-        }
+        val hideSystemAppsFlow = settingsPreferences.preferencesFlow
+            .map { it.hideSystemApps }
+            .distinctUntilChanged()
 
-
+        launchStatusCollector(AppUsageStatus.RECENT, hideSystemAppsFlow) { recent ->
+            _uiState.update { it.copy(recentApps = recent, isLoading = false) }
+        }
+        launchStatusCollector(AppUsageStatus.RARE, hideSystemAppsFlow) { rare ->
+            _uiState.update { it.copy(rareApps = rare, isLoading = false) }
+        }
     }
 
-    private fun launchStatusCollector(status: AppUsageStatus, onUpdate: (List<com.silentport.silentport.model.AppUsageInfo>) -> Unit) {
+    private fun launchStatusCollector(
+        status: AppUsageStatus,
+        hideSystemAppsFlow: kotlinx.coroutines.flow.Flow<Boolean>,
+        onUpdate: (List<com.silentport.silentport.model.AppUsageInfo>) -> Unit
+    ) {
         viewModelScope.launch {
-            usageRepository.observeStatus(status).collect {
+            combine(
+                usageRepository.observeStatus(status),
+                hideSystemAppsFlow
+            ) { apps, hideSystem ->
+                if (hideSystem) {
+                    apps.filter { !it.isSystemApp }
+                } else {
+                    apps
+                }
+            }.collect {
                 onUpdate(it)
                 syncFirewallBlockList()
             }
@@ -426,7 +450,8 @@ class MainViewModel(
                 _uiState.value = previousState.copy(
                     allowDurationMillis = prefs.allowDurationMillis,
                     metricsEnabled = prefs.metricsEnabled,
-                    manualFirewallUnblock = prefs.manualFirewallUnblock
+                    manualFirewallUnblock = prefs.manualFirewallUnblock,
+                    hideSystemApps = prefs.hideSystemApps
                 )
 
                 when {

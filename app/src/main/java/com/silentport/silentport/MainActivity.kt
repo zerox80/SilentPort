@@ -96,6 +96,9 @@ class MainActivity : ComponentActivity() {
                         },
                         onRemoveFromWhitelist = { packageName ->
                             lifecycleScope.launch { viewModel.removeFromWhitelist(packageName) }
+                        },
+                        onToggleHideSystemApps = { enabled ->
+                            lifecycleScope.launch { viewModel.setHideSystemApps(enabled) }
                         }
                     )
                 }

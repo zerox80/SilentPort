@@ -15,6 +15,7 @@ data class AppHomeState(
     val allowDurationMillis: Long = SettingsPreferencesDataSource.DEFAULT_ALLOW_DURATION_MILLIS,
     val manualFirewallUnblock: Boolean = false,
     val metricsEnabled: Boolean = false,
+    val hideSystemApps: Boolean = false,
     val appTraffic: Map<String, Long> = emptyMap(),
     val metricsLastSampleAt: Long? = null,
     val whitelistedPackages: Set<String> = emptySet(),

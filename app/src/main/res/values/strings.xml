@@ -85,6 +85,8 @@
     <string name="settings_manual_firewall_title">Manuelle Sperrsteuerung</string>
     <string name="settings_manual_firewall_description">Wenn aktiviert, bleiben blockierte Apps gesperrt, bis Sie sie hier manuell freigeben. Das Öffnen einer App hebt die Sperre nicht automatisch auf.</string>
     <string name="settings_manual_firewall_toggle">Manuelle Freigabe erforderlich</string>
+    <string name="settings_hide_system_apps_title">System-Apps ausblenden</string>
+    <string name="settings_hide_system_apps_desc">System- und vorinstallierte Apps werden in den Listen und der Firewall ignoriert.</string>
 
     <string name="metrics_title">Netzwerk-Metriken</string>
     <string name="metrics_description">Aktivieren Sie die Metrik-Erfassung, um den tatsächlichen Datenverkehr seltener Apps in den letzten 10 Minuten anzuzeigen. Ideal zum Debuggen von Firewall-Regeln.</string>
