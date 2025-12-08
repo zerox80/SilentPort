@@ -83,9 +83,6 @@ fun SilentPortRoot(
     onManualFirewallUnblock: (String) -> Unit,
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
-    onManualFirewallUnblock: (String) -> Unit,
-    onRefreshMetrics: () -> Unit,
-    onAddToWhitelist: (String) -> Unit,
     onRemoveFromWhitelist: (String) -> Unit,
     onToggleHideSystemApps: (Boolean) -> Unit
 ) {
@@ -102,9 +99,6 @@ fun SilentPortRoot(
         onUpdateAllowDuration = onUpdateAllowDuration,
         onToggleMetrics = onToggleMetrics,
         onManualFirewallUnblockChange = onManualFirewallUnblockChange,
-        onManualFirewallUnblock = onManualFirewallUnblock,
-        onRefreshMetrics = onRefreshMetrics,
-        onAddToWhitelist = onAddToWhitelist,
         onManualFirewallUnblock = onManualFirewallUnblock,
         onRefreshMetrics = onRefreshMetrics,
         onAddToWhitelist = onAddToWhitelist,
@@ -127,9 +121,6 @@ fun SilentPortRoot(
     onUpdateAllowDuration: (Long) -> Unit,
     onToggleMetrics: (Boolean) -> Unit,
     onManualFirewallUnblockChange: (Boolean) -> Unit,
-    onManualFirewallUnblock: (String) -> Unit,
-    onRefreshMetrics: () -> Unit,
-    onAddToWhitelist: (String) -> Unit,
     onManualFirewallUnblock: (String) -> Unit,
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
@@ -335,9 +326,6 @@ private fun SettingsScreen(
                             )
                         }
                     )
-                }
-            }
-
                 }
             }
 
