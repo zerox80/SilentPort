@@ -344,10 +344,6 @@ class MainViewModel(
                 val lastUsed = info.lastUsedAt
                 lastUsed == null || lastUsed <= threshold
             }
-            .filter { info ->
-                // If hideSystemApps is enabled, exclude system apps from blocking
-                !state.hideSystemApps || !info.isSystemApp
-            }
             .map { it.packageName }
 
 
