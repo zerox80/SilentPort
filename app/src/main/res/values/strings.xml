@@ -37,6 +37,7 @@
     <string name="status_recent">Kürzlich verwendet</string>
     <string name="status_rare">Selten verwendet</string>
     <string name="status_disabled">Deaktiviert</string>
+    <string name="tag_system_app">System-App</string>
     <string name="firewall_card_title">Netzwerk-Firewall</string>
     <string name="firewall_card_description">Blockiert automatisch die Netzwerkverbindung von Apps, die Sie seit %1$s nicht mehr geöffnet haben. Sie können die Firewall jederzeit pausieren oder neu starten.</string>
     <string name="firewall_switch_label">Firewall aktiv</string>

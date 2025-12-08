@@ -92,6 +92,17 @@ fun AppUsageCard(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatusChip(app.status)
+                if (app.isSystemApp) {
+                    SuggestionChip(
+                        onClick = {},
+                        enabled = false,
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        label = { Text(text = stringResource(id = R.string.tag_system_app)) }
+                    )
+                }
                 scheduledDisableText?.let { text ->
                     SuggestionChip(
                         onClick = {},

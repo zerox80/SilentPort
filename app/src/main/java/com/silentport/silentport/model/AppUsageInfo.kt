@@ -9,6 +9,7 @@ data class AppUsageInfo(
     val status: AppUsageStatus,
     val isDisabled: Boolean,
     val scheduledDisableAt: Long?,
-    val notifiedAt: Long?
+    val notifiedAt: Long?,
+    val isSystemApp: Boolean = false
 )
 

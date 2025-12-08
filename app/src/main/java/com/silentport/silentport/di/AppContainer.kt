@@ -21,7 +21,7 @@ class AppContainer(context: Context) {
 
     val usageAnalyzer: UsageAnalyzer = UsageAnalyzer(appContext, trackedAppDao, usagePolicy)
     val applicationManager: ApplicationManager = ApplicationManager(appContext, trackedAppDao)
-    val usageRepository: UsageRepository = UsageRepository(trackedAppDao)
+    val usageRepository: UsageRepository = UsageRepository(appContext, trackedAppDao)
 
     private val firewallPreferences: FirewallPreferencesDataSource = FirewallPreferencesDataSource(appContext)
     val firewallController: FirewallController = FirewallController(appContext, firewallPreferences)
