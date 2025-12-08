@@ -71,6 +71,11 @@
     <string name="manual_system_apps_description">Apps in this list will be treated as system apps and hidden when \"Hide system apps\" is enabled.</string>
     <string name="manual_system_apps_empty">No apps found.</string>
     <string name="manual_system_app_real_system">(Real system app)</string>
+    <string name="manual_system_apps_marked_section">Manually marked apps</string>
+    <string name="manual_system_apps_marked_count">%d app(s) marked</string>
+    <string name="manual_system_apps_expand">Show</string>
+    <string name="manual_system_apps_collapse">Hide</string>
+    <string name="manual_system_apps_remove">Remove</string>
     <string name="whitelist_description">Apps in this list will never be automatically blocked, even if they haven\'t been used for a long time.</string>
     <string name="whitelist_empty">No apps found.</string>
 

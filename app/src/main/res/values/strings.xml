@@ -81,6 +81,11 @@
     <string name="manual_system_apps_description">Apps in dieser Liste werden als System-Apps behandelt und ausgeblendet, wenn "System-Apps ausblenden" aktiviert ist.</string>
     <string name="manual_system_apps_empty">Keine Apps gefunden.</string>
     <string name="manual_system_app_real_system">(Echte System-App)</string>
+    <string name="manual_system_apps_marked_section">Manuell markierte Apps</string>
+    <string name="manual_system_apps_marked_count">%d App(s) markiert</string>
+    <string name="manual_system_apps_expand">Anzeigen</string>
+    <string name="manual_system_apps_collapse">Ausblenden</string>
+    <string name="manual_system_apps_remove">Entfernen</string>
 
     <string name="settings_title">Firewall-Einstellungen</string>
     <string name="settings_description">Legen Sie fest, wie lange die Firewall Verbindungen zulässt, bevor selten genutzte Apps wieder blockiert werden.</string>

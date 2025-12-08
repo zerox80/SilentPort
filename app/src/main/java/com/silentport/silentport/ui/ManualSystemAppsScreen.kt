@@ -1,12 +1,22 @@
 package com.silentport.silentport.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -15,17 +25,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.silentport.silentport.R
 import com.silentport.silentport.model.AppUsageInfo
@@ -43,6 +60,7 @@ fun ManualSystemAppsScreen(
     onOpenNavigation: () -> Unit
 ) {
     val context = LocalContext.current
+    var showMarkedApps by remember { mutableStateOf(false) }
     
     // Sort apps: Real system apps first, then manually marked, then alphabetically
     val sortedApps = remember(apps, manualSystemApps) {
@@ -51,6 +69,16 @@ fun ManualSystemAppsScreen(
                 .thenByDescending { it.packageName in manualSystemApps }
                 .thenBy { it.appLabel }
         )
+    }
+    
+    // Find manually marked apps that might not be in the visible list
+    val markedAppsInList = remember(apps, manualSystemApps) {
+        apps.filter { it.packageName in manualSystemApps }
+    }
+    
+    // Package names that are marked but not visible
+    val hiddenMarkedPackages = remember(apps, manualSystemApps) {
+        manualSystemApps - apps.map { it.packageName }.toSet()
     }
 
     LaunchedEffect(apps) {
@@ -126,8 +154,98 @@ fun ManualSystemAppsScreen(
                     )
                 }
             }
+            
+            // Expandable section for marked apps
+            if (manualSystemApps.isNotEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedCard(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = stringResource(id = R.string.manual_system_apps_marked_section),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.manual_system_apps_marked_count, manualSystemApps.size),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                TextButton(onClick = { showMarkedApps = !showMarkedApps }) {
+                                    Text(
+                                        text = if (showMarkedApps) 
+                                            stringResource(id = R.string.manual_system_apps_collapse) 
+                                        else 
+                                            stringResource(id = R.string.manual_system_apps_expand)
+                                    )
+                                    Icon(
+                                        imageVector = if (showMarkedApps) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                            
+                            AnimatedVisibility(
+                                visible = showMarkedApps,
+                                enter = expandVertically(),
+                                exit = shrinkVertically()
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(bottom = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    // Show marked apps that are in the visible list
+                                    markedAppsInList.forEach { app ->
+                                        MarkedAppItem(
+                                            appLabel = app.appLabel,
+                                            packageName = app.packageName,
+                                            onRemove = { onRemoveFromManualSystemApps(app.packageName) }
+                                        )
+                                    }
+                                    // Show marked apps that are hidden (not in visible list)
+                                    hiddenMarkedPackages.forEach { packageName ->
+                                        MarkedAppItem(
+                                            appLabel = packageName.substringAfterLast('.'),
+                                            packageName = packageName,
+                                            onRemove = { onRemoveFromManualSystemApps(packageName) }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun MarkedAppItem(
+    appLabel: String,
+    packageName: String,
+    onRemove: () -> Unit
+) {
+    ListItem(
+        headlineContent = { Text(text = appLabel) },
+        supportingContent = { Text(text = packageName) },
+        trailingContent = {
+            TextButton(onClick = onRemove) {
+                Text(text = stringResource(id = R.string.manual_system_apps_remove))
+            }
+        }
+    )
 }
 
 @Composable

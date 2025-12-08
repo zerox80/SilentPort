@@ -394,9 +394,9 @@ class MainViewModel(
             }.toSet()
             manualSet.removeAll(validTemporaryUnblocks)
             
-            // If hideSystemApps is enabled, remove system apps from blocklist
+            // If hideSystemApps is enabled, remove system apps and manual system apps from blocklist
             if (state.hideSystemApps) {
-                manualSet.removeAll { pkg -> isSystemApp(pkg) }
+                manualSet.removeAll { pkg -> isSystemApp(pkg) || pkg in state.manualSystemApps }
             }
             
             manualSet
@@ -415,6 +415,7 @@ class MainViewModel(
                 .filterNot { it in firewallAllowlist }
                 .filterNot { it in state.whitelistedPackages }
                 .filterNot { it in validTemporaryUnblocks }
+                .filterNot { state.hideSystemApps && (isSystemApp(it) || it in state.manualSystemApps) }
                 .toSet()
         }
         Log.d(TAG, "computeBlockList manual=${state.manualFirewallUnblock} -> ${result.size} packages")
