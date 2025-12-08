@@ -344,6 +344,10 @@ class MainViewModel(
                 val lastUsed = info.lastUsedAt
                 lastUsed == null || lastUsed <= threshold
             }
+            .filter { info ->
+                // If hideSystemApps is enabled, exclude system apps from blocking
+                !state.hideSystemApps || !info.isSystemApp
+            }
             .map { it.packageName }
 
 
@@ -374,6 +378,11 @@ class MainViewModel(
                 } else null
             }.toSet()
             manualSet.removeAll(validTemporaryUnblocks)
+            
+            // If hideSystemApps is enabled, remove system apps from blocklist
+            if (state.hideSystemApps) {
+                manualSet.removeAll { pkg -> isSystemApp(pkg) }
+            }
             
             manualSet
         } else {
@@ -513,6 +522,20 @@ class MainViewModel(
             appInfo.uid.also { uidCache[packageName] = it }
         } catch (_: PackageManager.NameNotFoundException) {
             null
+        }
+    }
+
+    private fun isSystemApp(packageName: String): Boolean {
+        return try {
+            val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getApplicationInfo(packageName, 0)
+            }
+            (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
         }
     }
 
