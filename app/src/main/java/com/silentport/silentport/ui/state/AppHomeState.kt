@@ -16,6 +16,7 @@ data class AppHomeState(
     val manualFirewallUnblock: Boolean = false,
     val metricsEnabled: Boolean = false,
     val hideSystemApps: Boolean = false,
+    val manualSystemApps: Set<String> = emptySet(),
     val appTraffic: Map<String, Long> = emptyMap(),
     val metricsLastSampleAt: Long? = null,
     val whitelistedPackages: Set<String> = emptySet(),

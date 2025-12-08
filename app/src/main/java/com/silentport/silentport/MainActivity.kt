@@ -99,6 +99,12 @@ class MainActivity : ComponentActivity() {
                         },
                         onToggleHideSystemApps = { enabled ->
                             lifecycleScope.launch { viewModel.setHideSystemApps(enabled) }
+                        },
+                        onAddToManualSystemApps = { packageName ->
+                            lifecycleScope.launch { viewModel.addToManualSystemApps(packageName) }
+                        },
+                        onRemoveFromManualSystemApps = { packageName ->
+                            lifecycleScope.launch { viewModel.removeFromManualSystemApps(packageName) }
                         }
                     )
                 }

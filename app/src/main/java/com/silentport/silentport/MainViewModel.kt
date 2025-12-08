@@ -212,6 +212,24 @@ class MainViewModel(
         }
     }
 
+    fun addToManualSystemApps(packageName: String) {
+        viewModelScope.launch {
+            val current = _uiState.value.manualSystemApps.toMutableSet()
+            if (current.add(packageName)) {
+                settingsPreferences.setManualSystemApps(current)
+            }
+        }
+    }
+
+    fun removeFromManualSystemApps(packageName: String) {
+        viewModelScope.launch {
+            val current = _uiState.value.manualSystemApps.toMutableSet()
+            if (current.remove(packageName)) {
+                settingsPreferences.setManualSystemApps(current)
+            }
+        }
+    }
+
     fun refreshMetricsNow() {
         if (!_uiState.value.metricsEnabled) return
         viewModelScope.launch(Dispatchers.IO) {
@@ -320,10 +338,11 @@ class MainViewModel(
         viewModelScope.launch {
             combine(
                 usageRepository.observeStatus(status),
-                hideSystemAppsFlow
-            ) { apps, hideSystem ->
+                hideSystemAppsFlow,
+                settingsPreferences.preferencesFlow.map { it.manualSystemApps }.distinctUntilChanged()
+            ) { apps, hideSystem, manualSystemApps ->
                 if (hideSystem) {
-                    apps.filter { !it.isSystemApp }
+                    apps.filter { !it.isSystemApp && it.packageName !in manualSystemApps }
                 } else {
                     apps
                 }
@@ -456,7 +475,8 @@ class MainViewModel(
                     allowDurationMillis = prefs.allowDurationMillis,
                     metricsEnabled = prefs.metricsEnabled,
                     manualFirewallUnblock = prefs.manualFirewallUnblock,
-                    hideSystemApps = prefs.hideSystemApps
+                    hideSystemApps = prefs.hideSystemApps,
+                    manualSystemApps = prefs.manualSystemApps
                 )
 
                 when {

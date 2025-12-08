@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -34,7 +35,8 @@ class SettingsPreferencesDataSource(context: Context) {
                 allowDurationMillis = prefs[Keys.ALLOW_DURATION_MILLIS] ?: DEFAULT_ALLOW_DURATION_MILLIS,
                 metricsEnabled = prefs[Keys.METRICS_ENABLED] ?: false,
                 manualFirewallUnblock = prefs[Keys.MANUAL_FIREWALL_UNBLOCK] ?: false,
-                hideSystemApps = prefs[Keys.HIDE_SYSTEM_APPS] ?: false
+                hideSystemApps = prefs[Keys.HIDE_SYSTEM_APPS] ?: false,
+                manualSystemApps = prefs[Keys.MANUAL_SYSTEM_APPS] ?: emptySet()
             )
         }
 
@@ -63,11 +65,22 @@ class SettingsPreferencesDataSource(context: Context) {
         }
     }
 
+    suspend fun setManualSystemApps(packages: Set<String>) {
+        dataStore.edit { prefs ->
+            if (packages.isEmpty()) {
+                prefs.remove(Keys.MANUAL_SYSTEM_APPS)
+            } else {
+                prefs[Keys.MANUAL_SYSTEM_APPS] = packages
+            }
+        }
+    }
+
     private object Keys {
         val ALLOW_DURATION_MILLIS = longPreferencesKey("allow_duration_millis")
         val METRICS_ENABLED = booleanPreferencesKey("metrics_enabled")
         val MANUAL_FIREWALL_UNBLOCK = booleanPreferencesKey("manual_firewall_unblock")
         val HIDE_SYSTEM_APPS = booleanPreferencesKey("hide_system_apps")
+        val MANUAL_SYSTEM_APPS = stringSetPreferencesKey("manual_system_apps")
     }
 
     companion object {
@@ -79,6 +92,7 @@ data class AppSettingsPreferences(
     val allowDurationMillis: Long,
     val metricsEnabled: Boolean,
     val manualFirewallUnblock: Boolean,
-    val hideSystemApps: Boolean
+    val hideSystemApps: Boolean,
+    val manualSystemApps: Set<String> = emptySet()
 )
 

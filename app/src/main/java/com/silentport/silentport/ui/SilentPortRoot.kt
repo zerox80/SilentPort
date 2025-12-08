@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -64,7 +65,8 @@ private enum class AppDestination(
     Home("home", R.string.nav_home, Icons.Outlined.Home),
     Settings("settings", R.string.nav_settings, Icons.Outlined.Settings),
     Metrics("metrics", R.string.nav_metrics, Icons.Outlined.Insights),
-    Whitelist("whitelist", R.string.nav_whitelist, Icons.Outlined.Check)
+    Whitelist("whitelist", R.string.nav_whitelist, Icons.Outlined.Check),
+    ManualSystemApps("manual_system_apps", R.string.nav_manual_system_apps, Icons.Outlined.PhoneAndroid)
 }
 
 @Composable
@@ -84,7 +86,9 @@ fun SilentPortRoot(
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
     onRemoveFromWhitelist: (String) -> Unit,
-    onToggleHideSystemApps: (Boolean) -> Unit
+    onToggleHideSystemApps: (Boolean) -> Unit,
+    onAddToManualSystemApps: (String) -> Unit,
+    onRemoveFromManualSystemApps: (String) -> Unit
 ) {
     val uiState by uiStateFlow.collectAsState()
     SilentPortRoot(
@@ -103,7 +107,9 @@ fun SilentPortRoot(
         onRefreshMetrics = onRefreshMetrics,
         onAddToWhitelist = onAddToWhitelist,
         onRemoveFromWhitelist = onRemoveFromWhitelist,
-        onToggleHideSystemApps = onToggleHideSystemApps
+        onToggleHideSystemApps = onToggleHideSystemApps,
+        onAddToManualSystemApps = onAddToManualSystemApps,
+        onRemoveFromManualSystemApps = onRemoveFromManualSystemApps
     )
 }
 
@@ -125,7 +131,9 @@ fun SilentPortRoot(
     onRefreshMetrics: () -> Unit,
     onAddToWhitelist: (String) -> Unit,
     onRemoveFromWhitelist: (String) -> Unit,
-    onToggleHideSystemApps: (Boolean) -> Unit
+    onToggleHideSystemApps: (Boolean) -> Unit,
+    onAddToManualSystemApps: (String) -> Unit,
+    onRemoveFromManualSystemApps: (String) -> Unit
 ) {
     val navController = rememberNavController()
     val drawerState = androidx.compose.material3.rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
@@ -231,6 +239,19 @@ fun SilentPortRoot(
                     hardcodedAllowlist = uiState.hardcodedAllowlist,
                     onAddToWhitelist = onAddToWhitelist,
                     onRemoveFromWhitelist = onRemoveFromWhitelist,
+                    onOpenNavigation = {
+                        scope.launch { drawerState.open() }
+                    }
+                )
+            }
+            composable(AppDestination.ManualSystemApps.route) {
+                val allApps = (uiState.recentApps + uiState.rareApps)
+                    .distinctBy { it.packageName }
+                ManualSystemAppsScreen(
+                    apps = allApps,
+                    manualSystemApps = uiState.manualSystemApps,
+                    onAddToManualSystemApps = onAddToManualSystemApps,
+                    onRemoveFromManualSystemApps = onRemoveFromManualSystemApps,
                     onOpenNavigation = {
                         scope.launch { drawerState.open() }
                     }

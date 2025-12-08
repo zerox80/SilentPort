@@ -66,6 +66,13 @@
     <string name="nav_home">Dashboard</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_metrics">Network Metrics</string>
+    <string name="nav_whitelist">Exceptions (Whitelist)</string>
+    <string name="nav_manual_system_apps">Manual System Apps</string>
+    <string name="manual_system_apps_description">Apps in this list will be treated as system apps and hidden when \"Hide system apps\" is enabled.</string>
+    <string name="manual_system_apps_empty">No apps found.</string>
+    <string name="manual_system_app_real_system">(Real system app)</string>
+    <string name="whitelist_description">Apps in this list will never be automatically blocked, even if they haven\'t been used for a long time.</string>
+    <string name="whitelist_empty">No apps found.</string>
 
     <string name="settings_title">Firewall Settings</string>
     <string name="settings_description">Set how long the firewall allows connections before blocking rarely used apps again.</string>
