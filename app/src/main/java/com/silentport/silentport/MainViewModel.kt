@@ -466,8 +466,9 @@ class MainViewModel(
                 val previousMetricsEnabled = previousState.metricsEnabled
                 val manualModeChanged = prefs.manualFirewallUnblock != previousState.manualFirewallUnblock
 
-                if (allowDurationChanged) {
-                    usageAnalyzer.updatePolicyThresholds(prefs.allowDurationMillis)
+                val policyUpdated = usageAnalyzer.updatePolicyThresholds(prefs.allowDurationMillis)
+
+                if (allowDurationChanged || policyUpdated) {
                     trafficWindowMillisRef.set(prefs.allowDurationMillis.coerceAtLeast(TimeUnit.MINUTES.toMillis(1)))
                     blockThresholdMillisRef.set(prefs.allowDurationMillis.coerceAtLeast(TimeUnit.MINUTES.toMillis(1)))
                 }
@@ -485,7 +486,7 @@ class MainViewModel(
                     !prefs.metricsEnabled && previousMetricsEnabled -> stopMetricsMonitor()
                 }
 
-                if (allowDurationChanged) {
+                if (allowDurationChanged || policyUpdated) {
                     refreshUsage()
                 }
 
