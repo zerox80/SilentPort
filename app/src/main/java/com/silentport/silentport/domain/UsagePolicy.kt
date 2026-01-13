@@ -40,7 +40,7 @@ class UsagePolicy(
         val sanitized = allowDurationMillis.coerceAtLeast(MIN_THRESHOLD)
         val newDisable = sanitized
         val newWarning = (sanitized * 3 / 4).coerceAtLeast(MIN_THRESHOLD)
-        val newRecent = sanitized.coerceAtMost(DEFAULT_RECENT_THRESHOLD)
+        val newRecent = sanitized
 
         var changed = false
         synchronized(this) {
