@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Gebruiks toegang vereist</string>
@@ -6,25 +6,19 @@
     <string name="permission_usage_access_action">Toegang verlenen</string>
     <string name="tab_recent">Onlangs gebruikt</string>
     <string name="tab_rare">Zelden gebruikt</string>
-    <string name="tab_disabled">Uitgeschakelde apps</string>
-    <string name="action_restore_app">App heractiveren</string>
     <string name="action_open_app_info">App-info openen</string>
-    <string name="usage_permission_denied">Toestemming geweigerd. Open instellingen om toegang toe te staan.</string>
     <string name="notification_disable_title">App wordt uitgeschakeld</string>
     <string name="notification_disable_text">%1$s is 4 dagen niet gebruikt. Open app-info om zelf uit te schakelen of te verwijderen.</string>
     <string name="notification_disable_recommendation_title">App lange tijd ongebruikt</string>
     <string name="notification_disable_recommendation_text">%1$s is meerdere dagen niet gebruikt. Controleer app-info als je ruimte wilt vrijmaken.</string>
     <string name="notification_channel_name">App-gebruiksstatus</string>
     <string name="notification_channel_description">Meldingen over automatische uitschakeling en herstel van apps.</string>
-    <string name="settings_usage_access">Gebruiks toegang openen</string>
     <string name="empty_state_recent">Geen onlangs gebruikte apps.</string>
     <string name="empty_state_rare">Alle apps zijn onlangs gebruikt.</string>
-    <string name="empty_state_disabled">Geen apps zijn uitgeschakeld.</string>
-    <string name="usage_stats_loading">Gebruiksgegevens laden…</string>
+    <string name="usage_stats_loading">Gebruiksgegevens ladenâ€¦</string>
     <string name="last_used_format">Laatst gebruikt: %1$s</string>
     <string name="last_used_never">Nooit geopend</string>
     <string name="scheduled_disable_format">Geplande uitschakeling: %1$s</string>
-    <string name="permission_usage_access_subtitle">Zonder gebruikstoegang kan de app geen analyses uitvoeren.</string>
     <string name="action_refresh">Vernieuwen</string>
     <string name="dashboard_title">Gebruiksoverzicht</string>
     <string name="summary_headline">Houd je apps in de gaten</string>
@@ -33,10 +27,8 @@
     <string name="permission_status_missing">Gebruiks toegang vereist</string>
     <string name="stat_recent">Recent</string>
     <string name="stat_rare">Zelden</string>
-    <string name="stat_disabled">Uitgeschakeld</string>
     <string name="status_recent">Onlangs gebruikt</string>
     <string name="status_rare">Zelden gebruikt</string>
-    <string name="status_disabled">Uitgeschakeld</string>
     <string name="firewall_card_title">Netwerk-firewall</string>
     <string name="firewall_card_description">Blokkeert automatisch netwerkverbindingen van apps die je 4 dagen niet hebt geopend. Je kunt de firewall op elk moment pauzeren of herstarten.</string>
     <string name="firewall_switch_label">Firewall actief</string>
@@ -45,19 +37,11 @@
     <string name="firewall_blocking_now">Zelden gebruikte apps zijn momenteel offline</string>
     <string name="firewall_allowing_now">Alle apps zijn tijdelijk toegestaan</string>
     <string name="firewall_manual_mode_hint">Handmatige blokkeringscontrole actief: apps blijven geblokkeerd tot je ze in instellingen ontgrendelt.</string>
-    <string name="firewall_manual_section_title">Handmatig geblokkeerde apps</string>
-    <string name="firewall_manual_section_description">Deze apps blijven geblokkeerd tot je ze hier ontgrendelt. Tik op "Ontgrendelen" om netwerktoegang alleen voor deze app te herstellen.</string>
-    <string name="firewall_manual_section_empty">Momenteel geen apps handmatig geblokkeerd.</string>
     <string name="firewall_manual_unblock_button">Ontgrendelen</string>
     <string name="firewall_vpn_session_name">SilentPort Firewall</string>
     <string name="firewall_notification_channel_name">Firewall-meldingen</string>
-    <string name="firewall_notification_channel_description">Status van de geïntegreerde firewall en snelle acties.</string>
-    <string name="firewall_notification_title_blocking">Firewall actief – zelden gebruikte apps geblokkeerd</string>
-    <string name="firewall_notification_text_blocking">Apps die minstens 4 dagen niet zijn gebruikt, hebben momenteel geen netwerkverbinding. Open de app of pauzeer de firewall om ze opnieuw toe te staan.</string>
+    <string name="firewall_notification_channel_description">Status van de geÃ¯ntegreerde firewall en snelle acties.</string>
     <string name="firewall_notification_action_disable">Firewall uitschakelen</string>
-    <string name="firewall_notification_title_allowing">Firewall actief – verbindingen toegestaan</string>
-    <string name="firewall_notification_text_allowing">Alle apps mogen tijdelijk online blijven. Na 4 dagen worden ongebruikte apps automatisch opnieuw geblokkeerd.</string>
-    <string name="firewall_allow_button">4 dagen toestaan</string>
     <string name="firewall_block_now_button">Nu blokkeren</string>
     <string name="firewall_allow_button_dynamic">Toestaan voor %1$s</string>
     <string name="firewall_allow_duration_hint">Na %1$s worden zelden gebruikte apps automatisch geblokkeerd.</string>
@@ -69,12 +53,10 @@
 
     <string name="settings_title">Firewall-instellingen</string>
     <string name="settings_description">Stel in hoe lang de firewall verbindingen toelaat voordat zelden gebruikte apps opnieuw worden geblokkeerd.</string>
-    <string name="settings_duration_header">Toestemming duur</string>
     <string name="settings_current_duration">Huidig: %1$s</string>
     <string name="settings_duration_subtitle">Tik op een optie om toe te passen.</string>
     <string name="settings_manual_firewall_title">Handmatige blokkeringscontrole</string>
     <string name="settings_manual_firewall_description">Indien ingeschakeld, blijven geblokkeerde apps geblokkeerd tot je ze hier handmatig ontgrendelt. Het openen van een app heft de blokkering niet automatisch op.</string>
-    <string name="settings_manual_firewall_toggle">Handmatige ontgrendeling vereist</string>
 
     <string name="metrics_title">Netwerk-metrics</string>
     <string name="metrics_description">Schakel metrics-verzameling in om het werkelijke verkeer van zeldzame apps in de laatste 10 minuten weer te geven. Ideaal voor het debuggen van firewall-regels.</string>

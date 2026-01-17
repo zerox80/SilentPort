@@ -26,3 +26,7 @@ Thumbs.db
 
 # Misc
 out/
+
+# Release artifacts
+app/release/
+*.apk

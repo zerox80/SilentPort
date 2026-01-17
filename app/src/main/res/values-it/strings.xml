@@ -1,30 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Accesso all\'utilizzo richiesto</string>
-    <string name="permission_usage_access_message">Per raccogliere statistiche di utilizzo delle app, è necessario concedere l\'accesso all\'utilizzo.</string>
+    <string name="permission_usage_access_message">Per raccogliere statistiche di utilizzo delle app, Ã¨ necessario concedere l\'accesso all\'utilizzo.</string>
     <string name="permission_usage_access_action">Concedi accesso</string>
     <string name="tab_recent">Utilizzato di recente</string>
     <string name="tab_rare">Utilizzato raramente</string>
-    <string name="tab_disabled">App disabilitate</string>
-    <string name="action_restore_app">Riattiva app</string>
     <string name="action_open_app_info">Apri informazioni app</string>
-    <string name="usage_permission_denied">Permesso negato. Apri le impostazioni per consentire l\'accesso.</string>
     <string name="notification_disable_title">L\'app sta per essere disabilitata</string>
-    <string name="notification_disable_text">%1$s non è stato utilizzato per 4 giorni. Apri le informazioni dell\'app per disabilitare o disinstallare manualmente.</string>
+    <string name="notification_disable_text">%1$s non Ã¨ stato utilizzato per 4 giorni. Apri le informazioni dell\'app per disabilitare o disinstallare manualmente.</string>
     <string name="notification_disable_recommendation_title">App inutilizzata per molto tempo</string>
-    <string name="notification_disable_recommendation_text">%1$s non è stato utilizzato per diversi giorni. Controlla le informazioni dell\'app se desideri liberare spazio.</string>
+    <string name="notification_disable_recommendation_text">%1$s non Ã¨ stato utilizzato per diversi giorni. Controlla le informazioni dell\'app se desideri liberare spazio.</string>
     <string name="notification_channel_name">Stato utilizzo app</string>
     <string name="notification_channel_description">Notifiche sulla disabilitazione automatica e ripristino delle app.</string>
-    <string name="settings_usage_access">Apri accesso utilizzo</string>
     <string name="empty_state_recent">Nessuna app utilizzata di recente.</string>
     <string name="empty_state_rare">Tutte le app sono state utilizzate di recente.</string>
-    <string name="empty_state_disabled">Nessuna app è stata disabilitata.</string>
-    <string name="usage_stats_loading">Caricamento dati di utilizzo…</string>
+    <string name="usage_stats_loading">Caricamento dati di utilizzoâ€¦</string>
     <string name="last_used_format">Ultimo utilizzo: %1$s</string>
     <string name="last_used_never">Mai aperto</string>
     <string name="scheduled_disable_format">Disabilitazione programmata: %1$s</string>
-    <string name="permission_usage_access_subtitle">Senza accesso all\'utilizzo, l\'app non può eseguire analisi.</string>
     <string name="action_refresh">Aggiorna</string>
     <string name="dashboard_title">Panoramica utilizzo</string>
     <string name="summary_headline">Tieni d\'occhio le tue app</string>
@@ -33,10 +27,8 @@
     <string name="permission_status_missing">Accesso utilizzo richiesto</string>
     <string name="stat_recent">Recente</string>
     <string name="stat_rare">Raro</string>
-    <string name="stat_disabled">Disabilitato</string>
     <string name="status_recent">Utilizzato di recente</string>
     <string name="status_rare">Utilizzato raramente</string>
-    <string name="status_disabled">Disabilitato</string>
     <string name="firewall_card_title">Firewall di rete</string>
     <string name="firewall_card_description">Blocca automaticamente le connessioni di rete delle app che non hai aperto per 4 giorni. Puoi mettere in pausa o riavviare il firewall in qualsiasi momento.</string>
     <string name="firewall_switch_label">Firewall attivo</string>
@@ -45,19 +37,11 @@
     <string name="firewall_blocking_now">Le app utilizzate raramente sono attualmente offline</string>
     <string name="firewall_allowing_now">Tutte le app sono temporaneamente consentite</string>
     <string name="firewall_manual_mode_hint">Controllo blocco manuale attivo: le app rimangono bloccate fino a quando non le sblocchi nelle impostazioni.</string>
-    <string name="firewall_manual_section_title">App bloccate manualmente</string>
-    <string name="firewall_manual_section_description">Queste app rimangono bloccate fino a quando non le sblocchi qui. Tocca "Sblocca" per ripristinare l\'accesso di rete solo per questa app.</string>
-    <string name="firewall_manual_section_empty">Attualmente nessuna app è bloccata manualmente.</string>
     <string name="firewall_manual_unblock_button">Sblocca</string>
     <string name="firewall_vpn_session_name">Firewall SilentPort</string>
     <string name="firewall_notification_channel_name">Notifiche firewall</string>
     <string name="firewall_notification_channel_description">Stato del firewall integrato e azioni rapide.</string>
-    <string name="firewall_notification_title_blocking">Firewall attivo – app utilizzate raramente bloccate</string>
-    <string name="firewall_notification_text_blocking">Le app che non sono state utilizzate per almeno 4 giorni attualmente non hanno connessione di rete. Apri l\'app o metti in pausa il firewall per consentirle nuovamente.</string>
     <string name="firewall_notification_action_disable">Disabilita firewall</string>
-    <string name="firewall_notification_title_allowing">Firewall attivo – connessioni consentite</string>
-    <string name="firewall_notification_text_allowing">Tutte le app possono rimanere online temporaneamente. Dopo 4 giorni, le app inutilizzate verranno bloccate automaticamente nuovamente.</string>
-    <string name="firewall_allow_button">Consenti 4 giorni</string>
     <string name="firewall_block_now_button">Blocca ora</string>
     <string name="firewall_allow_button_dynamic">Consenti per %1$s</string>
     <string name="firewall_allow_duration_hint">Dopo %1$s, le app utilizzate raramente verranno bloccate automaticamente.</string>
@@ -69,12 +53,10 @@
 
     <string name="settings_title">Impostazioni firewall</string>
     <string name="settings_description">Imposta per quanto tempo il firewall consente connessioni prima di bloccare nuovamente le app utilizzate raramente.</string>
-    <string name="settings_duration_header">Durata permesso</string>
     <string name="settings_current_duration">Attuale: %1$s</string>
     <string name="settings_duration_subtitle">Tocca un\'opzione per applicarla.</string>
     <string name="settings_manual_firewall_title">Controllo blocco manuale</string>
     <string name="settings_manual_firewall_description">Se attivato, le app bloccate rimangono bloccate fino a quando non le sblocchi manualmente qui. L\'apertura di un\'app non rimuove il blocco automaticamente.</string>
-    <string name="settings_manual_firewall_toggle">Sblocco manuale richiesto</string>
 
     <string name="metrics_title">Metriche di rete</string>
     <string name="metrics_description">Attiva la raccolta delle metriche per visualizzare il traffico effettivo delle app rare negli ultimi 10 minuti. Ideale per il debug delle regole del firewall.</string>

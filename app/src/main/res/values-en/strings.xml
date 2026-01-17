@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Usage Access Required</string>
     <string name="permission_usage_access_message">To collect app usage statistics, usage access must be granted.</string>
     <string name="permission_usage_access_action">Grant Access</string>
     <string name="tab_recent">Recently Used</string>
     <string name="tab_rare">Rarely Used</string>
-    <string name="tab_disabled">Disabled Apps</string>
-    <string name="action_restore_app">Reactivate App</string>
+
+
     <string name="action_open_app_info">Open App Info</string>
-    <string name="usage_permission_denied">Permission denied. Open settings to allow access.</string>
+
     <string name="notification_disable_title">App is being disabled</string>
     <string name="notification_disable_text">%1$s has not been used for 4 days. Open app info to disable or uninstall yourself.</string>
     <string name="notification_disable_recommendation_title">App unused for a long time</string>
     <string name="notification_disable_recommendation_text">%1$s has not been used for several days. Check app info if you want to free up storage.</string>
     <string name="notification_channel_name">App Usage Status</string>
     <string name="notification_channel_description">Notifications about automatic app deactivation and restoration.</string>
-    <string name="settings_usage_access">Open Usage Access</string>
+
     <string name="empty_state_recent">No recently used apps.</string>
     <string name="empty_state_rare">All apps have been used recently.</string>
-    <string name="empty_state_disabled">No apps have been disabled.</string>
+
     <string name="usage_stats_loading">Loading usage data…</string>
     <string name="last_used_format">Last used: %1$s</string>
     <string name="last_used_never">Never opened</string>
     <string name="scheduled_disable_format">Scheduled deactivation: %1$s</string>
-    <string name="permission_usage_access_subtitle">Without usage access, the app cannot perform analyses.</string>
+
     <string name="action_refresh">Refresh</string>
     <string name="dashboard_title">Usage Overview</string>
     <string name="summary_headline">Keep an eye on your apps</string>
@@ -33,31 +33,27 @@
     <string name="permission_status_missing">Usage access required</string>
     <string name="stat_recent">Recent</string>
     <string name="stat_rare">Rare</string>
-    <string name="stat_disabled">Disabled</string>
+
     <string name="status_recent">Recently used</string>
     <string name="status_rare">Rarely used</string>
-    <string name="status_disabled">Disabled</string>
+
     <string name="firewall_card_title">Network Firewall</string>
-    <string name="firewall_card_description">Automatically blocks network connections from apps you haven\'t opened for 4 days. You can pause or restart the firewall anytime.</string>
+    <string name="firewall_card_description">Automatically blocks network connections from apps you haven\'t opened for %1$s. You can pause or restart the firewall anytime.</string>
     <string name="firewall_switch_label">Firewall active</string>
     <string name="firewall_switch_label_disabled">Firewall inactive</string>
     <string name="firewall_countdown_label">Automatic blocking in: %1$s</string>
     <string name="firewall_blocking_now">Rarely used apps are currently offline</string>
     <string name="firewall_allowing_now">All apps are temporarily allowed</string>
     <string name="firewall_manual_mode_hint">Manual block control active: Apps remain blocked until you unblock them in settings.</string>
-    <string name="firewall_manual_section_title">Manually blocked apps</string>
-    <string name="firewall_manual_section_description">These apps remain blocked until you unblock them here. Tap "Unblock" to restore network access only for this app.</string>
-    <string name="firewall_manual_section_empty">Currently no apps are manually blocked.</string>
+
     <string name="firewall_manual_unblock_button">Unblock</string>
     <string name="firewall_vpn_session_name">SilentPort Firewall</string>
     <string name="firewall_notification_channel_name">Firewall Notifications</string>
     <string name="firewall_notification_channel_description">Status of the integrated firewall and quick actions.</string>
-    <string name="firewall_notification_title_blocking">Firewall active – rarely used apps blocked</string>
-    <string name="firewall_notification_text_blocking">Apps that have been unused for at least 4 days currently have no network connection. Open the app or pause the firewall to allow them again.</string>
+
     <string name="firewall_notification_action_disable">Disable Firewall</string>
-    <string name="firewall_notification_title_allowing">Firewall active – connections allowed</string>
-    <string name="firewall_notification_text_allowing">All apps are allowed to stay online temporarily. After 4 days, unused apps will be automatically blocked again.</string>
-    <string name="firewall_allow_button">Allow 4 days</string>
+
+
     <string name="firewall_block_now_button">Block now</string>
     <string name="firewall_allow_button_dynamic">Allow for %1$s</string>
     <string name="firewall_allow_duration_hint">After %1$s, rarely used apps will be automatically blocked.</string>
@@ -81,12 +77,12 @@
 
     <string name="settings_title">Firewall Settings</string>
     <string name="settings_description">Set how long the firewall allows connections before blocking rarely used apps again.</string>
-    <string name="settings_duration_header">Allowance Duration</string>
+
     <string name="settings_current_duration">Current: %1$s</string>
     <string name="settings_duration_subtitle">Tap an option to apply it.</string>
     <string name="settings_manual_firewall_title">Manual Block Control</string>
     <string name="settings_manual_firewall_description">When enabled, blocked apps remain blocked until you manually unblock them here. Opening an app does not automatically lift the block.</string>
-    <string name="settings_manual_firewall_toggle">Manual unblock required</string>
+
 
     <string name="metrics_title">Network Metrics</string>
     <string name="metrics_description">Enable metrics collection to display actual traffic of rare apps in the last 10 minutes. Ideal for debugging firewall rules.</string>

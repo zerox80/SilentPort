@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SilentPort</string>
     <string name="permission_usage_access_title">Nutzungszugriff erforderlich</string>
     <string name="permission_usage_access_message">Um App-Nutzungsstatistiken zu erfassen, muss der Nutzungszugriff gewährt werden.</string>
     <string name="permission_usage_access_action">Zugriff gewähren</string>
     <string name="tab_recent">Kürzlich verwendet</string>
     <string name="tab_rare">Selten verwendet</string>
-    <string name="tab_disabled">Deaktivierte Apps</string>
-    <string name="action_restore_app">App wieder aktivieren</string>
+
+
     <string name="action_open_app_info">App-Info öffnen</string>
-    <string name="usage_permission_denied">Berechtigung abgelehnt. Öffnen Sie die Einstellungen, um den Zugriff zu erlauben.</string>
+
     <string name="notification_disable_title">App wird deaktiviert</string>
     <string name="notification_disable_text">%1$s wurde seit 4 Tagen nicht verwendet. Öffnen Sie die App-Info, um selbst zu deaktivieren oder zu deinstallieren.</string>
     <string name="notification_disable_recommendation_title">App längere Zeit ungenutzt</string>
     <string name="notification_disable_recommendation_text">%1$s wurde seit mehreren Tagen nicht genutzt. Prüfen Sie die App-Info, falls Sie Speicher freigeben möchten.</string>
     <string name="notification_channel_name">App-Nutzungsstatus</string>
     <string name="notification_channel_description">Benachrichtigungen zur automatischen Deaktivierung und Wiederherstellung von Apps.</string>
-    <string name="settings_usage_access">Nutzungszugriff öffnen</string>
+
     <string name="empty_state_recent">Keine kürzlich verwendeten Apps.</string>
     <string name="empty_state_rare">Alle Apps wurden kürzlich verwendet.</string>
-    <string name="empty_state_disabled">Keine Apps wurden deaktiviert.</string>
+
     <string name="usage_stats_loading">Nutzungsdaten werden geladen…</string>
     <string name="last_used_format">Zuletzt verwendet: %1$s</string>
     <string name="last_used_never">Noch nie geöffnet</string>
     <string name="scheduled_disable_format">Geplante Deaktivierung: %1$s</string>
-    <string name="permission_usage_access_subtitle">Ohne Nutzungszugriff kann die App keine Analysen durchführen.</string>
+
     <string name="action_refresh">Aktualisieren</string>
     <string name="dashboard_title">Nutzungsübersicht</string>
     <string name="summary_headline">Behalten Sie Ihre Apps im Blick</string>
@@ -33,11 +33,11 @@
     <string name="permission_status_missing">Nutzungszugriff erforderlich</string>
     <string name="stat_recent">Kürzlich</string>
     <string name="stat_rare">Selten</string>
-    <string name="stat_disabled">Deaktiviert</string>
+
     <string name="status_recent">Kürzlich verwendet</string>
     <string name="status_rare">Selten verwendet</string>
-    <string name="status_disabled">Deaktiviert</string>
-    <string name="tag_system_app">System-App</string>
+
+    <string name="tag_system_app" tools:ignore="MissingTranslation">System-App</string>
     <string name="firewall_card_title">Netzwerk-Firewall</string>
     <string name="firewall_card_description">Blockiert automatisch die Netzwerkverbindung von Apps, die Sie seit %1$s nicht mehr geöffnet haben. Sie können die Firewall jederzeit pausieren oder neu starten.</string>
     <string name="firewall_switch_label">Firewall aktiv</string>
@@ -46,24 +46,21 @@
     <string name="firewall_blocking_now">Selten genutzte Apps sind aktuell ohne Netzwerk</string>
     <string name="firewall_allowing_now">Alle Apps sind vorübergehend freigegeben</string>
     <string name="firewall_manual_mode_hint">Manuelle Sperrsteuerung aktiv: Apps bleiben blockiert, bis Sie sie in den Einstellungen freigeben.</string>
-    <string name="firewall_manual_section_title">Manuell gesperrte Apps</string>
-    <string name="firewall_manual_section_description">Diese Apps bleiben blockiert, bis Sie sie hier freigeben. Tippen Sie auf "Freigeben", um den Netzwerkzugang nur für diese App wiederherzustellen.</string>
-    <string name="firewall_manual_section_empty">Aktuell sind keine Apps manuell blockiert.</string>
+
+
     <string name="firewall_manual_unblock_button">Freigeben</string>
     <string name="firewall_vpn_session_name">SilentPort Firewall</string>
     <string name="firewall_notification_channel_name">Firewall-Benachrichtigungen</string>
     <string name="firewall_notification_channel_description">Status der integrierten Firewall und Schnellaktionen.</string>
-    <string name="firewall_notification_title_blocking">Firewall aktiv – selten genutzte Apps blockiert</string>
-    <string name="firewall_notification_text_blocking">Apps, die seit mindestens %1$s ungenutzt sind, haben gerade keine Netzwerkverbindung. Öffnen Sie die App oder pausieren Sie die Firewall, um sie wieder zuzulassen.</string>
+
     <string name="firewall_notification_action_disable">Firewall deaktivieren</string>
-    <string name="firewall_notification_persistent_title">SilentPort Firewall</string>
-    <string name="firewall_notification_persistent_text">Firewall ist aktiv</string>
-    <string name="firewall_notification_title_allowing">Firewall aktiv – Verbindungen erlaubt</string>
-    <string name="firewall_notification_text_allowing">Alle Apps dürfen vorübergehend online bleiben. Nach Ablauf der %1$s werden ungenutzte Apps automatisch wieder gesperrt.</string>
-    <string name="firewall_notification_blocked_title">%1$s ist blockiert</string>
-    <string name="firewall_notification_blocked_text">Diese App wurde wegen Inaktivität blockiert. Tippen Sie auf "Zulassen", um sie vorübergehend freizugeben.</string>
-    <string name="firewall_notification_action_allow">Zulassen</string>
-    <string name="firewall_allow_button">4 Tage erlauben</string>
+    <string name="firewall_notification_persistent_title" tools:ignore="MissingTranslation">SilentPort Firewall</string>
+    <string name="firewall_notification_persistent_text" tools:ignore="MissingTranslation">Firewall ist aktiv</string>
+
+    <string name="firewall_notification_blocked_title" tools:ignore="MissingTranslation">%1$s ist blockiert</string>
+    <string name="firewall_notification_blocked_text" tools:ignore="MissingTranslation">Diese App wurde wegen Inaktivität blockiert. Tippen Sie auf "Zulassen", um sie vorübergehend freizugeben.</string>
+    <string name="firewall_notification_action_allow" tools:ignore="MissingTranslation">Zulassen</string>
+
     <string name="firewall_block_now_button">Jetzt blockieren</string>
     <string name="firewall_allow_button_dynamic">Für %1$s erlauben</string>
     <string name="firewall_allow_duration_hint">Nach %1$s werden selten genutzte Apps automatisch blockiert.</string>
@@ -72,31 +69,31 @@
     <string name="nav_home">Dashboard</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="nav_metrics">Netzwerk-Metriken</string>
-    <string name="nav_whitelist">Ausnahmen (Whitelist)</string>
+    <string name="nav_whitelist" tools:ignore="MissingTranslation">Ausnahmen (Whitelist)</string>
 
-    <string name="whitelist_description">Apps in dieser Liste werden niemals automatisch blockiert, auch wenn sie lange nicht genutzt wurden.</string>
-    <string name="whitelist_empty">Keine Apps gefunden.</string>
+    <string name="whitelist_description" tools:ignore="MissingTranslation">Apps in dieser Liste werden niemals automatisch blockiert, auch wenn sie lange nicht genutzt wurden.</string>
+    <string name="whitelist_empty" tools:ignore="MissingTranslation">Keine Apps gefunden.</string>
 
-    <string name="nav_manual_system_apps">Manuelle System-Apps</string>
-    <string name="manual_system_apps_description">Apps in dieser Liste werden als System-Apps behandelt und ausgeblendet, wenn "System-Apps ausblenden" aktiviert ist.</string>
-    <string name="manual_system_apps_empty">Keine Apps gefunden.</string>
-    <string name="manual_system_app_real_system">(Echte System-App)</string>
-    <string name="manual_system_apps_marked_section">Manuell markierte Apps</string>
-    <string name="manual_system_apps_marked_count">%d App(s) markiert</string>
-    <string name="manual_system_apps_expand">Anzeigen</string>
-    <string name="manual_system_apps_collapse">Ausblenden</string>
-    <string name="manual_system_apps_remove">Entfernen</string>
+    <string name="nav_manual_system_apps" tools:ignore="MissingTranslation">Manuelle System-Apps</string>
+    <string name="manual_system_apps_description" tools:ignore="MissingTranslation">Apps in dieser Liste werden als System-Apps behandelt und ausgeblendet, wenn "System-Apps ausblenden" aktiviert ist.</string>
+    <string name="manual_system_apps_empty" tools:ignore="MissingTranslation">Keine Apps gefunden.</string>
+    <string name="manual_system_app_real_system" tools:ignore="MissingTranslation">(Echte System-App)</string>
+    <string name="manual_system_apps_marked_section" tools:ignore="MissingTranslation">Manuell markierte Apps</string>
+    <string name="manual_system_apps_marked_count" tools:ignore="MissingTranslation">%d App(s) markiert</string>
+    <string name="manual_system_apps_expand" tools:ignore="MissingTranslation">Anzeigen</string>
+    <string name="manual_system_apps_collapse" tools:ignore="MissingTranslation">Ausblenden</string>
+    <string name="manual_system_apps_remove" tools:ignore="MissingTranslation">Entfernen</string>
 
     <string name="settings_title">Firewall-Einstellungen</string>
     <string name="settings_description">Legen Sie fest, wie lange die Firewall Verbindungen zulässt, bevor selten genutzte Apps wieder blockiert werden.</string>
-    <string name="settings_duration_header">Erlaubnisdauer</string>
+
     <string name="settings_current_duration">Aktuell: %1$s</string>
     <string name="settings_duration_subtitle">Tippen Sie auf eine Option, um sie zu übernehmen.</string>
     <string name="settings_manual_firewall_title">Manuelle Sperrsteuerung</string>
     <string name="settings_manual_firewall_description">Wenn aktiviert, bleiben blockierte Apps gesperrt, bis Sie sie hier manuell freigeben. Das Öffnen einer App hebt die Sperre nicht automatisch auf.</string>
-    <string name="settings_manual_firewall_toggle">Manuelle Freigabe erforderlich</string>
-    <string name="settings_hide_system_apps_title">System-Apps ausblenden</string>
-    <string name="settings_hide_system_apps_desc">System- und vorinstallierte Apps werden in den Listen und der Firewall ignoriert.</string>
+
+    <string name="settings_hide_system_apps_title" tools:ignore="MissingTranslation">System-Apps ausblenden</string>
+    <string name="settings_hide_system_apps_desc" tools:ignore="MissingTranslation">System- und vorinstallierte Apps werden in den Listen und der Firewall ignoriert.</string>
 
     <string name="metrics_title">Netzwerk-Metriken</string>
     <string name="metrics_description">Aktivieren Sie die Metrik-Erfassung, um den tatsächlichen Datenverkehr seltener Apps in den letzten 10 Minuten anzuzeigen. Ideal zum Debuggen von Firewall-Regeln.</string>
