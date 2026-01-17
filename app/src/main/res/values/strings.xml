@@ -13,7 +13,7 @@
     <string name="notification_disable_title">App wird deaktiviert</string>
     <string name="notification_disable_text">%1$s wurde seit %2$s nicht verwendet. Öffnen Sie die App-Info, um selbst zu deaktivieren oder zu deinstallieren.</string>
     <string name="notification_disable_recommendation_title">App längere Zeit ungenutzt</string>
-    <string name="notification_disable_recommendation_text">%1$s wurde seit mehreren Tagen nicht genutzt. Prüfen Sie die App-Info, falls Sie Speicher freigeben möchten.</string>
+    <string name="notification_disable_recommendation_text">%1$s wurde seit %2$s nicht genutzt. Prüfen Sie die App-Info, falls Sie Speicher freigeben möchten.</string>
     <string name="notification_channel_name">App-Nutzungsstatus</string>
     <string name="notification_channel_description">Benachrichtigungen zur automatischen Deaktivierung und Wiederherstellung von Apps.</string>
 

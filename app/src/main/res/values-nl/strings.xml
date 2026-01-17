@@ -10,7 +10,7 @@
     <string name="notification_disable_title">App wordt uitgeschakeld</string>
     <string name="notification_disable_text">%1$s is %2$s niet gebruikt. Open app-info om zelf uit te schakelen of te verwijderen.</string>
     <string name="notification_disable_recommendation_title">App lange tijd ongebruikt</string>
-    <string name="notification_disable_recommendation_text">%1$s is meerdere dagen niet gebruikt. Controleer app-info als je ruimte wilt vrijmaken.</string>
+    <string name="notification_disable_recommendation_text">%1$s is %2$s niet gebruikt. Controleer app-info als je ruimte wilt vrijmaken.</string>
     <string name="notification_channel_name">App-gebruiksstatus</string>
     <string name="notification_channel_description">Meldingen over automatische uitschakeling en herstel van apps.</string>
     <string name="empty_state_recent">Geen onlangs gebruikte apps.</string>

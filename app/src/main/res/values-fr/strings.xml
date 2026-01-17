@@ -10,7 +10,7 @@
     <string name="notification_disable_title">L\'application est en cours de dÃ©sactivation</string>
     <string name="notification_disable_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant %2$s. Ouvrez les infos de l\'application pour dÃ©sactiver ou dÃ©sinstaller vous-mÃªme.</string>
     <string name="notification_disable_recommendation_title">Application inutilisÃ©e depuis longtemps</string>
-    <string name="notification_disable_recommendation_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant plusieurs jours. VÃ©rifiez les infos de l\'application si vous souhaitez libÃ©rer de l\'espace.</string>
+    <string name="notification_disable_recommendation_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant %2$s. VÃ©rifiez les infos de l\'application si vous souhaitez libÃ©rer de l\'espace.</string>
     <string name="notification_channel_name">Ã‰tat d\'utilisation des applications</string>
     <string name="notification_channel_description">Notifications sur la dÃ©sactivation automatique et la restauration des applications.</string>
     <string name="empty_state_recent">Aucune application utilisÃ©e rÃ©cemment.</string>

@@ -13,7 +13,7 @@
     <string name="notification_disable_title">App is being disabled</string>
     <string name="notification_disable_text">%1$s has not been used for %2$s. Open app info to disable or uninstall yourself.</string>
     <string name="notification_disable_recommendation_title">App unused for a long time</string>
-    <string name="notification_disable_recommendation_text">%1$s has not been used for several days. Check app info if you want to free up storage.</string>
+    <string name="notification_disable_recommendation_text">%1$s has not been used for %2$s. Check app info if you want to free up storage.</string>
     <string name="notification_channel_name">App Usage Status</string>
     <string name="notification_channel_description">Notifications about automatic app deactivation and restoration.</string>
 

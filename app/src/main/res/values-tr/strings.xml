@@ -10,7 +10,7 @@
     <string name="notification_disable_title">Uygulama devre dÄ±ÅŸÄ± bÄ±rakÄ±lÄ±yor</string>
     <string name="notification_disable_text">%1$s %2$s boyunca kullanÄ±lmadÄ±. Kendiniz devre dÄ±ÅŸÄ± bÄ±rakmak veya kaldÄ±rmak iÃ§in uygulama bilgilerini aÃ§Ä±n.</string>
     <string name="notification_disable_recommendation_title">Uygulama uzun sÃ¼redir kullanÄ±lmadÄ±</string>
-    <string name="notification_disable_recommendation_text">%1$s birkaÃ§ gÃ¼ndÃ¼r kullanÄ±lmadÄ±. Yer aÃ§mak istiyorsanÄ±z uygulama bilgilerini kontrol edin.</string>
+    <string name="notification_disable_recommendation_text">%1$s %2$s boyunca kullanÄ±lmadÄ±. Yer aÃ§mak istiyorsanÄ±z uygulama bilgilerini kontrol edin.</string>
     <string name="notification_channel_name">Uygulama kullanÄ±m durumu</string>
     <string name="notification_channel_description">UygulamalarÄ±n otomatik devre dÄ±ÅŸÄ± bÄ±rakÄ±lmasÄ± ve geri yÃ¼klenmesi hakkÄ±nda bildirimler.</string>
     <string name="empty_state_recent">Son kullanÄ±lan uygulama yok.</string>
