@@ -8,7 +8,7 @@
     <string name="tab_rare">å¾ˆå°‘ä½¿ç”¨</string>
     <string name="action_open_app_info">æ‰“å¼€åº”ç”¨ä¿¡æ¯</string>
     <string name="notification_disable_title">åº”ç”¨æ­£åœ¨è¢«ç¦ç”¨</string>
-    <string name="notification_disable_text">%1$s å·²æœ‰ 4 å¤©æœªä½¿ç”¨ã€‚æ‰“å¼€åº”ç”¨ä¿¡æ¯è‡ªè¡Œç¦ç”¨æˆ–å¸è½½ã€‚</string>
+    <string name="notification_disable_text">%1$s å·²æœ‰ %2$s æœªä½¿ç”¨ã€‚æ‰“å¼€åº”ç”¨ä¿¡æ ¯è‡ªè¡Œç¦ ç”¨æˆ–å ¸è½½ã€‚</string>
     <string name="notification_disable_recommendation_title">åº”ç”¨é•¿æ—¶é—´æœªä½¿ç”¨</string>
     <string name="notification_disable_recommendation_text">%1$s å·²æœ‰å‡ å¤©æœªä½¿ç”¨ã€‚å¦‚æžœæ‚¨æƒ³é‡Šæ”¾å­˜å‚¨ç©ºé—´ï¼Œè¯·æ£€æŸ¥åº”ç”¨ä¿¡æ¯ã€‚</string>
     <string name="notification_channel_name">åº”ç”¨ä½¿ç”¨çŠ¶æ€</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">æœ€è¿‘ä½¿ç”¨</string>
     <string name="status_rare">å¾ˆå°‘ä½¿ç”¨</string>
     <string name="firewall_card_title">ç½‘ç»œé˜²ç«å¢™</string>
-    <string name="firewall_card_description">è‡ªåŠ¨é˜»æ­¢æ‚¨ 4 å¤©æœªæ‰“å¼€çš„åº”ç”¨çš„ç½‘ç»œè¿žæŽ¥ã€‚æ‚¨å¯ä»¥éšæ—¶æš‚åœæˆ–é‡æ–°å¯åŠ¨é˜²ç«å¢™ã€‚</string>
+    <string name="firewall_card_description">è‡ªåŠ¨é˜»æ­¢æ‚¨ %1$s æœªæ‰“å¼€çš„åº”ç”¨çš„ç½‘ç»œè¿žæŽ¥ã€‚æ‚¨å ¯ä»¥éš æ—¶æš‚å œæˆ–é‡ æ–°å ¯åŠ¨é˜²ç «å¢™ã€‚</string>
     <string name="firewall_switch_label">é˜²ç«å¢™æ¿€æ´»</string>
     <string name="firewall_switch_label_disabled">é˜²ç«å¢™æœªæ¿€æ´»</string>
     <string name="firewall_countdown_label">è‡ªåŠ¨é˜»æ­¢äºŽ: %1$s</string>

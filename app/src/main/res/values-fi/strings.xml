@@ -8,7 +8,7 @@
     <string name="tab_rare">Harvoin kÃ¤ytetty</string>
     <string name="action_open_app_info">Avaa sovellustiedot</string>
     <string name="notification_disable_title">Sovellus poistetaan kÃ¤ytÃ¶stÃ¤</string>
-    <string name="notification_disable_text">%1$s ei ole kÃ¤ytetty 4 pÃ¤ivÃ¤Ã¤n. Avaa sovellustiedot poistaaksesi kÃ¤ytÃ¶stÃ¤ tai asentaaksesi itse.</string>
+    <string name="notification_disable_text">%1$s ei ole kÃ¤ytetty %2$s. Avaa sovellustiedot poistaaksesi kÃ¤ytÃ¶stÃ¤ tai asentaaksesi itse.</string>
     <string name="notification_disable_recommendation_title">Sovellus kÃ¤yttÃ¤mÃ¤tÃ¶n pitkÃ¤Ã¤n</string>
     <string name="notification_disable_recommendation_text">%1$s ei ole kÃ¤ytetty useaan pÃ¤ivÃ¤Ã¤n. Tarkista sovellustiedot jos haluat vapauttaa tilaa.</string>
     <string name="notification_channel_name">Sovelluksen kÃ¤yttÃ¶tiedot</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Ã„skettÃ¤in kÃ¤ytetty</string>
     <string name="status_rare">Harvoin kÃ¤ytetty</string>
     <string name="firewall_card_title">Verkkovarustus</string>
-    <string name="firewall_card_description">EstÃ¤Ã¤ automaattisesti verkkoyhteydet sovelluksista, joita et ole avannut 4 pÃ¤ivÃ¤Ã¤n. Voit keskeyttÃ¤Ã¤ tai kÃ¤ynnistÃ¤Ã¤ varustuksen uudelleen milloin tahansa.</string>
+    <string name="firewall_card_description">EstÃ¤Ã¤ automaattisesti verkkoyhteydet sovelluksista, joita et ole avannut %1$s. Voit keskeyttÃ¤Ã¤ tai kÃ¤ynnistÃ¤Ã¤ varustuksen uudelleen milloin tahansa.</string>
     <string name="firewall_switch_label">Varustus aktiivinen</string>
     <string name="firewall_switch_label_disabled">Varustus passiivinen</string>
     <string name="firewall_countdown_label">Automaattinen esto: %1$s</string>

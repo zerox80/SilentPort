@@ -19,7 +19,8 @@ object NotificationHelper {
         context: Context,
         appLabel: String,
         packageName: String,
-        isRecommendation: Boolean
+        isRecommendation: Boolean,
+        durationMillis: Long
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val hasPermission = ContextCompat.checkSelfPermission(
@@ -53,10 +54,12 @@ object NotificationHelper {
             pendingIntentFlags
         )
 
+        val durationLabel = com.silentport.silentport.ui.formatDuration(context, durationMillis)
+
         val builder = NotificationCompat.Builder(context, UsageSyncWorker.NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_notify)
             .setContentTitle(context.getString(titleRes))
-            .setContentText(context.getString(textRes, appLabel))
+            .setContentText(context.getString(textRes, appLabel, durationLabel))
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)

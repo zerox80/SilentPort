@@ -8,7 +8,7 @@
     <string name="tab_rare">Zelden gebruikt</string>
     <string name="action_open_app_info">App-info openen</string>
     <string name="notification_disable_title">App wordt uitgeschakeld</string>
-    <string name="notification_disable_text">%1$s is 4 dagen niet gebruikt. Open app-info om zelf uit te schakelen of te verwijderen.</string>
+    <string name="notification_disable_text">%1$s is %2$s niet gebruikt. Open app-info om zelf uit te schakelen of te verwijderen.</string>
     <string name="notification_disable_recommendation_title">App lange tijd ongebruikt</string>
     <string name="notification_disable_recommendation_text">%1$s is meerdere dagen niet gebruikt. Controleer app-info als je ruimte wilt vrijmaken.</string>
     <string name="notification_channel_name">App-gebruiksstatus</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Onlangs gebruikt</string>
     <string name="status_rare">Zelden gebruikt</string>
     <string name="firewall_card_title">Netwerk-firewall</string>
-    <string name="firewall_card_description">Blokkeert automatisch netwerkverbindingen van apps die je 4 dagen niet hebt geopend. Je kunt de firewall op elk moment pauzeren of herstarten.</string>
+    <string name="firewall_card_description">Blokkeert automatisch netwerkverbindingen van apps die je %1$s niet hebt geopend. Je kunt de firewall op elk moment pauzeren of herstarten.</string>
     <string name="firewall_switch_label">Firewall actief</string>
     <string name="firewall_switch_label_disabled">Firewall inactief</string>
     <string name="firewall_countdown_label">Automatische blokkering over: %1$s</string>

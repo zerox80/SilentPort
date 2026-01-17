@@ -8,7 +8,7 @@
     <string name="tab_rare">Sjelden brukt</string>
     <string name="action_open_app_info">Ã…pne app-info</string>
     <string name="notification_disable_title">Appen deaktiveres</string>
-    <string name="notification_disable_text">%1$s har ikke blitt brukt pÃ¥ 4 dager. Ã…pne app-info for Ã¥ deaktivere eller avinstallere selv.</string>
+    <string name="notification_disable_text">%1$s har ikke blitt brukt pÃ¥ %2$s. Ã…pne app-info for Ã¥ deaktivere eller avinstallere selv.</string>
     <string name="notification_disable_recommendation_title">App ubrukt lenge</string>
     <string name="notification_disable_recommendation_text">%1$s har ikke blitt brukt pÃ¥ flere dager. Sjekk app-info hvis du vil frigjÃ¸re plass.</string>
     <string name="notification_channel_name">App-bruksstatus</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Brukt nylig</string>
     <string name="status_rare">Sjelden brukt</string>
     <string name="firewall_card_title">Nettverks-brannmur</string>
-    <string name="firewall_card_description">Blokkerer automatisk nettverksforbindelser fra apper du ikke har Ã¥pnet pÃ¥ 4 dager. Du kan pause eller starte brannmuren pÃ¥ nytt nÃ¥r som helst.</string>
+    <string name="firewall_card_description">Blokkerer automatisk nettverksforbindelser fra apper du ikke har Ã¥pnet pÃ¥ %1$s. Du kan pause eller starte brannmuren pÃ¥ nytt nÃ¥r som helst.</string>
     <string name="firewall_switch_label">Brannmur aktiv</string>
     <string name="firewall_switch_label_disabled">Brannmur inaktiv</string>
     <string name="firewall_countdown_label">Automatisk blokkering om: %1$s</string>

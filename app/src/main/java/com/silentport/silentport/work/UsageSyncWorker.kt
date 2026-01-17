@@ -7,6 +7,8 @@ import androidx.work.WorkerParameters
 import com.silentport.silentport.SilentPortApp
 import com.silentport.silentport.util.UsagePermissionChecker
 
+import com.silentport.silentport.notifications.NotificationHelper
+
 class UsageSyncWorker(
     appContext: Context,
     workerParams: WorkerParameters
@@ -25,6 +27,28 @@ class UsageSyncWorker(
         return runCatching {
             val evaluation = container.usageAnalyzer.evaluateUsage()
             container.usageRepository.applyEvaluation(evaluation)
+
+            val usagePolicy = container.usagePolicy
+            
+            evaluation.appsToNotify.forEach { entity ->
+                NotificationHelper.showDisableReminderNotification(
+                    context,
+                    entity.appLabel,
+                    entity.packageName,
+                    isRecommendation = false,
+                    durationMillis = usagePolicy.warningThresholdMillis
+                )
+            }
+            
+            evaluation.appsForDisableRecommendation.forEach { entity ->
+                NotificationHelper.showDisableReminderNotification(
+                    context,
+                    entity.appLabel,
+                    entity.packageName,
+                    isRecommendation = true,
+                    durationMillis = usagePolicy.disableThresholdMillis
+                )
+            }
 
             Result.success()
         }.getOrElse { throwable ->

@@ -8,7 +8,7 @@
     <string name="tab_rare">SÃ¤llan anvÃ¤nd</string>
     <string name="action_open_app_info">Ã–ppna app-info</string>
     <string name="notification_disable_title">Appen inaktiveras</string>
-    <string name="notification_disable_text">%1$s har inte anvÃ¤nts pÃ¥ 4 dagar. Ã–ppna app-info fÃ¶r att sjÃ¤lv inaktivera eller avinstallera.</string>
+    <string name="notification_disable_text">%1$s har inte anvÃ¤nts pÃ¥ %2$s. Ã–ppna app-info fÃ¶r att sjÃ¤lv inaktivera eller avinstallera.</string>
     <string name="notification_disable_recommendation_title">App oanvÃ¤nd lÃ¤nge</string>
     <string name="notification_disable_recommendation_text">%1$s har inte anvÃ¤nts pÃ¥ flera dagar. Kontrollera app-info om du vill frigÃ¶ra utrymme.</string>
     <string name="notification_channel_name">App-anvÃ¤ndningsstatus</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">AnvÃ¤nd nyligen</string>
     <string name="status_rare">SÃ¤llan anvÃ¤nd</string>
     <string name="firewall_card_title">NÃ¤tverks-brandvÃ¤gg</string>
-    <string name="firewall_card_description">Blockerar automatiskt nÃ¤tverksanslutningar frÃ¥n appar du inte har Ã¶ppnat pÃ¥ 4 dagar. Du kan pausa eller starta om brandvÃ¤ggen nÃ¤r som helst.</string>
+    <string name="firewall_card_description">Blockerar automatiskt nÃ¤tverksanslutningar frÃ¥n appar du inte har Ã¶ppnat pÃ¥ %1$s. Du kan pausa eller starta om brandvÃ¤ggen nÃ¤r som helst.</string>
     <string name="firewall_switch_label">BrandvÃ¤gg aktiv</string>
     <string name="firewall_switch_label_disabled">BrandvÃ¤gg inaktiv</string>
     <string name="firewall_countdown_label">Automatisk blockering om: %1$s</string>

@@ -17,7 +17,7 @@ class AppContainer(context: Context) {
     private val database: AppDatabase = AppDatabase.getInstance(appContext)
     private val trackedAppDao = database.trackedAppDao()
 
-    private val usagePolicy: UsagePolicy = UsagePolicy()
+    val usagePolicy: UsagePolicy = UsagePolicy()
 
     val usageAnalyzer: UsageAnalyzer = UsageAnalyzer(appContext, trackedAppDao, usagePolicy)
     val applicationManager: ApplicationManager = ApplicationManager(appContext, trackedAppDao)

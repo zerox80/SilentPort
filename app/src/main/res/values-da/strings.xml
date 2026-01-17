@@ -8,7 +8,7 @@
     <string name="tab_rare">SjÃ¦ldent brugt</string>
     <string name="action_open_app_info">Ã…bn app-info</string>
     <string name="notification_disable_title">Appen deaktiveres</string>
-    <string name="notification_disable_text">%1$s er ikke blevet brugt i 4 dage. Ã…bn app-info for at deaktivere eller afinstallere selv.</string>
+    <string name="notification_disable_text">%1$s er ikke blevet brugt i %2$s. Ã…bn app-info for at deaktivere eller afinstallere selv.</string>
     <string name="notification_disable_recommendation_title">App ubrugt i lang tid</string>
     <string name="notification_disable_recommendation_text">%1$s er ikke blevet brugt i flere dage. Tjek app-info hvis du vil frigÃ¸re plads.</string>
     <string name="notification_channel_name">App-brugsstatus</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Brugt for nylig</string>
     <string name="status_rare">SjÃ¦ldent brugt</string>
     <string name="firewall_card_title">NetvÃ¦rks-firewall</string>
-    <string name="firewall_card_description">Blokerer automatisk netvÃ¦rksforbindelser fra apps, du ikke har Ã¥bnet i 4 dage. Du kan sÃ¦tte firewall pÃ¥ pause eller genstarte det nÃ¥r som helst.</string>
+    <string name="firewall_card_description">Blokerer automatisk netvÃ¦rksforbindelser fra apps, du ikke har Ã¥bnet i %1$s. Du kan sÃ¦tte firewall pÃ¥ pause eller genstarte det nÃ¥r som helst.</string>
     <string name="firewall_switch_label">Firewall aktiv</string>
     <string name="firewall_switch_label_disabled">Firewall inaktiv</string>
     <string name="firewall_countdown_label">Automatisk blokering om: %1$s</string>

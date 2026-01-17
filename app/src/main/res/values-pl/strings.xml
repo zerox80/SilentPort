@@ -8,7 +8,7 @@
     <string name="tab_rare">UÅ¼ywane rzadko</string>
     <string name="action_open_app_info">OtwÃ³rz informacje o aplikacji</string>
     <string name="notification_disable_title">Aplikacja jest wyÅ‚Ä…czana</string>
-    <string name="notification_disable_text">%1$s nie byÅ‚ uÅ¼ywany przez 4 dni. OtwÃ³rz informacje o aplikacji, aby samodzielnie wyÅ‚Ä…czyÄ‡ lub odinstalowaÄ‡.</string>
+    <string name="notification_disable_text">%1$s nie byÅ‚ uÅ¼ywany przez %2$s. OtwÃ³rz informacje o aplikacji, aby samodzielnie wyÅ‚Ä…czyÄ‡ lub odinstalowaÄ‡.</string>
     <string name="notification_disable_recommendation_title">Aplikacja nieuÅ¼ywana przez dÅ‚ugi czas</string>
     <string name="notification_disable_recommendation_text">%1$s nie byÅ‚ uÅ¼ywany przez kilka dni. SprawdÅº informacje o aplikacji, jeÅ›li chcesz zwolniÄ‡ miejsce.</string>
     <string name="notification_channel_name">Status uÅ¼ytkowania aplikacji</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">UÅ¼ywane ostatnio</string>
     <string name="status_rare">UÅ¼ywane rzadko</string>
     <string name="firewall_card_title">Firewall sieciowy</string>
-    <string name="firewall_card_description">Automatycznie blokuje poÅ‚Ä…czenia sieciowe aplikacji, ktÃ³rych nie otwieraÅ‚eÅ› przez 4 dni. MoÅ¼esz wstrzymaÄ‡ lub ponownie uruchomiÄ‡ firewall w dowolnym momencie.</string>
+    <string name="firewall_card_description">Automatycznie blokuje poÅ‚Ä…czenia sieciowe aplikacji, ktÃ³rych nie otwieraÅ‚eÅ› przez %1$s. MoÅ¼esz wstrzymaÄ‡ lub ponownie uruchomiÄ‡ firewall w dowolnym momencie.</string>
     <string name="firewall_switch_label">Firewall aktywny</string>
     <string name="firewall_switch_label_disabled">Firewall nieaktywny</string>
     <string name="firewall_countdown_label">Automatyczne blokowanie za: %1$s</string>

@@ -8,7 +8,7 @@
     <string name="tab_rare">UtilisÃ© rarement</string>
     <string name="action_open_app_info">Ouvrir les infos de l\'application</string>
     <string name="notification_disable_title">L\'application est en cours de dÃ©sactivation</string>
-    <string name="notification_disable_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant 4 jours. Ouvrez les infos de l\'application pour dÃ©sactiver ou dÃ©sinstaller vous-mÃªme.</string>
+    <string name="notification_disable_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant %2$s. Ouvrez les infos de l\'application pour dÃ©sactiver ou dÃ©sinstaller vous-mÃªme.</string>
     <string name="notification_disable_recommendation_title">Application inutilisÃ©e depuis longtemps</string>
     <string name="notification_disable_recommendation_text">%1$s n\'a pas Ã©tÃ© utilisÃ© pendant plusieurs jours. VÃ©rifiez les infos de l\'application si vous souhaitez libÃ©rer de l\'espace.</string>
     <string name="notification_channel_name">Ã‰tat d\'utilisation des applications</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">UtilisÃ© rÃ©cemment</string>
     <string name="status_rare">UtilisÃ© rarement</string>
     <string name="firewall_card_title">Pare-feu rÃ©seau</string>
-    <string name="firewall_card_description">Bloque automatiquement les connexions rÃ©seau des applications que vous n\'avez pas ouvertes depuis 4 jours. Vous pouvez mettre en pause ou redÃ©marrer le pare-feu Ã  tout moment.</string>
+    <string name="firewall_card_description">Bloque automatiquement les connexions rÃ©seau des applications que vous n\'avez pas ouvertes depuis %1$s. Vous pouvez mettre en pause ou redÃ©marrer le pare-feu Ã  tout moment.</string>
     <string name="firewall_switch_label">Pare-feu actif</string>
     <string name="firewall_switch_label_disabled">Pare-feu inactif</string>
     <string name="firewall_countdown_label">Blocage automatique dans: %1$s</string>

@@ -8,7 +8,7 @@
     <string name="tab_rare">Nadir kullanÄ±lan</string>
     <string name="action_open_app_info">Uygulama bilgilerini aÃ§</string>
     <string name="notification_disable_title">Uygulama devre dÄ±ÅŸÄ± bÄ±rakÄ±lÄ±yor</string>
-    <string name="notification_disable_text">%1$s 4 gÃ¼ndÃ¼r kullanÄ±lmadÄ±. Kendiniz devre dÄ±ÅŸÄ± bÄ±rakmak veya kaldÄ±rmak iÃ§in uygulama bilgilerini aÃ§Ä±n.</string>
+    <string name="notification_disable_text">%1$s %2$s boyunca kullanÄ±lmadÄ±. Kendiniz devre dÄ±ÅŸÄ± bÄ±rakmak veya kaldÄ±rmak iÃ§in uygulama bilgilerini aÃ§Ä±n.</string>
     <string name="notification_disable_recommendation_title">Uygulama uzun sÃ¼redir kullanÄ±lmadÄ±</string>
     <string name="notification_disable_recommendation_text">%1$s birkaÃ§ gÃ¼ndÃ¼r kullanÄ±lmadÄ±. Yer aÃ§mak istiyorsanÄ±z uygulama bilgilerini kontrol edin.</string>
     <string name="notification_channel_name">Uygulama kullanÄ±m durumu</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Son kullanÄ±lan</string>
     <string name="status_rare">Nadir kullanÄ±lan</string>
     <string name="firewall_card_title">AÄŸ gÃ¼venlik duvarÄ±</string>
-    <string name="firewall_card_description">4 gÃ¼ndÃ¼r aÃ§madÄ±ÄŸÄ±nÄ±z uygulamalarÄ±n aÄŸ baÄŸlantÄ±larÄ±nÄ± otomatik olarak engeller. GÃ¼venlik duvarÄ±nÄ± istediÄŸiniz zaman duraklatabilir veya yeniden baÅŸlatabilirsiniz.</string>
+    <string name="firewall_card_description">%1$s boyunca aÃ§madÄ±ÄŸÄ±nÄ±z uygulamalarÄ±n aÄŸ baÄŸlantÄ±larÄ±nÄ± otomatik olarak engeller. GÃ¼venlik duvarÄ±nÄ± istediÄŸiniz zaman duraklatabilir veya yeniden baÅŸlatabilirsiniz.</string>
     <string name="firewall_switch_label">GÃ¼venlik duvarÄ± aktif</string>
     <string name="firewall_switch_label_disabled">GÃ¼venlik duvarÄ± pasif</string>
     <string name="firewall_countdown_label">Otomatik engelleme: %1$s iÃ§inde</string>

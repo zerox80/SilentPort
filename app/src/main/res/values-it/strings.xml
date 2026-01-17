@@ -8,7 +8,7 @@
     <string name="tab_rare">Utilizzato raramente</string>
     <string name="action_open_app_info">Apri informazioni app</string>
     <string name="notification_disable_title">L\'app sta per essere disabilitata</string>
-    <string name="notification_disable_text">%1$s non Ã¨ stato utilizzato per 4 giorni. Apri le informazioni dell\'app per disabilitare o disinstallare manualmente.</string>
+    <string name="notification_disable_text">%1$s non Ã¨ stato utilizzato per %2$s. Apri le informazioni dell\'app per disabilitare o disinstallare manualmente.</string>
     <string name="notification_disable_recommendation_title">App inutilizzata per molto tempo</string>
     <string name="notification_disable_recommendation_text">%1$s non Ã¨ stato utilizzato per diversi giorni. Controlla le informazioni dell\'app se desideri liberare spazio.</string>
     <string name="notification_channel_name">Stato utilizzo app</string>
@@ -30,7 +30,7 @@
     <string name="status_recent">Utilizzato di recente</string>
     <string name="status_rare">Utilizzato raramente</string>
     <string name="firewall_card_title">Firewall di rete</string>
-    <string name="firewall_card_description">Blocca automaticamente le connessioni di rete delle app che non hai aperto per 4 giorni. Puoi mettere in pausa o riavviare il firewall in qualsiasi momento.</string>
+    <string name="firewall_card_description">Blocca automaticamente le connessioni di rete delle app che non hai aperto per %1$s. Puoi mettere in pausa o riavviare il firewall in qualsiasi momento.</string>
     <string name="firewall_switch_label">Firewall attivo</string>
     <string name="firewall_switch_label_disabled">Firewall inattivo</string>
     <string name="firewall_countdown_label">Blocco automatico tra: %1$s</string>
