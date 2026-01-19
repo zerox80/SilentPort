@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import com.silentport.silentport.data.local.TrackedAppDao
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -61,7 +62,7 @@ class UsageAnalyzerTest {
     @Test
     fun `evaluateUsage returns evaluation`() = runTest {
         // Mock data
-        every { trackedAppDao.getAll() } returns emptyList()
+        coEvery { trackedAppDao.getAll() } returns emptyList()
         
         // Mock Installed Apps
         val appInfo = ApplicationInfo().apply {

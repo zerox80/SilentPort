@@ -7,8 +7,8 @@ import com.silentport.silentport.domain.ApplicationManager
 import com.silentport.silentport.domain.UsageAnalyzer
 import com.silentport.silentport.domain.UsageEvaluation
 import com.silentport.silentport.firewall.FirewallController
-import com.silentport.silentport.firewall.FirewallState
-import com.silentport.silentport.settings.SettingsPreferences
+import com.silentport.silentport.ui.state.FirewallUiState
+import com.silentport.silentport.settings.AppSettingsPreferences
 import com.silentport.silentport.settings.SettingsPreferencesDataSource
 import com.silentport.silentport.util.UsagePermissionChecker
 import io.mockk.MockKAnnotations
@@ -69,7 +69,7 @@ class MainViewModelTest {
         
         // Mock Settings flow
         every { settingsPreferences.preferencesFlow } returns flowOf(
-            SettingsPreferences(
+            AppSettingsPreferences(
                 allowDurationMillis = TimeUnit.MINUTES.toMillis(10),
                 metricsEnabled = false,
                 manualFirewallUnblock = false,
@@ -79,7 +79,7 @@ class MainViewModelTest {
         )
         
         // Mock Firewall state
-        every { firewallController.state } returns MutableStateFlow(FirewallState())
+        every { firewallController.state } returns MutableStateFlow(FirewallUiState())
         
         // Mock UsageRepository flows
         every { usageRepository.observeStatus(AppUsageStatus.RECENT) } returns flowOf(emptyList())
