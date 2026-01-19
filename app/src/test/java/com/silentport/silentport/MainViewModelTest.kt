@@ -92,6 +92,7 @@ class MainViewModelTest {
             appsToNotify = emptyList(),
             appsForDisableRecommendation = emptyList()
         )
+        every { usageAnalyzer.updatePolicyThresholds(any()) } returns false
         
         // Mock Repo apply
         coEvery { usageRepository.applyEvaluation(any()) } returns Unit
@@ -99,6 +100,14 @@ class MainViewModelTest {
         // Mock Context calls in init (getPackageManager etc)
         every { context.packageManager } returns mockk()
         every { context.getSystemService(any<Class<Any>>()) } returns null // NetworkStatsManager
+        every { context.packageName } returns "com.silentport.silentport"
+        
+        // Mock Firewall updateBlockedPackages (called during init via syncFirewallBlockList)
+        coEvery { firewallController.updateBlockedPackages(any()) } returns Unit
+        coEvery { firewallController.updateWhitelistedPackages(any()) } returns Unit
+        
+        // Mock settings update methods
+        coEvery { settingsPreferences.setAllowDurationMillis(any()) } returns Unit
     }
 
     @After
