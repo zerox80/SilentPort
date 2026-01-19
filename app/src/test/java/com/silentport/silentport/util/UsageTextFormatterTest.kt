@@ -25,7 +25,8 @@ class UsageTextFormatterTest {
         mockkStatic(DateUtils::class)
         every { context.getString(R.string.last_used_never) } returns "Never used"
         every { context.getString(R.string.last_used_format, *anyVararg()) } answers { 
-            "Last used: ${args[1]}" 
+            val varargs = args[1] as Array<*>
+            "Last used: ${varargs[0]}" 
         }
     }
 

@@ -1,6 +1,7 @@
 package com.silentport.silentport
 
 import android.content.Context
+import android.util.Log
 import com.silentport.silentport.data.local.AppUsageStatus
 import com.silentport.silentport.data.repository.UsageRepository
 import com.silentport.silentport.domain.ApplicationManager
@@ -63,6 +64,14 @@ class MainViewModelTest {
         MockKAnnotations.init(this)
         Dispatchers.setMain(testDispatcher)
 
+        // Mock android.util.Log static methods
+        mockkStatic(Log::class)
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.v(any(), any()) } returns 0
+        
         // Mock UsagePermissionChecker static
         mockkObject(UsagePermissionChecker)
         every { UsagePermissionChecker.isUsageAccessGranted(any()) } returns true
