@@ -199,4 +199,100 @@ class MainViewModelTest {
         
         coVerify { firewallController.updateWhitelistedPackages(match { it.contains(pkg) }) }
     }
+    
+    @Test
+    fun `removeFromWhitelist updates controller`() = runTest {
+        // First add a package to whitelist
+        every { firewallController.state } returns MutableStateFlow(
+            FirewallUiState(whitelistedPackages = setOf("com.example.app"))
+        )
+        
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        val pkg = "com.example.app"
+        coEvery { firewallController.updateWhitelistedPackages(any()) } returns Unit
+        
+        viewModel.removeFromWhitelist(pkg)
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { firewallController.updateWhitelistedPackages(match { !it.contains(pkg) }) }
+    }
+    
+    @Test
+    fun `blockNow triggers controller`() = runTest {
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coEvery { firewallController.blockNow(any()) } returns Unit
+        
+        viewModel.blockNow()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { firewallController.blockNow(any()) }
+    }
+    
+    @Test
+    fun `allowForConfiguredDuration triggers controller`() = runTest {
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coEvery { firewallController.allowForDuration(any(), any()) } returns Unit
+        
+        viewModel.allowForConfiguredDuration()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { firewallController.allowForDuration(any(), any()) }
+    }
+    
+    @Test
+    fun `setMetricsEnabled updates settings`() = runTest {
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coEvery { settingsPreferences.setMetricsEnabled(any()) } returns Unit
+        
+        viewModel.setMetricsEnabled(true)
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { settingsPreferences.setMetricsEnabled(true) }
+    }
+    
+    @Test
+    fun `setManualFirewallUnblock updates settings`() = runTest {
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coEvery { settingsPreferences.setManualFirewallUnblock(any()) } returns Unit
+        coEvery { firewallController.applyManualBlockList(any()) } returns Unit
+        
+        viewModel.setManualFirewallUnblock(true)
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { settingsPreferences.setManualFirewallUnblock(true) }
+    }
+    
+    @Test
+    fun `setHideSystemApps updates settings`() = runTest {
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coEvery { settingsPreferences.setHideSystemApps(any()) } returns Unit
+        
+        viewModel.setHideSystemApps(true)
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        coVerify { settingsPreferences.setHideSystemApps(true) }
+    }
+    
+    @Test
+    fun `refreshUsage without permission sets correct state`() = runTest {
+        every { UsagePermissionChecker.isUsageAccessGranted(any()) } returns false
+        
+        createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        
+        val state = viewModel.uiState.value
+        org.junit.Assert.assertFalse(state.usagePermissionGranted)
+    }
 }

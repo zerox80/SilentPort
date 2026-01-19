@@ -94,4 +94,46 @@ class UsagePolicyTest {
         val changed = policy.updateThresholds(initialDisable)
         assertFalse("Should return false when values don't change", changed)
     }
+    
+    @Test
+    fun `thresholds maintain correct order after update`() {
+        val policy = UsagePolicy()
+        val duration = TimeUnit.DAYS.toMillis(10)
+        
+        policy.updateThresholds(duration)
+        
+        // Warning should be less than or equal to disable
+        assertTrue(
+            "Warning should be <= disable",
+            policy.warningThresholdMillis <= policy.disableThresholdMillis
+        )
+    }
+    
+    @Test
+    fun `negative duration is sanitized to minimum`() {
+        val policy = UsagePolicy()
+        val negativeDuration = -1000L
+        val minThreshold = TimeUnit.MINUTES.toMillis(1)
+        
+        policy.updateThresholds(negativeDuration)
+        
+        // All thresholds should be at minimum
+        assertTrue(
+            "All thresholds should be at or above minimum",
+            policy.disableThresholdMillis >= minThreshold &&
+            policy.warningThresholdMillis >= minThreshold &&
+            policy.recentThresholdMillis >= minThreshold
+        )
+    }
+    
+    @Test
+    fun `very large duration is accepted`() {
+        val policy = UsagePolicy()
+        val largeDuration = TimeUnit.DAYS.toMillis(365)
+        
+        val changed = policy.updateThresholds(largeDuration)
+        
+        assertTrue("Large duration should be accepted and change values", changed)
+        assertEquals(largeDuration, policy.disableThresholdMillis)
+    }
 }

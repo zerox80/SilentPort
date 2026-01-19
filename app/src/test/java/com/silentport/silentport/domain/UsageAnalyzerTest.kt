@@ -75,4 +75,35 @@ class UsageAnalyzerTest {
         val result = analyzer.updatePolicyThresholds(100L)
         assertTrue(!result)
     }
+    
+    @Test
+    fun `analyzer is properly initialized with dependencies`() {
+        assertNotNull(analyzer)
+    }
+    
+    @Test
+    fun `policy thresholds are accessible`() {
+        val recentThreshold = usagePolicy.recentThresholdMillis
+        val warningThreshold = usagePolicy.warningThresholdMillis
+        val disableThreshold = usagePolicy.disableThresholdMillis
+        
+        assertNotNull(recentThreshold)
+        assertNotNull(warningThreshold)
+        assertNotNull(disableThreshold)
+    }
+    
+    @Test
+    fun `updatePolicyThresholds with zero value returns result`() {
+        every { usagePolicy.updateThresholds(0L) } returns true
+        val result = analyzer.updatePolicyThresholds(0L)
+        assertTrue(result)
+    }
+    
+    @Test
+    fun `updatePolicyThresholds with large value returns result`() {
+        val largeValue = TimeUnit.DAYS.toMillis(365)
+        every { usagePolicy.updateThresholds(largeValue) } returns true
+        val result = analyzer.updatePolicyThresholds(largeValue)
+        assertTrue(result)
+    }
 }
