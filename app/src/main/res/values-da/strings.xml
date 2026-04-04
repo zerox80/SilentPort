@@ -54,7 +54,14 @@
     <string name="settings_title">Firewall-indstillinger</string>
     <string name="settings_description">Indstil, hvor lÃ¦nge firewall tillader forbindelser, fÃ¸r sjÃ¦ldent brugte apps blokeres igen.</string>
     <string name="settings_current_duration">NuvÃ¦rende: %1$s</string>
-    <string name="settings_duration_subtitle">Tryk pÃ¥ en mulighed for at anvende.</string>
+    <string name="settings_duration_subtitle">Indtast din ønskede varighed</string>
+    <string name="settings_custom_duration_hint">Antal</string>
+    <string name="settings_apply_duration">Anvend</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Tim</string>
+    <string name="unit_days">Dage</string>
+    <string name="unit_weeks">Uger</string>
+    <string name="unit_months">Mdr</string>
     <string name="settings_manual_firewall_title">Manuel blokeringskontrol</string>
     <string name="settings_manual_firewall_description">NÃ¥r aktiveret, forbliver blokerede apps blokeret, indtil du manuelt fjerner blokeringen her. Ã…bning af en app fjerner ikke blokeringen automatisk.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Ingen sjÃ¦ldent brugte apps fundet.</string>
     <string name="metrics_traffic_title">Trafik (sidste 10 minutter)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Måned</item>
+        <item quantity="other">%d Måneder</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Uge</item>
+        <item quantity="other">%d Uger</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Dag</item>
         <item quantity="other">%d Dage</item>

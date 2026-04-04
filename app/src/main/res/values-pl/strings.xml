@@ -54,7 +54,14 @@
     <string name="settings_title">Ustawienia firewall</string>
     <string name="settings_description">Ustaw, jak dÅ‚ugo firewall pozwala na poÅ‚Ä…czenia przed ponownym zablokowaniem rzadko uÅ¼ywanych aplikacji.</string>
     <string name="settings_current_duration">Obecny: %1$s</string>
-    <string name="settings_duration_subtitle">Dotknij opcji, aby zastosowaÄ‡.</string>
+    <string name="settings_duration_subtitle">Wprowadź żądany czas trwania</string>
+    <string name="settings_custom_duration_hint">Ilość</string>
+    <string name="settings_apply_duration">Zastosuj</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Godz</string>
+    <string name="unit_days">Dni</string>
+    <string name="unit_weeks">Tyg</string>
+    <string name="unit_months">Mies</string>
     <string name="settings_manual_firewall_title">RÄ™czna kontrola blokowania</string>
     <string name="settings_manual_firewall_description">Gdy wÅ‚Ä…czone, zablokowane aplikacje pozostajÄ… zablokowane, dopÃ³ki nie odblokujesz ich rÄ™cznie tutaj. Otwarcie aplikacji nie usuwa blokady automatycznie.</string>
 
@@ -67,6 +74,18 @@
     <string name="metrics_empty_list">Nie znaleziono rzadko uÅ¼ywanych aplikacji.</string>
     <string name="metrics_traffic_title">Ruch (ostatnie 10 minut)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Miesiąc</item>
+        <item quantity="few">%d Miesiące</item>
+        <item quantity="many">%d Miesięcy</item>
+        <item quantity="other">%d Miesięcy</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Tydzień</item>
+        <item quantity="few">%d Tygodnie</item>
+        <item quantity="many">%d Tygodni</item>
+        <item quantity="other">%d Tygodni</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d DzieÅ„</item>
         <item quantity="many">%d Dni</item>

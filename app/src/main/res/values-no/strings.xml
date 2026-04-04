@@ -54,7 +54,14 @@
     <string name="settings_title">Brannmur-innstillinger</string>
     <string name="settings_description">Still inn hvor lenge brannmuren tillater forbindelser fÃ¸r sjelden brukte apper blokkeres igjen.</string>
     <string name="settings_current_duration">NÃ¥vÃ¦rende: %1$s</string>
-    <string name="settings_duration_subtitle">Trykk pÃ¥ et alternativ for Ã¥ bruke.</string>
+    <string name="settings_duration_subtitle">Angi ønsket varighet</string>
+    <string name="settings_custom_duration_hint">Antall</string>
+    <string name="settings_apply_duration">Bruk</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Tim</string>
+    <string name="unit_days">Dgr</string>
+    <string name="unit_weeks">Ukr</string>
+    <string name="unit_months">Mnd</string>
     <string name="settings_manual_firewall_title">Manuell blokkeringskontroll</string>
     <string name="settings_manual_firewall_description">NÃ¥r aktivert forblir blokkerte apper blokkert til du manuelt fjerner blokkeringen her. Ã…pning av en app fjerner ikke blokkeringen automatisk.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Ingen sjelden brukte apper funnet.</string>
     <string name="metrics_traffic_title">Trafikk (siste 10 minutter)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Måned</item>
+        <item quantity="other">%d Måneder</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Uke</item>
+        <item quantity="other">%d Uker</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Dag</item>
         <item quantity="other">%d Dager</item>

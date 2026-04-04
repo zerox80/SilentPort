@@ -54,7 +54,14 @@
     <string name="settings_title">Impostazioni firewall</string>
     <string name="settings_description">Imposta per quanto tempo il firewall consente connessioni prima di bloccare nuovamente le app utilizzate raramente.</string>
     <string name="settings_current_duration">Attuale: %1$s</string>
-    <string name="settings_duration_subtitle">Tocca un\'opzione per applicarla.</string>
+    <string name="settings_duration_subtitle">Inserisci la durata desiderata</string>
+    <string name="settings_custom_duration_hint">Quantità</string>
+    <string name="settings_apply_duration">Applica</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Ore</string>
+    <string name="unit_days">Gg</string>
+    <string name="unit_weeks">Sett</string>
+    <string name="unit_months">Mesi</string>
     <string name="settings_manual_firewall_title">Controllo blocco manuale</string>
     <string name="settings_manual_firewall_description">Se attivato, le app bloccate rimangono bloccate fino a quando non le sblocchi manualmente qui. L\'apertura di un\'app non rimuove il blocco automaticamente.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Nessuna app utilizzata raramente trovata.</string>
     <string name="metrics_traffic_title">Traffico (ultimi 10 minuti)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Mese</item>
+        <item quantity="other">%d Mesi</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Settimana</item>
+        <item quantity="other">%d Settimane</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Giorno</item>
         <item quantity="other">%d Giorni</item>

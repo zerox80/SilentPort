@@ -79,7 +79,14 @@
     <string name="settings_description">Set how long the firewall allows connections before blocking rarely used apps again.</string>
 
     <string name="settings_current_duration">Current: %1$s</string>
-    <string name="settings_duration_subtitle">Tap an option to apply it.</string>
+    <string name="settings_duration_subtitle">Enter your desired duration</string>
+    <string name="settings_custom_duration_hint">Amount</string>
+    <string name="settings_apply_duration">Apply</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Hrs</string>
+    <string name="unit_days">Days</string>
+    <string name="unit_weeks">Wks</string>
+    <string name="unit_months">Mon</string>
     <string name="settings_manual_firewall_title">Manual Block Control</string>
     <string name="settings_manual_firewall_description">When enabled, blocked apps remain blocked until you manually unblock them here. Opening an app does not automatically lift the block.</string>
 
@@ -93,6 +100,14 @@
     <string name="metrics_empty_list">No rarely used apps found.</string>
     <string name="metrics_traffic_title">Traffic (last 10 minutes)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Month</item>
+        <item quantity="other">%d Months</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Week</item>
+        <item quantity="other">%d Weeks</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Day</item>
         <item quantity="other">%d Days</item>

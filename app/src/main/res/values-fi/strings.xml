@@ -54,7 +54,14 @@
     <string name="settings_title">Varustusasetukset</string>
     <string name="settings_description">Aseta, kuinka kauan varustus sallii yhteydet ennen kuin harvoin kÃ¤ytetyt sovellukset estetÃ¤Ã¤n uudelleen.</string>
     <string name="settings_current_duration">Nykyinen: %1$s</string>
-    <string name="settings_duration_subtitle">Napauta vaihtoehtoa kÃ¤yttÃ¤Ã¤ksesi.</string>
+    <string name="settings_duration_subtitle">Syötä haluamasi kesto</string>
+    <string name="settings_custom_duration_hint">Määrä</string>
+    <string name="settings_apply_duration">Käytä</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Tun</string>
+    <string name="unit_days">Pv</string>
+    <string name="unit_weeks">Vko</string>
+    <string name="unit_months">Kk</string>
     <string name="settings_manual_firewall_title">Manuaalinen estokontrolli</string>
     <string name="settings_manual_firewall_description">Kun aktivoitu, estetyt sovellukset pysyvÃ¤t estetyinÃ¤, kunnes poistat eston manuaalisesti tÃ¤Ã¤ltÃ¤. Sovelluksen avaaminen ei poista estoa automaattisesti.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Harvoin kÃ¤ytettyjÃ¤ sovelluksia ei lÃ¶ytynyt.</string>
     <string name="metrics_traffic_title">Liikenne (viimeiset 10 minuuttia)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Kuukausi</item>
+        <item quantity="other">%d Kuukautta</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Viikko</item>
+        <item quantity="other">%d Viikkoa</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d PÃ¤ivÃ¤</item>
         <item quantity="other">%d PÃ¤ivÃ¤Ã¤</item>

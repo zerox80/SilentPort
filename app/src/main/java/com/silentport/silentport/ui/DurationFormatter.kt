@@ -15,9 +15,21 @@ fun rememberDurationLabel(durationMillis: Long): String {
 }
 
 fun formatDuration(context: Context, durationMillis: Long): String {
+    val monthMillis = TimeUnit.DAYS.toMillis(30)
+    val weekMillis = TimeUnit.DAYS.toMillis(7)
     val dayMillis = TimeUnit.DAYS.toMillis(1)
     val hourMillis = TimeUnit.HOURS.toMillis(1)
     val minuteMillis = TimeUnit.MINUTES.toMillis(1)
+
+    val months = durationMillis / monthMillis
+    if (durationMillis % monthMillis == 0L && months > 0) {
+        return context.resources.getQuantityString(R.plurals.duration_months, months.toInt(), months)
+    }
+
+    val weeks = durationMillis / weekMillis
+    if (durationMillis % weekMillis == 0L && weeks > 0) {
+        return context.resources.getQuantityString(R.plurals.duration_weeks, weeks.toInt(), weeks)
+    }
 
     val days = durationMillis / dayMillis
     if (durationMillis % dayMillis == 0L && days > 0) {

@@ -54,7 +54,14 @@
     <string name="settings_title">ØªÙ†Ø¸ÛŒÙ…Ø§Øª ÙØ§ÛŒØ±ÙˆØ§Ù„</string>
     <string name="settings_description">ØªÙ†Ø¸ÛŒÙ… Ú©Ù†ÛŒØ¯ Ú©Ù‡ ÙØ§ÛŒØ±ÙˆØ§Ù„ Ú†Ù‚Ø¯Ø± Ø§Ø¬Ø§Ø²Ù‡ Ø§ØªØµØ§Ù„Ø§Øª Ø¯Ù‡Ø¯ Ù‚Ø¨Ù„ Ø§Ø² Ù…Ø³Ø¯ÙˆØ¯ Ú©Ø±Ø¯Ù† Ø¯ÙˆØ¨Ø§Ø±Ù‡ Ø¨Ø±Ù†Ø§Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ø¨Ù‡ Ù†Ø¯Ø±Øª Ø§Ø³ØªÙØ§Ø¯Ù‡ Ø´Ø¯Ù‡.</string>
     <string name="settings_current_duration">ÙØ¹Ù„ÛŒ: %1$s</string>
-    <string name="settings_duration_subtitle">Ø±ÙˆÛŒ Ú¯Ø²ÛŒÙ†Ù‡â€ŒØ§ÛŒ Ø¶Ø±Ø¨Ù‡ Ø¨Ø²Ù†ÛŒØ¯ ØªØ§ Ø§Ø¹Ù…Ø§Ù„ Ø´ÙˆØ¯.</string>
+    <string name="settings_duration_subtitle">مدت زمان مورد نظر را وارد کنید</string>
+    <string name="settings_custom_duration_hint">مقدار</string>
+    <string name="settings_apply_duration">اعمال</string>
+    <string name="unit_minutes">دقیقه</string>
+    <string name="unit_hours">ساعت</string>
+    <string name="unit_days">روز</string>
+    <string name="unit_weeks">هفته</string>
+    <string name="unit_months">ماه</string>
     <string name="settings_manual_firewall_title">Ú©Ù†ØªØ±Ù„ Ù…Ø³Ø¯ÙˆØ¯Ø³Ø§Ø²ÛŒ Ø¯Ø³ØªÛŒ</string>
     <string name="settings_manual_firewall_description">ÙˆÙ‚ØªÛŒ ÙØ¹Ø§Ù„ Ø¨Ø§Ø´Ø¯ØŒ Ø¨Ø±Ù†Ø§Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù…Ø³Ø¯ÙˆØ¯ Ø´Ø¯Ù‡ Ù…Ø³Ø¯ÙˆØ¯ Ù…ÛŒâ€ŒÙ…Ø§Ù†Ù†Ø¯ ØªØ§ Ø²Ù…Ø§Ù†ÛŒ Ú©Ù‡ Ø¢Ù†Ù‡Ø§ Ø±Ø§ Ø§ÛŒÙ†Ø¬Ø§ Ø¯Ø³ØªÛŒ Ø±ÙØ¹ Ù…Ø³Ø¯ÙˆØ¯Ø³Ø§Ø²ÛŒ Ú©Ù†ÛŒØ¯. Ø¨Ø§Ø² Ú©Ø±Ø¯Ù† Ø¨Ø±Ù†Ø§Ù…Ù‡ Ø¨Ù‡ Ø·ÙˆØ± Ø®ÙˆØ¯Ú©Ø§Ø± Ù…Ø³Ø¯ÙˆØ¯Ø³Ø§Ø²ÛŒ Ø±Ø§ Ø¨Ø±Ø·Ø±Ù Ù†Ù…ÛŒâ€ŒÚ©Ù†Ø¯.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Ù‡ÛŒÚ† Ø¨Ø±Ù†Ø§Ù…Ù‡â€ŒØ§ÛŒ Ø¨Ù‡ Ù†Ø¯Ø±Øª Ø§Ø³ØªÙØ§Ø¯Ù‡ Ø´Ø¯Ù‡ ÛŒØ§ÙØª Ù†Ø´Ø¯.</string>
     <string name="metrics_traffic_title">ØªØ±Ø§ÙÛŒÚ© (10 Ø¯Ù‚ÛŒÙ‚Ù‡ Ú¯Ø°Ø´ØªÙ‡)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d ماه</item>
+        <item quantity="other">%d ماه</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d هفته</item>
+        <item quantity="other">%d هفته</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Ø±ÙˆØ²</item>
         <item quantity="other">%d Ø±ÙˆØ²</item>

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ':*)",
+      "Bash(python -c ':*)",
+      "Bash(xxd -l 200 -s 2600 \"C:/Daten3/SilentPort/app/src/main/res/values-ru/strings.xml\")",
+      "Bash(./gradlew assembleDebug)"
+    ]
+  }
+}

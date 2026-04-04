@@ -54,7 +54,14 @@
     <string name="settings_title">BrandvÃ¤ggsinstÃ¤llningar</string>
     <string name="settings_description">StÃ¤ll in hur lÃ¤nge brandvÃ¤ggen tillÃ¥ter anslutningar innan sÃ¤llan anvÃ¤nda appar blockeras igen.</string>
     <string name="settings_current_duration">Nuvarande: %1$s</string>
-    <string name="settings_duration_subtitle">Tryck pÃ¥ ett alternativ fÃ¶r att tillÃ¤mpa.</string>
+    <string name="settings_duration_subtitle">Ange önskad varaktighet</string>
+    <string name="settings_custom_duration_hint">Antal</string>
+    <string name="settings_apply_duration">Tillämpa</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Tim</string>
+    <string name="unit_days">Dgr</string>
+    <string name="unit_weeks">Vkr</string>
+    <string name="unit_months">Mån</string>
     <string name="settings_manual_firewall_title">Manuell blockeringskontroll</string>
     <string name="settings_manual_firewall_description">NÃ¤r aktiverad fÃ¶rblir blockerade appar blockerade tills du manuellt avblockerar dem hÃ¤r. Att Ã¶ppna en app tar inte bort blockeringen automatiskt.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Inga sÃ¤llan anvÃ¤nda appar hittade.</string>
     <string name="metrics_traffic_title">Trafik (senaste 10 minuterna)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Månad</item>
+        <item quantity="other">%d Månader</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Vecka</item>
+        <item quantity="other">%d Veckor</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Dag</item>
         <item quantity="other">%d Dagar</item>

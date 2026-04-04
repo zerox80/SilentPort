@@ -54,7 +54,14 @@
     <string name="settings_title">ParamÃ¨tres de pare-feu</string>
     <string name="settings_description">DÃ©finissez combien de temps le pare-feu autorise les connexions avant de bloquer Ã  nouveau les applications utilisÃ©es rarement.</string>
     <string name="settings_current_duration">Actuel: %1$s</string>
-    <string name="settings_duration_subtitle">Appuyez sur une option pour l\'appliquer.</string>
+    <string name="settings_duration_subtitle">Entrez la durée souhaitée</string>
+    <string name="settings_custom_duration_hint">Quantité</string>
+    <string name="settings_apply_duration">Appliquer</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Hrs</string>
+    <string name="unit_days">Jrs</string>
+    <string name="unit_weeks">Sem</string>
+    <string name="unit_months">Mois</string>
     <string name="settings_manual_firewall_title">ContrÃ´le de blocage manuel</string>
     <string name="settings_manual_firewall_description">Lorsqu\'activÃ©, les applications bloquÃ©es restent bloquÃ©es jusqu\'Ã  ce que vous les dÃ©bloquiez manuellement ici. Ouvrir une application ne lÃ¨ve pas automatiquement le blocage.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Aucune application utilisÃ©e rarement trouvÃ©e.</string>
     <string name="metrics_traffic_title">Trafic (10 derniÃ¨res minutes)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Mois</item>
+        <item quantity="other">%d Mois</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Semaine</item>
+        <item quantity="other">%d Semaines</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Jour</item>
         <item quantity="other">%d Jours</item>

@@ -54,7 +54,14 @@
     <string name="settings_title">Firewall-instellingen</string>
     <string name="settings_description">Stel in hoe lang de firewall verbindingen toelaat voordat zelden gebruikte apps opnieuw worden geblokkeerd.</string>
     <string name="settings_current_duration">Huidig: %1$s</string>
-    <string name="settings_duration_subtitle">Tik op een optie om toe te passen.</string>
+    <string name="settings_duration_subtitle">Voer de gewenste duur in</string>
+    <string name="settings_custom_duration_hint">Aantal</string>
+    <string name="settings_apply_duration">Toepassen</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Uur</string>
+    <string name="unit_days">Dgn</string>
+    <string name="unit_weeks">Wkn</string>
+    <string name="unit_months">Mnd</string>
     <string name="settings_manual_firewall_title">Handmatige blokkeringscontrole</string>
     <string name="settings_manual_firewall_description">Indien ingeschakeld, blijven geblokkeerde apps geblokkeerd tot je ze hier handmatig ontgrendelt. Het openen van een app heft de blokkering niet automatisch op.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Geen zelden gebruikte apps gevonden.</string>
     <string name="metrics_traffic_title">Verkeer (laatste 10 minuten)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Maand</item>
+        <item quantity="other">%d Maanden</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Week</item>
+        <item quantity="other">%d Weken</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Dag</item>
         <item quantity="other">%d Dagen</item>

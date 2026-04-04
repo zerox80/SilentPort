@@ -54,7 +54,14 @@
     <string name="settings_title">GÃ¼venlik duvarÄ± ayarlarÄ±</string>
     <string name="settings_description">Nadir kullanÄ±lan uygulamalarÄ± yeniden engellemeden Ã¶nce gÃ¼venlik duvarÄ±nÄ±n baÄŸlantÄ±lara ne kadar sÃ¼re izin vereceÄŸini ayarlayÄ±n.</string>
     <string name="settings_current_duration">Mevcut: %1$s</string>
-    <string name="settings_duration_subtitle">Uygulamak iÃ§in bir seÃ§eneÄŸe dokunun.</string>
+    <string name="settings_duration_subtitle">İstediğiniz süreyi girin</string>
+    <string name="settings_custom_duration_hint">Miktar</string>
+    <string name="settings_apply_duration">Uygula</string>
+    <string name="unit_minutes">Dk</string>
+    <string name="unit_hours">Sa</string>
+    <string name="unit_days">Gün</string>
+    <string name="unit_weeks">Hft</string>
+    <string name="unit_months">Ay</string>
     <string name="settings_manual_firewall_title">Manuel engelleme kontrolÃ¼</string>
     <string name="settings_manual_firewall_description">EtkinleÅŸtirildiÄŸinde, engellenen uygulamalar burada manuel olarak engellemeyi kaldÄ±rana kadar engelli kalÄ±r. Bir uygulamanÄ±n aÃ§Ä±lmasÄ± engellemeyi otomatik olarak kaldÄ±rmaz.</string>
 
@@ -67,6 +74,14 @@
     <string name="metrics_empty_list">Nadir kullanÄ±lan uygulama bulunamadÄ±.</string>
     <string name="metrics_traffic_title">Trafik (son 10 dakika)</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Ay</item>
+        <item quantity="other">%d Ay</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Hafta</item>
+        <item quantity="other">%d Hafta</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d GÃ¼n</item>
         <item quantity="other">%d GÃ¼n</item>

@@ -88,7 +88,14 @@
     <string name="settings_description">Legen Sie fest, wie lange die Firewall Verbindungen zulässt, bevor selten genutzte Apps wieder blockiert werden.</string>
 
     <string name="settings_current_duration">Aktuell: %1$s</string>
-    <string name="settings_duration_subtitle">Tippen Sie auf eine Option, um sie zu übernehmen.</string>
+    <string name="settings_duration_subtitle">Gewünschte Dauer eingeben</string>
+    <string name="settings_custom_duration_hint">Anzahl</string>
+    <string name="settings_apply_duration">Übernehmen</string>
+    <string name="unit_minutes">Min</string>
+    <string name="unit_hours">Std</string>
+    <string name="unit_days">Tage</string>
+    <string name="unit_weeks">Wo</string>
+    <string name="unit_months">Mon</string>
     <string name="settings_manual_firewall_title">Manuelle Sperrsteuerung</string>
     <string name="settings_manual_firewall_description">Wenn aktiviert, bleiben blockierte Apps gesperrt, bis Sie sie hier manuell freigeben. Das Öffnen einer App hebt die Sperre nicht automatisch auf.</string>
 
@@ -107,6 +114,14 @@
 
     <string name="summary_jump_to_lists" translatable="false">Zu den App-Listen springen</string>
 
+    <plurals name="duration_months">
+        <item quantity="one">%d Monat</item>
+        <item quantity="other">%d Monate</item>
+    </plurals>
+    <plurals name="duration_weeks">
+        <item quantity="one">%d Woche</item>
+        <item quantity="other">%d Wochen</item>
+    </plurals>
     <plurals name="duration_days">
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>

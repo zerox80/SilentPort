@@ -24,6 +24,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -32,18 +34,24 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -261,6 +269,34 @@ fun SilentPortRoot(
     }
 }
 
+private enum class DurationUnit(
+    val labelRes: Int,
+    val toMillis: (Long) -> Long
+) {
+    MINUTES(R.string.unit_minutes, { TimeUnit.MINUTES.toMillis(it) }),
+    HOURS(R.string.unit_hours, { TimeUnit.HOURS.toMillis(it) }),
+    DAYS(R.string.unit_days, { TimeUnit.DAYS.toMillis(it) }),
+    WEEKS(R.string.unit_weeks, { TimeUnit.DAYS.toMillis(it * 7) }),
+    MONTHS(R.string.unit_months, { TimeUnit.DAYS.toMillis(it * 30) });
+
+    companion object {
+        fun fromMillis(millis: Long): Pair<Long, DurationUnit> {
+            val monthMs = TimeUnit.DAYS.toMillis(30)
+            val weekMs = TimeUnit.DAYS.toMillis(7)
+            val dayMs = TimeUnit.DAYS.toMillis(1)
+            val hourMs = TimeUnit.HOURS.toMillis(1)
+            val minMs = TimeUnit.MINUTES.toMillis(1)
+            return when {
+                millis >= monthMs && millis % monthMs == 0L -> (millis / monthMs) to MONTHS
+                millis >= weekMs && millis % weekMs == 0L -> (millis / weekMs) to WEEKS
+                millis >= dayMs && millis % dayMs == 0L -> (millis / dayMs) to DAYS
+                millis >= hourMs && millis % hourMs == 0L -> (millis / hourMs) to HOURS
+                else -> (millis / minMs).coerceAtLeast(1) to MINUTES
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
@@ -272,15 +308,11 @@ private fun SettingsScreen(
     onToggleHideSystemApps: (Boolean) -> Unit,
     onOpenNavigation: () -> Unit
 ) {
-    val presetDurations = listOf(
-        TimeUnit.MINUTES.toMillis(1),
-        TimeUnit.MINUTES.toMillis(5),
-        TimeUnit.MINUTES.toMillis(30),
-        TimeUnit.HOURS.toMillis(1),
-        TimeUnit.HOURS.toMillis(6),
-        TimeUnit.DAYS.toMillis(1),
-        TimeUnit.DAYS.toMillis(4)
-    )
+    val (initialValue, initialUnit) = remember(currentDurationMillis) {
+        DurationUnit.fromMillis(currentDurationMillis)
+    }
+    var inputText by remember(currentDurationMillis) { mutableStateOf(initialValue.toString()) }
+    var selectedUnit by remember(currentDurationMillis) { mutableStateOf(initialUnit) }
 
     val currentDurationLabel = rememberDurationLabel(currentDurationMillis)
 
@@ -315,12 +347,61 @@ private fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 12.dp)
                 )
-                Text(
-                    text = stringResource(id = R.string.settings_duration_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = stringResource(id = R.string.settings_duration_subtitle),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+
+                        OutlinedTextField(
+                            value = inputText,
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                    inputText = newValue
+                                }
+                            },
+                            label = { Text(stringResource(id = R.string.settings_custom_duration_hint)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            DurationUnit.entries.forEach { unit ->
+                                FilterChip(
+                                    selected = unit == selectedUnit,
+                                    onClick = { selectedUnit = unit },
+                                    label = { Text(stringResource(id = unit.labelRes)) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
+                        val parsedValue = inputText.toLongOrNull()
+                        val newMillis = parsedValue?.let { selectedUnit.toMillis(it) }
+                        val isChanged = newMillis != null && newMillis > 0 && newMillis != currentDurationMillis
+
+                        Button(
+                            onClick = { if (newMillis != null) onDurationSelected(newMillis) },
+                            enabled = isChanged,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(id = R.string.settings_apply_duration))
+                        }
+                    }
+                }
             }
 
             item {
@@ -372,26 +453,6 @@ private fun SettingsScreen(
                                 checked = hideSystemApps,
                                 onCheckedChange = onToggleHideSystemApps
                             )
-                        }
-                    )
-                }
-            }
-
-            items(presetDurations) { duration ->
-                val label = rememberDurationLabel(duration)
-                val isSelected = duration == currentDurationMillis
-                Card(
-                    onClick = { if (!isSelected) onDurationSelected(duration) },
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    ListItem(
-                        headlineContent = { Text(text = label) },
-                        supportingContent = {
-                            if (isSelected) {
-                                Text(text = stringResource(id = R.string.settings_current_duration, label))
-                            }
                         }
                     )
                 }
