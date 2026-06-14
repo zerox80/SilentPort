@@ -376,7 +376,8 @@ class MainViewModel(
 
     private suspend fun syncFirewallBlockList() {
         // Drop expired cooldowns before recomputing so they no longer suppress blocking.
-        manualUnblockCooldown.values.removeAll { it <= System.currentTimeMillis() }
+        val now = System.currentTimeMillis()
+        manualUnblockCooldown.values.removeAll { it <= now }
 
         val desired = computeBlockList()
         val current = _uiState.value.firewallBlockedPackages

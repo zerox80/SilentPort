@@ -117,7 +117,7 @@ class BlockListCalculatorTest {
             isSystemApp = { false }
         )
         assertEquals(setOf("existing", "new"), result)
-        assertFalse("cooling".let { result.contains(it) })
+        assertFalse(result.contains("cooling"))
     }
 
     @Test
