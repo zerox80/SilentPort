@@ -91,11 +91,13 @@ class FirewallPreferencesDataSource(context: Context) {
     }
 
     suspend fun addTemporaryUnblock(packageName: String, durationMillis: Long) {
-        val expiry = System.currentTimeMillis() + durationMillis
+        val entry = TemporaryUnblock(packageName, System.currentTimeMillis() + durationMillis)
         dataStore.edit { preferences ->
             val current = preferences[Keys.TEMPORARY_UNBLOCKS] ?: emptySet()
-            val filtered = current.filterNot { it.startsWith("$packageName:") }.toMutableSet()
-            filtered.add("$packageName:$expiry")
+            val filtered = current
+                .filterNot { TemporaryUnblock.decode(it)?.packageName == packageName }
+                .toMutableSet()
+            filtered.add(entry.encode())
             preferences[Keys.TEMPORARY_UNBLOCKS] = filtered
         }
     }

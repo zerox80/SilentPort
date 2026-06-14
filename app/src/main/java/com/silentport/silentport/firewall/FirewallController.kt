@@ -54,37 +54,18 @@ class FirewallController(
 
     suspend fun allowForDuration(allowDurationMillis: Long, blockPackages: Set<String>? = null) = stateMutex.withLock {
         val packages = blockPackages ?: preferences.preferencesFlow.first().blockedPackages
-        if (packages.isEmpty()) {
-            Log.i(TAG, "allowForDuration -> no packages, delegating to setBlocking(false)")
-            // We need to release lock before calling another suspended function that acquires it, or refactor.
-            // setBlocking acquires lock. Re-entrant locks are not supported by Mutex.
-            // Refactoring to internal method or just inlining logic.
-            // Simplest is to just duplicate logic or extract internal helper.
-            // Let's extract internal helper.
-        }
-        // Actually, let's just implement it directly here to avoid recursion issues with Mutex
-        if (packages.isEmpty()) {
-             Log.i(TAG, "allowForDuration -> no packages, disabling blocking")
-             preferences.setState(
-                isEnabled = true,
-                isBlocking = false,
-                reactivateAt = System.currentTimeMillis() + allowDurationMillis,
-                blockedPackages = packages
-            )
-            scheduleAutoBlock(System.currentTimeMillis() + allowDurationMillis)
-            startService(isBlocking = false, blockList = packages, includeBlockListWhenNotBlocking = true)
-            return@withLock
-        }
-
-        Log.i(TAG, "allowForDuration -> allowDuration=${allowDurationMillis} keepBlocked=${packages.size}")
+        val reactivateAt = System.currentTimeMillis() + allowDurationMillis
+        Log.i(TAG, "allowForDuration -> allowDuration=$allowDurationMillis keepBlocked=${packages.size}")
         preferences.setState(
             isEnabled = true,
             isBlocking = false,
-            reactivateAt = System.currentTimeMillis() + allowDurationMillis,
+            reactivateAt = reactivateAt,
             blockedPackages = packages
         )
-        scheduleAutoBlock(System.currentTimeMillis() + allowDurationMillis)
-        startService(isBlocking = false, blockList = packages)
+        scheduleAutoBlock(reactivateAt)
+        // When nothing stays blocked we still hand the (empty) list to the service so it can clear any
+        // previously applied blocks instead of leaving them in place.
+        startService(isBlocking = false, blockList = packages, includeBlockListWhenNotBlocking = packages.isEmpty())
     }
 
     suspend fun blockNow(blockPackages: Set<String>? = null) = stateMutex.withLock {
@@ -151,30 +132,12 @@ class FirewallController(
         }
         Log.i(TAG, "updateBlockedPackages -> ${blockPackages.size} packages (was ${current.blockedPackages.size})")
 
-        // Bug fix 19: Filter out valid temporary unblocks to prevent race conditions
+        // Filter out valid temporary unblocks to prevent race conditions.
         val now = System.currentTimeMillis()
-        val validUnblocks = current.temporaryUnblocks.mapNotNull { 
-            val parts = it.split(":")
-            if (parts.size == 2 && (parts[1].toLongOrNull() ?: 0L) > now) parts[0] else null
-        }.toSet()
-        
+        val validUnblocks = TemporaryUnblock.activePackages(current.temporaryUnblocks, now)
         val filteredPackages = blockPackages - validUnblocks
 
-        preferences.setState(
-            isEnabled = current.isEnabled,
-            isBlocking = current.isBlocking,
-            reactivateAt = current.reactivateAt,
-            blockedPackages = filteredPackages
-        )
-
-        if (current.isEnabled) {
-            val includeBlockList = (!current.isBlocking && current.reactivateAt == null && filteredPackages.isNotEmpty())
-            startService(
-                isBlocking = current.isBlocking,
-                blockList = filteredPackages,
-                includeBlockListWhenNotBlocking = includeBlockList
-            )
-        }
+        persistBlockedPackages(current, filteredPackages)
     }
 
     suspend fun updateWhitelistedPackages(whitelistedPackages: Set<String>) = stateMutex.withLock {
@@ -185,26 +148,33 @@ class FirewallController(
         Log.i(TAG, "temporarilyUnblock -> $packageName for ${durationMillis}ms")
         preferences.addTemporaryUnblock(packageName, durationMillis)
 
-        // Update blocked packages immediately by removing this one
+        // Update blocked packages immediately by removing this one.
         val current = preferences.preferencesFlow.first()
         val newBlocked = current.blockedPackages - packageName
-        
-        // Inline updateBlockedPackages logic to avoid re-entrancy
         if (current.blockedPackages != newBlocked) {
-             preferences.setState(
-                isEnabled = current.isEnabled,
+            persistBlockedPackages(current, newBlocked)
+        }
+    }
+
+    /**
+     * Persists [blockedPackages] while preserving the rest of [current]'s state and refreshes the
+     * VPN service if the firewall is enabled. Caller must already hold [stateMutex] — this does not
+     * lock, so it is safe to call from other locked sections without re-entrancy.
+     */
+    private suspend fun persistBlockedPackages(current: FirewallPreferences, blockedPackages: Set<String>) {
+        preferences.setState(
+            isEnabled = current.isEnabled,
+            isBlocking = current.isBlocking,
+            reactivateAt = current.reactivateAt,
+            blockedPackages = blockedPackages
+        )
+        if (current.isEnabled) {
+            val includeBlockList = !current.isBlocking && current.reactivateAt == null && blockedPackages.isNotEmpty()
+            startService(
                 isBlocking = current.isBlocking,
-                reactivateAt = current.reactivateAt,
-                blockedPackages = newBlocked
+                blockList = blockedPackages,
+                includeBlockListWhenNotBlocking = includeBlockList
             )
-            if (current.isEnabled) {
-                val includeBlockList = (!current.isBlocking && current.reactivateAt == null && newBlocked.isNotEmpty())
-                startService(
-                    isBlocking = current.isBlocking,
-                    blockList = newBlocked,
-                    includeBlockListWhenNotBlocking = includeBlockList
-                )
-            }
         }
     }
 
