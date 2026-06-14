@@ -94,8 +94,8 @@ class FirewallPreferencesDataSource(context: Context) {
         val expiry = System.currentTimeMillis() + durationMillis
         dataStore.edit { preferences ->
             val current = preferences[Keys.TEMPORARY_UNBLOCKS] ?: emptySet()
-            val filtered = current.filterNot { it.startsWith("$packageName:") }.toMutableSet()
-            filtered.add("$packageName:$expiry")
+            val filtered = current.filterNotTo(mutableSetOf()) { TemporaryUnblocks.matches(it, packageName) }
+            filtered.add(TemporaryUnblocks.encode(packageName, expiry))
             preferences[Keys.TEMPORARY_UNBLOCKS] = filtered
         }
     }

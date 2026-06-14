@@ -1,13 +1,6 @@
 package com.silentport.silentport
 
-import android.app.usage.NetworkStats
-import android.app.usage.NetworkStatsManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.TrafficStats
-import android.os.Build
-import android.os.RemoteException
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,15 +9,21 @@ import com.silentport.silentport.data.local.AppUsageStatus
 import com.silentport.silentport.data.repository.UsageRepository
 import com.silentport.silentport.di.AppContainer
 import com.silentport.silentport.domain.ApplicationManager
+import com.silentport.silentport.domain.BlockListCalculator
 import com.silentport.silentport.domain.UsageAnalyzer
+import com.silentport.silentport.firewall.AppTrafficSampler
+import com.silentport.silentport.firewall.FirewallAllowlist
 import com.silentport.silentport.firewall.FirewallController
-import com.silentport.silentport.notifications.NotificationHelper
+import com.silentport.silentport.firewall.TemporaryUnblocks
+import com.silentport.silentport.model.AppUsageInfo
 import com.silentport.silentport.settings.SettingsPreferencesDataSource
 import com.silentport.silentport.ui.state.AppHomeState
+import com.silentport.silentport.util.PackageInspector
 import com.silentport.silentport.util.UsagePermissionChecker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,9 +34,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import java.util.ArrayDeque
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
@@ -52,32 +48,25 @@ class MainViewModel(
     private val settingsPreferences: SettingsPreferencesDataSource
 ) : ViewModel() {
 
-    private val firewallAllowlist = setOf(
-        "com.google.android.youtube",
-        // Sparkassen-Apps
-        "com.starfinanz.mobile.android.pushtan",
-        "de.starfinanz.smob.android.sfinanzstatus", // Sparkasse
-        "de.starfinanz.smob.android.sfinanzstatus.tablet",
-        "biz.first_financial.bk01_2fa" // BK Secure
-    )
+    private val firewallAllowlist = FirewallAllowlist.PACKAGES
 
     private val _uiState = MutableStateFlow(AppHomeState(hardcodedAllowlist = firewallAllowlist))
     val uiState: StateFlow<AppHomeState> = _uiState.asStateFlow()
 
-    private val packageManager = appContext.packageManager
-    private val networkStatsManager = appContext.getSystemService(NetworkStatsManager::class.java)
-    private val uidCache = ConcurrentHashMap<String, Int>()
-    private val trafficSnapshots = ConcurrentHashMap<String, Long>()
-    private val trafficHistory = ConcurrentHashMap<String, ArrayDeque<Pair<Long, Long>>>()
+    private val packageInspector = PackageInspector(appContext)
+    private val trafficSampler = AppTrafficSampler(appContext, packageInspector)
+
     private var metricsJob: Job? = null
     private var manualUnblockSchedulerJob: Job? = null
+    private var temporaryUnblockJob: Job? = null
+
     private val trafficWindowMillisRef = AtomicLong(TimeUnit.MINUTES.toMillis(10))
     private val trafficSampleIntervalMillis = TimeUnit.SECONDS.toMillis(30)
+    private val blockThresholdMillisRef = AtomicLong(TimeUnit.DAYS.toMillis(4))
+
     private val manualUnblockCooldown = ConcurrentHashMap<String, Long>()
-    private val trafficMutex = Mutex()
 
     private var subscriptionsStarted = false
-    private val blockThresholdMillisRef = AtomicLong(TimeUnit.DAYS.toMillis(4))
 
     init {
         observeSettings()
@@ -100,14 +89,9 @@ class MainViewModel(
         }
     }
 
-    private var temporaryUnblockJob: Job? = null
-
     private fun scheduleTemporaryUnblockSync() {
         val now = System.currentTimeMillis()
-        val nextExpiry = _uiState.value.firewallTemporaryUnblocks
-            .mapNotNull { it.split(":").getOrNull(1)?.toLongOrNull() }
-            .filter { it > now }
-            .minOrNull()
+        val nextExpiry = TemporaryUnblocks.nextExpiry(_uiState.value.firewallTemporaryUnblocks, now)
 
         if (nextExpiry == null) {
             temporaryUnblockJob?.cancel()
@@ -125,7 +109,6 @@ class MainViewModel(
         }
     }
 
-// aktiviert die Firewall 
     fun enableFirewall() {
         viewModelScope.launch {
             val state = _uiState.value
@@ -264,8 +247,8 @@ class MainViewModel(
     fun refreshUsage() {
         viewModelScope.launch {
             val hasPermission = UsagePermissionChecker.isUsageAccessGranted(appContext)
-            // Bug fix 11: Invalidate UID cache on refresh to handle app updates/reinstalls
-            uidCache.clear()
+            // Invalidate the UID cache so app updates/reinstalls don't resolve to stale UIDs.
+            packageInspector.clearCache()
             _uiState.value = _uiState.value.copy(usagePermissionGranted = hasPermission, isLoading = true)
 
             if (!hasPermission) {
@@ -280,8 +263,6 @@ class MainViewModel(
             result.onSuccess { evaluation ->
                 usageRepository.applyEvaluation(evaluation)
                 syncFirewallBlockList()
-
-                syncFirewallBlockList()
             }.onFailure { throwable ->
                 Log.e(TAG, "Failed to refresh usage", throwable)
             }
@@ -289,8 +270,6 @@ class MainViewModel(
             _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
-
-
 
     fun addToWhitelist(packageName: String) {
         viewModelScope.launch {
@@ -312,8 +291,6 @@ class MainViewModel(
         }
     }
 
-
-
     private fun subscribeToData() {
         if (subscriptionsStarted) return
         subscriptionsStarted = true
@@ -332,8 +309,8 @@ class MainViewModel(
 
     private fun launchStatusCollector(
         status: AppUsageStatus,
-        hideSystemAppsFlow: kotlinx.coroutines.flow.Flow<Boolean>,
-        onUpdate: (List<com.silentport.silentport.model.AppUsageInfo>) -> Unit
+        hideSystemAppsFlow: Flow<Boolean>,
+        onUpdate: (List<AppUsageInfo>) -> Unit
     ) {
         viewModelScope.launch {
             combine(
@@ -356,68 +333,25 @@ class MainViewModel(
     private fun computeBlockList(state: AppHomeState = _uiState.value): Set<String> {
         val now = System.currentTimeMillis()
         val thresholdMillis = blockThresholdMillisRef.get().coerceAtLeast(TimeUnit.MINUTES.toMillis(1))
-        val threshold = now - thresholdMillis
+        val validTemporaryUnblocks = TemporaryUnblocks.validPackages(state.firewallTemporaryUnblocks, now)
 
-        val rarePackages = state.rareApps
-            .filter { info ->
-                val lastUsed = info.lastUsedAt
-                lastUsed == null || lastUsed <= threshold
-            }
-            .map { it.packageName }
-
-
-
-
-        val result = if (state.manualFirewallUnblock) {
-            val manualSet = state.firewallBlockedPackages.toMutableSet()
-
-
-
-            val additions = rarePackages.filter { pkg ->
-                val cooldownExpiry = manualUnblockCooldown[pkg]
-                cooldownExpiry == null || cooldownExpiry <= now
-            }
-
-            manualSet += additions
-            manualSet.remove(appContext.packageName)
-            manualSet.removeAll(firewallAllowlist)
-            manualSet.removeAll(state.whitelistedPackages)
-            
-            // Remove valid temporary unblocks
-            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
-                val parts = entry.split(":")
-                if (parts.size == 2) {
-                    val pkg = parts[0]
-                    val expiry = parts[1].toLongOrNull() ?: 0L
-                    if (expiry > now) pkg else null
-                } else null
-            }.toSet()
-            manualSet.removeAll(validTemporaryUnblocks)
-            
-            // If hideSystemApps is enabled, remove system apps and manual system apps from blocklist
-            if (state.hideSystemApps) {
-                manualSet.removeAll { pkg -> isSystemApp(pkg) || pkg in state.manualSystemApps }
-            }
-            
-            manualSet
-        } else {
-            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
-                val parts = entry.split(":")
-                if (parts.size == 2) {
-                    val pkg = parts[0]
-                    val expiry = parts[1].toLongOrNull() ?: 0L
-                    if (expiry > now) pkg else null
-                } else null
-            }.toSet()
-
-            rarePackages.toSet()
-                .filterNot { it == appContext.packageName }
-                .filterNot { it in firewallAllowlist }
-                .filterNot { it in state.whitelistedPackages }
-                .filterNot { it in validTemporaryUnblocks }
-                .filterNot { state.hideSystemApps && (isSystemApp(it) || it in state.manualSystemApps) }
-                .toSet()
-        }
+        val result = BlockListCalculator.compute(
+            BlockListCalculator.Inputs(
+                rareApps = state.rareApps,
+                now = now,
+                thresholdMillis = thresholdMillis,
+                manualMode = state.manualFirewallUnblock,
+                currentBlocked = state.firewallBlockedPackages,
+                manualCooldown = manualUnblockCooldown,
+                whitelist = state.whitelistedPackages,
+                hardcodedAllowlist = firewallAllowlist,
+                selfPackage = appContext.packageName,
+                hideSystemApps = state.hideSystemApps,
+                manualSystemApps = state.manualSystemApps,
+                validTemporaryUnblocks = validTemporaryUnblocks
+            ),
+            isSystemApp = packageInspector::isSystemApp
+        )
         Log.d(TAG, "computeBlockList manual=${state.manualFirewallUnblock} -> ${result.size} packages")
         return result
     }
@@ -441,15 +375,9 @@ class MainViewModel(
     }
 
     private suspend fun syncFirewallBlockList() {
-        // Bug fix 12: Cleanup expired cooldowns before computing block list
-        val now = System.currentTimeMillis()
-        val iterator = manualUnblockCooldown.entries.iterator()
-        while (iterator.hasNext()) {
-            if (iterator.next().value <= now) {
-                iterator.remove()
-            }
-        }
-        
+        // Drop expired cooldowns before recomputing so they no longer suppress blocking.
+        manualUnblockCooldown.values.removeAll { it <= System.currentTimeMillis() }
+
         val desired = computeBlockList()
         val current = _uiState.value.firewallBlockedPackages
         if (desired != current) {
@@ -469,8 +397,9 @@ class MainViewModel(
                 val policyUpdated = usageAnalyzer.updatePolicyThresholds(prefs.allowDurationMillis)
 
                 if (allowDurationChanged || policyUpdated) {
-                    trafficWindowMillisRef.set(prefs.allowDurationMillis.coerceAtLeast(TimeUnit.MINUTES.toMillis(1)))
-                    blockThresholdMillisRef.set(prefs.allowDurationMillis.coerceAtLeast(TimeUnit.MINUTES.toMillis(1)))
+                    val window = prefs.allowDurationMillis.coerceAtLeast(TimeUnit.MINUTES.toMillis(1))
+                    trafficWindowMillisRef.set(window)
+                    blockThresholdMillisRef.set(window)
                 }
 
                 _uiState.value = previousState.copy(
@@ -508,202 +437,30 @@ class MainViewModel(
     }
 
     private fun stopMetricsMonitor() {
-        // Bug fix 8: Safe cancellation
         val job = metricsJob
         metricsJob = null
         job?.cancel()
-        // Bug fix: Clear collections safely or just let them be.
-        // If we want to clear, we should probably do it under lock or just rely on GC if we were replacing maps.
-        // But since they are concurrent maps now, clear() is safe-ish but might race with a running sample.
-        // Ideally we should acquire mutex, but stopMetricsMonitor might be called from UI thread and we don't want to block.
-        // So we launch a coroutine to clear it.
         viewModelScope.launch(Dispatchers.IO) {
-            trafficMutex.withLock {
-                trafficHistory.clear()
-                trafficSnapshots.clear()
-            }
+            trafficSampler.clear()
         }
         _uiState.update { state ->
             state.copy(appTraffic = emptyMap(), metricsLastSampleAt = null)
         }
     }
 
-    private fun resolveUid(packageName: String): Int? {
-        uidCache[packageName]?.let { return it }
-        return try {
-            val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                packageManager.getApplicationInfo(packageName, 0)
-            }
-            appInfo.uid.also { uidCache[packageName] = it }
-        } catch (_: PackageManager.NameNotFoundException) {
-            null
-        }
-    }
-
-    private fun isSystemApp(packageName: String): Boolean {
-        return try {
-            val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                packageManager.getApplicationInfo(packageName, 0)
-            }
-            (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
-        } catch (_: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
-
-    private suspend fun sampleAppTraffic() = trafficMutex.withLock {
-        val trackedApps = (_uiState.value.recentApps + _uiState.value.rareApps)
-            .distinctBy { it.packageName }
-        val trackedPackages = trackedApps.map { it.packageName }
+    private suspend fun sampleAppTraffic() {
+        val trackedPackages = (_uiState.value.recentApps + _uiState.value.rareApps)
+            .map { it.packageName }
+            .distinct()
         val now = System.currentTimeMillis()
-        val windowMillis = trafficWindowMillisRef.get()
-
-        if (trackedPackages.isEmpty()) {
-            trafficHistory.clear()
-            trafficSnapshots.clear()
-            _uiState.update { state ->
-                state.copy(appTraffic = emptyMap(), metricsLastSampleAt = now)
-            }
-            return@withLock
-        }
-
-        val trackedPackageSet = trackedPackages.toSet()
-        val packageUidPairs = trackedPackages.mapNotNull { packageName ->
-            resolveUid(packageName)?.let { uid -> packageName to uid }
-        }
-
-        val networkStatsSums = collectTrafficViaNetworkStats(packageUidPairs, now - windowMillis, now)
-
-        val sums: Map<String, Long>
-        if (networkStatsSums != null) {
-            trafficHistory.clear()
-            trafficSnapshots.clear()
-            sums = networkStatsSums
-        } else {
-            val fallbackSums = mutableMapOf<String, Long>()
-            for ((packageName, uid) in packageUidPairs) {
-                collectTrafficFromSnapshots(packageName, uid, now, windowMillis)?.let { sum ->
-                    fallbackSums[packageName] = sum
-                }
-            }
-
-            val iterator = trafficHistory.keys.iterator()
-            while (iterator.hasNext()) {
-                val key = iterator.next()
-                if (key !in trackedPackageSet) {
-                    iterator.remove()
-                    trafficSnapshots.remove(key)
-                }
-            }
-
-            sums = fallbackSums
-        }
-
+        val sums = trafficSampler.sample(trackedPackages, now, trafficWindowMillisRef.get())
         _uiState.update { state ->
-            state.copy(
-                appTraffic = sums,
-                metricsLastSampleAt = now
-            )
+            state.copy(appTraffic = sums, metricsLastSampleAt = now)
         }
-    }
-
-    private fun collectTrafficFromSnapshots(
-        packageName: String,
-        uid: Int,
-        now: Long,
-        windowMillis: Long
-    ): Long? {
-        val rxBytes = TrafficStats.getUidRxBytes(uid)
-        val txBytes = TrafficStats.getUidTxBytes(uid)
-        if (rxBytes < 0 || txBytes < 0) return null
-
-        val totalBytes = rxBytes + txBytes
-        val previousTotal = trafficSnapshots.put(packageName, totalBytes)
-        val delta = if (previousTotal == null || totalBytes < previousTotal) 0L else totalBytes - previousTotal
-
-        val history = trafficHistory.getOrPut(packageName) { ArrayDeque() }
-        if (delta > 0) {
-            history.addLast(now to delta)
-        }
-        while (history.isNotEmpty() && now - history.first().first > windowMillis) {
-            history.removeFirst()
-        }
-        // Bug fix: Limit history size to prevent memory leaks
-        while (history.size > MAX_HISTORY_SIZE) {
-            history.removeFirst()
-        }
-        return history.sumOf { it.second }
-    }
-
-    private fun collectTrafficViaNetworkStats(
-        packageUidPairs: List<Pair<String, Int>>,
-        start: Long,
-        end: Long
-    ): Map<String, Long>? {
-        val manager = networkStatsManager ?: return null
-        if (packageUidPairs.isEmpty()) return emptyMap()
-
-        val safeStart = start.coerceAtLeast(0L)
-        val uidToPackage = packageUidPairs.associate { (packageName, uid) -> uid to packageName }
-        val totals = mutableMapOf<String, Long>()
-        val bucket = android.app.usage.NetworkStats.Bucket()
-
-        val networkTypes = buildList {
-            add(ConnectivityManager.TYPE_WIFI)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                add(ConnectivityManager.TYPE_ETHERNET)
-            }
-        }
-
-        try {
-            for (networkType in networkTypes) {
-                try {
-                    // Bug fix: Handle potential nulls or exceptions better.
-                    // querySummary(networkType, subscriberId, start, end)
-                    // subscriberId is null for all mobile interfaces or wifi?
-                    // For WiFi it should be null. For Mobile it might need subscriberId but usually null works for "all".
-                    // Some devices throw if null is passed for mobile.
-                    manager.querySummary(networkType, null, safeStart, end).use { stats ->
-                        while (stats.hasNextBucket()) {
-                            stats.getNextBucket(bucket)
-                            val packageName = uidToPackage[bucket.uid] ?: continue
-                            val bytes = bucket.rxBytes + bucket.txBytes
-                            if (bytes <= 0) continue
-                            totals[packageName] = (totals[packageName] ?: 0L) + bytes
-                        }
-                    }
-                } catch (error: SecurityException) {
-                    Log.w(TAG, "Network stats permission missing", error)
-                    return null
-                } catch (error: RemoteException) {
-                    Log.w(TAG, "Unable to query network stats", error)
-                } catch (error: RuntimeException) {
-                    Log.e(TAG, "Skipping network type $networkType due to error", error)
-                    // Bug fix 20: Don't just return null, try next network type or return partial results if possible.
-                    // But if it's a critical error, we might want to flag it.
-                    // For now, we continue to next network type.
-                }
-            }
-        } catch (error: SecurityException) {
-            Log.w(TAG, "Missing permission for network stats", error)
-            return null
-        } catch (error: RemoteException) {
-            Log.w(TAG, "Network stats service error", error)
-            return null
-        }
-
-        return totals
     }
 
     companion object {
         private const val TAG = "MainViewModel"
-        private const val MAX_HISTORY_SIZE = 100
 
         fun Factory(container: AppContainer): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
