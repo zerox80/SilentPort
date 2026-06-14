@@ -63,8 +63,9 @@ class FirewallController(
             blockedPackages = packages
         )
         scheduleAutoBlock(reactivateAt)
-        // While allowing, nothing is blocked yet, so the service receives an empty block list.
-        startService(isBlocking = false, blockList = packages)
+        // When nothing stays blocked we still hand the (empty) list to the service so it can clear any
+        // previously applied blocks instead of leaving them in place.
+        startService(isBlocking = false, blockList = packages, includeBlockListWhenNotBlocking = packages.isEmpty())
     }
 
     suspend fun blockNow(blockPackages: Set<String>? = null) = stateMutex.withLock {
@@ -129,10 +130,13 @@ class FirewallController(
             Log.d(TAG, "updateBlockedPackages -> no change (${blockPackages.size})")
             return@withLock
         }
-        // Never re-block a package that still has a valid temporary unblock.
-        val validUnblocks = TemporaryUnblocks.validPackages(current.temporaryUnblocks, System.currentTimeMillis())
+        Log.i(TAG, "updateBlockedPackages -> ${blockPackages.size} packages (was ${current.blockedPackages.size})")
+
+        // Filter out valid temporary unblocks to prevent race conditions.
+        val now = System.currentTimeMillis()
+        val validUnblocks = TemporaryUnblock.activePackages(current.temporaryUnblocks, now)
         val filteredPackages = blockPackages - validUnblocks
-        Log.i(TAG, "updateBlockedPackages -> ${filteredPackages.size} packages (was ${current.blockedPackages.size})")
+
         persistBlockedPackages(current, filteredPackages)
     }
 
@@ -144,6 +148,7 @@ class FirewallController(
         Log.i(TAG, "temporarilyUnblock -> $packageName for ${durationMillis}ms")
         preferences.addTemporaryUnblock(packageName, durationMillis)
 
+        // Update blocked packages immediately by removing this one.
         val current = preferences.preferencesFlow.first()
         val newBlocked = current.blockedPackages - packageName
         if (current.blockedPackages != newBlocked) {
@@ -152,9 +157,9 @@ class FirewallController(
     }
 
     /**
-     * Persists [blockedPackages] while preserving the rest of [current]'s state, then pushes
-     * the change to the running service. Shared by [updateBlockedPackages] and
-     * [temporarilyUnblock]; both run inside [stateMutex] so this helper must not re-lock.
+     * Persists [blockedPackages] while preserving the rest of [current]'s state and refreshes the
+     * VPN service if the firewall is enabled. Caller must already hold [stateMutex] — this does not
+     * lock, so it is safe to call from other locked sections without re-entrancy.
      */
     private suspend fun persistBlockedPackages(current: FirewallPreferences, blockedPackages: Set<String>) {
         preferences.setState(
@@ -204,7 +209,7 @@ class FirewallController(
         val delay = reactivateAt - System.currentTimeMillis()
         Log.d(TAG, "scheduleAutoBlock -> reactivateAt=$reactivateAt delay=$delay")
         if (delay <= 0) {
-            // Ignore reactivation times that are more than an hour stale.
+            // Bug fix 16: Check if it's too stale (more than 1 hour ago)
             if (delay < -TimeUnit.HOURS.toMillis(1)) {
                 Log.w(TAG, "scheduleAutoBlock -> reactivateAt is too stale ($delay ms), ignoring")
                 return

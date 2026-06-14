@@ -14,7 +14,7 @@ import com.silentport.silentport.domain.UsageAnalyzer
 import com.silentport.silentport.firewall.AppTrafficSampler
 import com.silentport.silentport.firewall.FirewallAllowlist
 import com.silentport.silentport.firewall.FirewallController
-import com.silentport.silentport.firewall.TemporaryUnblocks
+import com.silentport.silentport.firewall.TemporaryUnblock
 import com.silentport.silentport.model.AppUsageInfo
 import com.silentport.silentport.settings.SettingsPreferencesDataSource
 import com.silentport.silentport.ui.state.AppHomeState
@@ -91,7 +91,10 @@ class MainViewModel(
 
     private fun scheduleTemporaryUnblockSync() {
         val now = System.currentTimeMillis()
-        val nextExpiry = TemporaryUnblocks.nextExpiry(_uiState.value.firewallTemporaryUnblocks, now)
+        val nextExpiry = _uiState.value.firewallTemporaryUnblocks
+            .mapNotNull { TemporaryUnblock.decode(it)?.expiresAt }
+            .filter { it > now }
+            .minOrNull()
 
         if (nextExpiry == null) {
             temporaryUnblockJob?.cancel()
@@ -109,36 +112,38 @@ class MainViewModel(
         }
     }
 
-    fun enableFirewall() {
+    /**
+     * Computes the current block list and applies it. In manual mode the list is pushed as a manual
+     * block list; otherwise [automatic] decides how the firewall controller consumes it.
+     */
+    private fun applyBlockList(
+        action: String,
+        automatic: suspend (state: AppHomeState, blockList: Set<String>) -> Unit
+    ) {
         viewModelScope.launch {
             val state = _uiState.value
             val blockList = computeBlockList(state)
-            Log.i(TAG, "enableFirewall requested. manual=${state.manualFirewallUnblock}, blockCount=${blockList.size}")
+            Log.i(TAG, "$action requested. manual=${state.manualFirewallUnblock} blockCount=${blockList.size}")
             if (state.manualFirewallUnblock) {
                 firewallController.applyManualBlockList(blockList)
             } else {
-                firewallController.enableFirewall(blockList, state.allowDurationMillis)
+                automatic(state, blockList)
             }
         }
+    }
+
+    fun enableFirewall() = applyBlockList("enableFirewall") { state, blockList ->
+        firewallController.enableFirewall(blockList, state.allowDurationMillis)
+    }
+
+    fun blockNow() = applyBlockList("blockNow") { _, blockList ->
+        firewallController.blockNow(blockList)
     }
 
     fun disableFirewall() {
         viewModelScope.launch {
             Log.i(TAG, "disableFirewall requested")
             firewallController.disableFirewall()
-        }
-    }
-
-    fun blockNow() {
-        viewModelScope.launch {
-            val state = _uiState.value
-            val blockList = computeBlockList(state)
-            Log.i(TAG, "blockNow requested. manual=${state.manualFirewallUnblock} blockCount=${blockList.size}")
-            if (state.manualFirewallUnblock) {
-                firewallController.applyManualBlockList(blockList)
-            } else {
-                firewallController.blockNow(blockList)
-            }
         }
     }
 
@@ -333,7 +338,7 @@ class MainViewModel(
     private fun computeBlockList(state: AppHomeState = _uiState.value): Set<String> {
         val now = System.currentTimeMillis()
         val thresholdMillis = blockThresholdMillisRef.get().coerceAtLeast(TimeUnit.MINUTES.toMillis(1))
-        val validTemporaryUnblocks = TemporaryUnblocks.validPackages(state.firewallTemporaryUnblocks, now)
+        val validTemporaryUnblocks = TemporaryUnblock.activePackages(state.firewallTemporaryUnblocks, now)
 
         val result = BlockListCalculator.compute(
             BlockListCalculator.Inputs(
@@ -441,6 +446,8 @@ class MainViewModel(
         val job = metricsJob
         metricsJob = null
         job?.cancel()
+        // Clear traffic state under the mutex on a background coroutine so we never block the caller
+        // (which may be the main thread) and never race with an in-flight sampleAppTraffic().
         viewModelScope.launch(Dispatchers.IO) {
             trafficSampler.clear()
         }
