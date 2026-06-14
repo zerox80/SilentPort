@@ -18,6 +18,7 @@ import com.silentport.silentport.di.AppContainer
 import com.silentport.silentport.domain.ApplicationManager
 import com.silentport.silentport.domain.UsageAnalyzer
 import com.silentport.silentport.firewall.FirewallController
+import com.silentport.silentport.firewall.TemporaryUnblock
 import com.silentport.silentport.notifications.NotificationHelper
 import com.silentport.silentport.settings.SettingsPreferencesDataSource
 import com.silentport.silentport.ui.state.AppHomeState
@@ -105,7 +106,7 @@ class MainViewModel(
     private fun scheduleTemporaryUnblockSync() {
         val now = System.currentTimeMillis()
         val nextExpiry = _uiState.value.firewallTemporaryUnblocks
-            .mapNotNull { it.split(":").getOrNull(1)?.toLongOrNull() }
+            .mapNotNull { TemporaryUnblock.decode(it)?.expiresAt }
             .filter { it > now }
             .minOrNull()
 
@@ -125,37 +126,38 @@ class MainViewModel(
         }
     }
 
-// aktiviert die Firewall 
-    fun enableFirewall() {
+    /**
+     * Computes the current block list and applies it. In manual mode the list is pushed as a manual
+     * block list; otherwise [automatic] decides how the firewall controller consumes it.
+     */
+    private fun applyBlockList(
+        action: String,
+        automatic: suspend (state: AppHomeState, blockList: Set<String>) -> Unit
+    ) {
         viewModelScope.launch {
             val state = _uiState.value
             val blockList = computeBlockList(state)
-            Log.i(TAG, "enableFirewall requested. manual=${state.manualFirewallUnblock}, blockCount=${blockList.size}")
+            Log.i(TAG, "$action requested. manual=${state.manualFirewallUnblock} blockCount=${blockList.size}")
             if (state.manualFirewallUnblock) {
                 firewallController.applyManualBlockList(blockList)
             } else {
-                firewallController.enableFirewall(blockList, state.allowDurationMillis)
+                automatic(state, blockList)
             }
         }
+    }
+
+    fun enableFirewall() = applyBlockList("enableFirewall") { state, blockList ->
+        firewallController.enableFirewall(blockList, state.allowDurationMillis)
+    }
+
+    fun blockNow() = applyBlockList("blockNow") { _, blockList ->
+        firewallController.blockNow(blockList)
     }
 
     fun disableFirewall() {
         viewModelScope.launch {
             Log.i(TAG, "disableFirewall requested")
             firewallController.disableFirewall()
-        }
-    }
-
-    fun blockNow() {
-        viewModelScope.launch {
-            val state = _uiState.value
-            val blockList = computeBlockList(state)
-            Log.i(TAG, "blockNow requested. manual=${state.manualFirewallUnblock} blockCount=${blockList.size}")
-            if (state.manualFirewallUnblock) {
-                firewallController.applyManualBlockList(blockList)
-            } else {
-                firewallController.blockNow(blockList)
-            }
         }
     }
 
@@ -280,8 +282,6 @@ class MainViewModel(
             result.onSuccess { evaluation ->
                 usageRepository.applyEvaluation(evaluation)
                 syncFirewallBlockList()
-
-                syncFirewallBlockList()
             }.onFailure { throwable ->
                 Log.e(TAG, "Failed to refresh usage", throwable)
             }
@@ -365,13 +365,10 @@ class MainViewModel(
             }
             .map { it.packageName }
 
-
-
+        val validTemporaryUnblocks = TemporaryUnblock.activePackages(state.firewallTemporaryUnblocks, now)
 
         val result = if (state.manualFirewallUnblock) {
             val manualSet = state.firewallBlockedPackages.toMutableSet()
-
-
 
             val additions = rarePackages.filter { pkg ->
                 val cooldownExpiry = manualUnblockCooldown[pkg]
@@ -382,34 +379,14 @@ class MainViewModel(
             manualSet.remove(appContext.packageName)
             manualSet.removeAll(firewallAllowlist)
             manualSet.removeAll(state.whitelistedPackages)
-            
-            // Remove valid temporary unblocks
-            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
-                val parts = entry.split(":")
-                if (parts.size == 2) {
-                    val pkg = parts[0]
-                    val expiry = parts[1].toLongOrNull() ?: 0L
-                    if (expiry > now) pkg else null
-                } else null
-            }.toSet()
             manualSet.removeAll(validTemporaryUnblocks)
-            
-            // If hideSystemApps is enabled, remove system apps and manual system apps from blocklist
+
             if (state.hideSystemApps) {
                 manualSet.removeAll { pkg -> isSystemApp(pkg) || pkg in state.manualSystemApps }
             }
-            
+
             manualSet
         } else {
-            val validTemporaryUnblocks = state.firewallTemporaryUnblocks.mapNotNull { entry ->
-                val parts = entry.split(":")
-                if (parts.size == 2) {
-                    val pkg = parts[0]
-                    val expiry = parts[1].toLongOrNull() ?: 0L
-                    if (expiry > now) pkg else null
-                } else null
-            }.toSet()
-
             rarePackages.toSet()
                 .filterNot { it == appContext.packageName }
                 .filterNot { it in firewallAllowlist }
@@ -441,15 +418,10 @@ class MainViewModel(
     }
 
     private suspend fun syncFirewallBlockList() {
-        // Bug fix 12: Cleanup expired cooldowns before computing block list
+        // Drop expired cooldowns before recomputing the block list.
         val now = System.currentTimeMillis()
-        val iterator = manualUnblockCooldown.entries.iterator()
-        while (iterator.hasNext()) {
-            if (iterator.next().value <= now) {
-                iterator.remove()
-            }
-        }
-        
+        manualUnblockCooldown.entries.removeAll { it.value <= now }
+
         val desired = computeBlockList()
         val current = _uiState.value.firewallBlockedPackages
         if (desired != current) {
@@ -508,15 +480,11 @@ class MainViewModel(
     }
 
     private fun stopMetricsMonitor() {
-        // Bug fix 8: Safe cancellation
         val job = metricsJob
         metricsJob = null
         job?.cancel()
-        // Bug fix: Clear collections safely or just let them be.
-        // If we want to clear, we should probably do it under lock or just rely on GC if we were replacing maps.
-        // But since they are concurrent maps now, clear() is safe-ish but might race with a running sample.
-        // Ideally we should acquire mutex, but stopMetricsMonitor might be called from UI thread and we don't want to block.
-        // So we launch a coroutine to clear it.
+        // Clear traffic state under the mutex on a background coroutine so we never block the caller
+        // (which may be the main thread) and never race with an in-flight sampleAppTraffic().
         viewModelScope.launch(Dispatchers.IO) {
             trafficMutex.withLock {
                 trafficHistory.clear()
@@ -528,33 +496,27 @@ class MainViewModel(
         }
     }
 
-    private fun resolveUid(packageName: String): Int? {
-        uidCache[packageName]?.let { return it }
+    private fun getApplicationInfoOrNull(packageName: String): android.content.pm.ApplicationInfo? {
         return try {
-            val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
             } else {
                 @Suppress("DEPRECATION")
                 packageManager.getApplicationInfo(packageName, 0)
             }
-            appInfo.uid.also { uidCache[packageName] = it }
         } catch (_: PackageManager.NameNotFoundException) {
             null
         }
     }
 
+    private fun resolveUid(packageName: String): Int? {
+        uidCache[packageName]?.let { return it }
+        return getApplicationInfoOrNull(packageName)?.uid?.also { uidCache[packageName] = it }
+    }
+
     private fun isSystemApp(packageName: String): Boolean {
-        return try {
-            val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                packageManager.getApplicationInfo(packageName, 0)
-            }
-            (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
-        } catch (_: PackageManager.NameNotFoundException) {
-            false
-        }
+        val appInfo = getApplicationInfoOrNull(packageName) ?: return false
+        return (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
     }
 
     private suspend fun sampleAppTraffic() = trafficMutex.withLock {
@@ -664,11 +626,7 @@ class MainViewModel(
         try {
             for (networkType in networkTypes) {
                 try {
-                    // Bug fix: Handle potential nulls or exceptions better.
-                    // querySummary(networkType, subscriberId, start, end)
-                    // subscriberId is null for all mobile interfaces or wifi?
-                    // For WiFi it should be null. For Mobile it might need subscriberId but usually null works for "all".
-                    // Some devices throw if null is passed for mobile.
+                    // subscriberId is null to request stats across all interfaces of this type.
                     manager.querySummary(networkType, null, safeStart, end).use { stats ->
                         while (stats.hasNextBucket()) {
                             stats.getNextBucket(bucket)
@@ -684,10 +642,8 @@ class MainViewModel(
                 } catch (error: RemoteException) {
                     Log.w(TAG, "Unable to query network stats", error)
                 } catch (error: RuntimeException) {
+                    // Skip this network type but keep partial results from the others.
                     Log.e(TAG, "Skipping network type $networkType due to error", error)
-                    // Bug fix 20: Don't just return null, try next network type or return partial results if possible.
-                    // But if it's a critical error, we might want to flag it.
-                    // For now, we continue to next network type.
                 }
             }
         } catch (error: SecurityException) {
